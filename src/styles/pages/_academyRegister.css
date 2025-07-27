@@ -1,0 +1,120 @@
+/* src/styles/pages/_academyRegister.css */
+
+/* Reutiliza a base de layout dos formulários de login/cadastro */
+.academy-register-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Alinha o formulário mais para cima */
+  padding: var(--spacing-xxl) var(--spacing-lg);
+  min-height: calc(100vh - var(--header-height, 80px) - var(--footer-height, 80px));
+  background-color: var(--background-color);
+}
+
+.academy-register-form-container {
+  background-color: white;
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--box-shadow-md);
+  max-width: 700px; /* Um pouco mais largo para acomodar mais campos */
+  width: 100%;
+  text-align: center;
+}
+
+.academy-register-form-container h1 {
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-color);
+}
+
+/* Estilo para áreas de texto (textarea) */
+.textarea-field {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-base);
+  color: var(--text-color);
+  background-color: white;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  min-height: 100px; /* Altura mínima para o campo de descrição */
+  resize: vertical; /* Permite redimensionamento vertical */
+}
+
+.textarea-field:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb, 76, 175, 80), 0.2);
+}
+
+/* Estilo para seletores (select) */
+.select-field {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-base);
+  color: var(--text-color);
+  background-color: white;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.select-field:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb, 76, 175, 80), 0.2);
+}
+
+/* Checkbox/Checkbox Group */
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap; /* Permite que os checkboxes quebrem linha */
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  justify-content: flex-start; /* Alinha à esquerda */
+  padding: var(--spacing-sm) 0;
+  border-top: 1px solid var(--border-color-light);
+  border-bottom: 1px solid var(--border-color-light);
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    font-size: var(--font-size-base);
+    color: var(--text-color-light);
+    cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: var(--spacing-xxs);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.academy-register-form-container .button-primary {
+  width: 100%;
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  font-size: var(--font-size-medium);
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+  .academy-register-page {
+    padding: var(--spacing-lg) var(--spacing-sm);
+  }
+
+  .academy-register-form-container {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .academy-register-form-container h1 {
+    font-size: var(--font-size-large);
+  }
+
+  .checkbox-group {
+      flex-direction: column; /* Empilha checkboxes em telas menores */
+      align-items: flex-start;
+  }
+}

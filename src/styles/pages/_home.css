@@ -1,0 +1,84 @@
+/* src/styles/pages/_home.css */
+
+.home-page {
+  text-align: center; /* Centraliza o texto e elementos na página */
+  padding: var(--spacing-xxl) var(--spacing-lg); /* Padding generoso */
+  background-color: var(--background-color); /* Fundo claro */
+}
+
+.home-page h1 {
+  font-size: var(--font-size-xxl);
+  color: var(--text-color);
+  margin-bottom: var(--spacing-md);
+}
+
+.home-page p {
+  font-size: var(--font-size-large);
+  color: var(--text-color-light);
+  max-width: 600px; /* Limita a largura do parágrafo */
+  margin: 0 auto var(--spacing-xl) auto; /* Centraliza e adiciona margem inferior */
+}
+
+.search-section {
+  display: flex; /* Para alinhar o input e o botão lado a lado */
+  justify-content: center; /* Centraliza os itens */
+  gap: var(--spacing-sm); /* Espaço entre o input e o botão */
+  margin-top: var(--spacing-lg);
+  max-width: 700px; /* Limita a largura da barra de busca */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.search-section .input-group {
+    margin-bottom: 0; /* Remove margem inferior padrão do input-group */
+    flex-grow: 1; /* Faz o input ocupar o máximo de espaço possível */
+}
+
+.search-section .input-field {
+    border-radius: var(--border-radius-md); /* Cantos mais arredondados */
+    padding: var(--spacing-md); /* Padding maior para o campo de busca */
+    font-size: var(--font-size-medium);
+}
+
+.search-section .button {
+    border-radius: var(--border-radius-md); /* Cantos mais arredondados */
+    padding: var(--spacing-md) var(--spacing-lg); /* Padding maior para o botão */
+    font-size: var(--font-size-medium);
+}
+
+/* Media query para telas menores */
+@media (max-width: 768px) {
+  .search-section {
+    flex-direction: column; /* Input e botão empilham em telas pequenas */
+    align-items: center; /* Centraliza os itens empilhados */
+  }
+
+  .search-section .input-field {
+    width: 100%; /* Ocupa largura total */
+  }
+
+  .search-section .button {
+    width: 100%; /* Ocupa largura total */
+  }
+}
+
+/* src/styles/pages/_home.css */
+
+/* ... (código existente) ... */
+
+.academies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Colunas responsivas */
+  gap: var(--spacing-lg); /* Espaçamento entre os cards */
+  margin-top: var(--spacing-xl); /* Espaço acima da grade */
+  max-width: 1200px; /* Limita a largura máxima da grade */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Ajustes para telas muito pequenas */
+@media (max-width: 600px) {
+  .academies-grid {
+    grid-template-columns: 1fr; /* Uma coluna em telas pequenas */
+  }
+}

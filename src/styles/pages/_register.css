@@ -1,0 +1,65 @@
+/* src/styles/pages/_register.css */
+
+.register-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Alinha o formulário mais para cima */
+  padding: var(--spacing-xxl) var(--spacing-lg);
+  min-height: calc(100vh - var(--header-height, 80px) - var(--footer-height, 80px)); /* Ajustar depois de definir alturas reais */
+  background-color: var(--background-color);
+}
+
+.register-form-container {
+  background-color: white;
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--box-shadow-md);
+  max-width: 500px; /* Largura máxima do formulário */
+  width: 100%; /* Garante que ocupe o espaço disponível */
+  text-align: center;
+}
+
+.register-form-container h1 {
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-color);
+}
+
+.register-form-container .button-primary {
+  width: 100%; /* Botão de submissão ocupa 100% da largura */
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md); /* Um pouco mais de padding para o botão */
+  font-size: var(--font-size-medium);
+}
+
+.register-form-container p {
+  margin-top: var(--spacing-lg);
+  font-size: var(--font-size-small);
+  color: var(--text-color-light);
+}
+
+.register-form-container p .link {
+  color: var(--primary-color);
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.register-form-container p .link:hover {
+  color: var(--secondary-color);
+}
+
+/* Media query para telas menores */
+@media (max-width: 600px) {
+  .register-page {
+    padding: var(--spacing-lg) var(--spacing-sm);
+  }
+
+  .register-form-container {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .register-form-container h1 {
+    font-size: var(--font-size-large);
+  }
+}

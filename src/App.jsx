@@ -1,35 +1,36 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// src/App.jsx
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Footer from './components/Footer/Footer';
+
+// Importações dos componentes de página
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import AcademyDetailsPage from './pages/AcademyDetailsPage';
+import AcademyRegisterPage from './pages/AcademyRegisterPage';
+
+import Header from './components/Header/Header'; // <-- Nova importação do Header
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="App">
+      <Header /> {/* <-- O cabeçalho será exibido em todas as páginas */}
+
+      <main> {/* Uma tag <main> para o conteúdo principal */}
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/cadastrar" element={<RegisterPage />} />
+          <Route path="/academia/:id" element={<AcademyDetailsPage />} />
+          <Route path="/cadastrar-academia" element={<AcademyRegisterPage />} />
+          {/* <Route path="*" element={<h1>Página Não Encontrada</h1>} /> */}
+        </Routes>
+      </main>
+
+      <Footer />
+    </div>
+  );
 }
 
-export default App
+export default App;

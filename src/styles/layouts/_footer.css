@@ -1,0 +1,43 @@
+/* src/styles/layouts/_footer.css */
+
+.footer {
+  background-color: var(--background-dark); /* Cor de fundo escura, como o cabeçalho */
+  color: white;
+  padding: var(--spacing-lg) var(--spacing-md); /* Espaçamento interno */
+  text-align: center;
+  margin-top: auto; /* Empurra o rodapé para a parte inferior quando o conteúdo é curto */
+  width: 100%;
+}
+
+.footer-content {
+  max-width: 1200px; /* Limita a largura do conteúdo do rodapé */
+  margin: 0 auto; /* Centraliza o conteúdo */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm); /* Espaço entre parágrafo e navegação */
+}
+
+.footer-nav {
+  display: flex;
+  gap: var(--spacing-lg); /* Espaço entre os links de navegação */
+}
+
+.footer-link {
+  color: white;
+  text-decoration: none;
+  font-size: var(--font-size-small);
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: var(--primary-color); /* Muda a cor ao passar o mouse */
+}
+
+/* Media query para telas menores */
+@media (max-width: 768px) {
+  .footer-nav {
+    flex-direction: column; /* Links empilham em telas pequenas */
+    gap: var(--spacing-xs);
+  }
+}

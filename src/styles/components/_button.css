@@ -1,0 +1,67 @@
+/* src/styles/components/_button.css */
+
+.button {
+  display: inline-block;
+  padding: var(--spacing-sm) var(--spacing-md); /* Usando variáveis de espaçamento */
+  font-size: var(--font-size-base);
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  border-radius: var(--border-radius-sm); /* Usando variável de border-radius */
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  -webkit-appearance: none; /* Reset para remover estilos padrão de navegador */
+  -moz-appearance: none;
+  appearance: none; /* Remove default button styles for consistency */
+}
+
+/* Variações de cor para o botão */
+.button-primary {
+  background-color: var(--primary-color);
+  color: white;
+  border: 1px solid var(--primary-color);
+}
+
+.button-primary:hover {
+  background-color: darken(var(--primary-color), 10%); /* Exige pré-processador ou uma cor fixa para o hover */
+  /* Ou simplesmente uma cor mais escura definida: */
+  background-color: #388e3c; /* Um verde um pouco mais escuro */
+  border-color: #388e3c;
+}
+
+.button-secondary {
+  background-color: var(--secondary-color);
+  color: white;
+  border: 1px solid var(--secondary-color);
+}
+
+.button-secondary:hover {
+  background-color: #1976d2; /* Um azul um pouco mais escuro */
+  border-color: #1976d2;
+}
+
+.button-outline {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+.button-outline:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.button-small {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-small);
+}
+
+.button-large {
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: var(--font-size-medium);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
