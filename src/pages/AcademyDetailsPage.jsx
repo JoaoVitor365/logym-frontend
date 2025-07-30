@@ -88,6 +88,25 @@ function AcademyDetailsPage() {
       reviews: [
         { id: 'r4', author: 'Pedro Costa', rating: 4, comment: 'Boa estrutura, mas o estacionamento é pequeno.' }
       ]
+    },
+{
+      id: '4',
+      name: 'Academia Power Up',
+      address: 'Rua Força, 321',
+      city: 'Curitiba',
+      state: 'PR',
+      zipCode: '80000-000',
+      phone: '(41) 91234-5678',
+      email: 'contato@powerup.com',
+      description: 'Treinamento funcional e musculação com foco em resultados. Contamos com os melhores equipamentos e professores.',
+      rating: 4.6,
+      facilities: ['Treinamento Funcional', 'Musculação', 'Nutricionista'],
+      gallery: [
+        'https://images.unsplash.com/photo-1594914101186-b08ea0e84b7a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+      ],
+      reviews: [
+        { id: 'r4', author: 'Pedro Costa', rating: 4, comment: 'Boa estrutura, mas o estacionamento é pequeno.' }
+      ]
     }
   ];
 

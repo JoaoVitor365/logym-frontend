@@ -17,37 +17,46 @@ function HomePage() {
   const sampleAcademies = [
     {
       id: '1',
-      name: 'Academia Fitness Total',
-      address: 'Rua da Malhação, 100',
-      city: 'São Paulo',
+      name: 'Smart Fit',
+      address: 'Av. Vinte e Seis de Março, 701 - Centro',
+      city: 'Barueri',
       state: 'SP',
       rating: 4.8,
-      imageUrl: 'https://images.unsplash.com/photo-1571019613454-f02b93f780b4?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+      imageUrl: '/images/smartFit.jpeg'
     },
     {
       id: '2',
-      name: 'CrossFit Extreme',
-      address: 'Av. Esportiva, 456',
-      city: 'Rio de Janeiro',
-      state: 'RJ',
+      name: 'Blue Fit',
+      address: 'Av. Trindade, - 344 Bethaville I',
+      city: 'Barueri',
+      state: 'SP',
       rating: 4.9,
-      imageUrl: 'https://images.unsplash.com/photo-1534438747731-a8315124b8d7?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+      imageUrl: '/images/blueFit.jpeg'
     },
     {
       id: '3',
-      name: 'Yoga Zen Studio',
-      address: 'Praça da Paz, 789',
-      city: 'Belo Horizonte',
-      state: 'MG',
+      name: 'Bio Ritmo',
+      address: 'Av. Piracema, 669 - Tamboré',
+      city: 'Barueri',
+      state: 'SP',
       rating: 4.7,
-      imageUrl: 'https://images.unsplash.com/photo-1544367327-c104e7600860?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+      imageUrl: '/images/bioRitmo.jpeg'
     },
     {
       id: '4',
-      name: 'Academia Power Up',
-      address: 'Rua Força, 321',
-      city: 'Curitiba',
-      state: 'PR',
+      name: 'Gaviões',
+      address: 'Av. Juruá, 253 - Alphaville',
+      city: 'Barueri',
+      state: 'SP',
+      rating: 4.6,
+      imageUrl: '/images/gavioes.jpeg'
+    },
+    {
+      id: '5',
+      name: 'Evoultion',
+      address: ' R. Salgueiro, 78 - Iputinga',
+      city: 'Barueri',
+      state: 'SP',
       rating: 4.6,
       imageUrl: 'https://images.unsplash.com/photo-1594914101186-b08ea0e84b7a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
     }
