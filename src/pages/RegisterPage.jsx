@@ -32,7 +32,7 @@ function RegisterPage() {
             type="text"
             id="name"
             name="name"
-            placeholder="Seu nome completo"
+            placeholder="Nome completo"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -42,7 +42,7 @@ function RegisterPage() {
             type="email"
             id="email"
             name="email"
-            placeholder="seu.email@example.com"
+            placeholder="email@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
