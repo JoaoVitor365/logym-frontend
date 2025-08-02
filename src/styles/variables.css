@@ -1,53 +1,41 @@
-/* src/styles/variables.css */
+/* src/styles/_variables.css */
 
 :root {
-  /* Cores */
-  --primary-color: #4CAF50; /* Verde vibrante para ações principais */
-  --secondary-color: #2196F3; /* Azul para destaque ou informações */
-  --accent-color: #FFC107; /* Amarelo para alertas ou foco */
+  /* Paleta de Cores */
+  --primary-color: #0D284C;        /* Azul marinho (Cor principal dos botões e destaque) */
+  --secondary-color: #495057;      /* Cinza azulado (Cor de fundo de seções, rodapé) */
+  --background-color: #F8F9FA;     /* Cinza muito claro (Fundo geral do site) */
+  --hover-color: #ADB5BD;          /* Cinza claro (Cor para o hover) */
+  --text-color: #343A40;           /* Cinza escuro (Cor do texto) */
+  --text-color-light: #6C757D;     /* Cinza mais claro (Texto secundário) */
+  --success-color: #28A745;        /* Verde (Feedback de sucesso) */
+  --error-color: #DC3545;          /* Vermelho (Feedback de erro) */
+  --border-color: #DEE2E6;         /* Cinza para bordas */
+  --card-background: #FFFFFF;      /* Fundo branco para cards */
+  
+  /* Tipografia */
+  --font-family: 'Arial', sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-xxl: 2rem;
 
-  --text-color: #333; /* Cor de texto padrão (quase preto) */
-  --text-color-light: #555; /* Cor de texto mais clara */
-  --background-color: #f4f4f4; /* Fundo geral da página */
-  --background-dark: #333; /* Fundo escuro para cabeçalhos/rodapés */
-  --border-color: #ddd; /* Cor padrão para bordas */
-  --error-color: #f44336; /* Vermelho para mensagens de erro */
+  /* Espaçamento */
+  --spacing-xxs: 0.25rem;
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
 
-  /* Fontes */
-  --font-family-primary: 'Arial', sans-serif; /* Fonte padrão */
-  --font-family-headings: 'Helvetica Neue', sans-serif; /* Fonte para títulos */
-
-  --font-size-base: 16px;
-  --font-size-small: 0.875rem; /* 14px */
-  --font-size-medium: 1.125rem; /* 18px */
-  --font-size-large: 1.5rem; /* 24px */
-  --font-size-xl: 2rem; /* 32px */
-  --font-size-xxl: 2.5rem; /* 40px */
-
-  /* Espaçamentos */
-  --spacing-xxs: 4px;
-  --spacing-xs: 8px;
-  --spacing-sm: 12px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-  --spacing-xxl: 48px;
-
-  /* Bordas */
+  /* Bordas e Sombras */
   --border-radius-sm: 4px;
   --border-radius-md: 8px;
-
-  /* Sombras */
   --box-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --box-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
 
-  /* Cores de feedback/status */
-  --success-color: #28a745; /* Verde para sucesso */
-  --warning-color: #ffc107; /* Amarelo para aviso */
-  --danger-color: #dc3545; /* Vermelho para erro */
-
-  /* Versões RGB para sombras (útil para cores que não são variáveis nativas) */
-  --primary-color-rgb: 76, 175, 80;   /* RGB de #4CAF50 */
-  --secondary-color-rgb: 25, 118, 210; /* RGB de #1976D2 */
-  --danger-color-rgb: 220, 53, 69;    /* RGB de #dc3545 */
+  /* Outras variáveis */
+  --container-width: 1200px;
+  --header-height: 70px;
 }

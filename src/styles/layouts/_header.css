@@ -1,28 +1,111 @@
 /* src/styles/layouts/_header.css */
+
 .header {
-  background-color: #333;
-  padding: 1rem;
+  background-color: var(--primary-color);
   color: white;
-}
-
-.nav-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  box-shadow: var(--box-shadow-sm);
+  height: var(--header-height);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 20px;
 }
 
-.nav-link {
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: var(--container-width);
+}
+
+/* Logo */
+.logo-container {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.logo-text {
+  font-size: var(--font-size-xl);
+  font-weight: bold;
   color: white;
   text-decoration: none;
-  font-weight: bold;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
 }
 
-.nav-link:hover {
-  background-color: #555;
+/* Ocultar o botão de menu em telas grandes */
+.menu-toggle {
+  display: none;
+}
+
+/* Links de navegação */
+.nav-links {
+  display: flex;
+  gap: var(--spacing-lg);
+}
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  padding: var(--spacing-xxs) var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+  transition: background-color 0.3s ease;
+}
+.nav-links a:hover {
+  background-color: var(--primary-darker);
+}
+
+/* ----- Estilos para Telas Pequenas (Menu Hambúrguer) ----- */
+@media (max-width: 768px) {
+  .header-container {
+    justify-content: flex-end;
+  }
+
+  .logo-container {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: var(--header-height);
+    right: 0;
+    width: 100%;
+    background-color: var(--primary-color);
+    padding: var(--spacing-lg);
+    box-shadow: var(--box-shadow-sm);
+    transition: transform 0.3s ease-in-out;
+    z-index: 999;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-links a {
+    padding: var(--spacing-md);
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .menu-toggle {
+    display: block;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    z-index: 1001;
+  }
+
+  .menu-icon {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: white;
+    margin: 5px 0;
+    transition: 0.4s;
+  }
 }

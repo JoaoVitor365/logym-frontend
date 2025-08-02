@@ -17,16 +17,19 @@
 
 /* Variações de cor para o botão */
 .button-primary {
-  background-color: var(--primary-color);
+  background-color: var(--primary-color); /* Fundo dos botões com azul marinho */
   color: white;
-  border: 1px solid var(--primary-color);
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s ease-in-out;
 }
 
 .button-primary:hover {
-  background-color: darken(var(--primary-color), 10%); /* Exige pré-processador ou uma cor fixa para o hover */
-  /* Ou simplesmente uma cor mais escura definida: */
-  background-color: #388e3c; /* Um verde um pouco mais escuro */
-  border-color: #388e3c;
+  background-color: var(--hover-color); /* Hover com o cinza claro */
+  color: var(--primary-color); /* Mude a cor do texto no hover para azul marinho */
 }
 
 .button-secondary {

@@ -1,19 +1,20 @@
 /* src/styles/components/_card.css */
 
 .card {
-  background-color: white;
+  background-color: var(--card-background); /* Fundo branco usando variável */
+  border: 1px solid var(--border-color); /* ADICIONE ESTA LINHA para a borda sutil */
   border-radius: var(--border-radius-md);
   box-shadow: var(--box-shadow-sm); /* Sombra leve */
-  overflow: hidden; /* Garante que a imagem arredondada não vaze */
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  width: 100%; /* Ocupa 100% da coluna na grid */
+  width: 100%;
 }
 
 .card:hover {
   transform: translateY(-5px); /* Efeito de levantar no hover */
-  box-shadow: var(--box-shadow-md); /* Sombra mais pronunciada no hover */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); /* MODIFIQUE ESTA LINHA para uma sombra mais pronunciada */
 }
 
 .card-image {

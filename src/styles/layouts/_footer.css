@@ -1,12 +1,11 @@
 /* src/styles/layouts/_footer.css */
 
 .footer {
-  background-color: var(--background-dark); /* Cor de fundo escura, como o cabeçalho */
+  background-color: var(--secondary-color); /* Fundo do rodapé com o cinza azulado */
   color: white;
-  padding: var(--spacing-lg) var(--spacing-md); /* Espaçamento interno */
+  padding: var(--spacing-md) var(--spacing-lg);
   text-align: center;
-  margin-top: auto; /* Empurra o rodapé para a parte inferior quando o conteúdo é curto */
-  width: 100%;
+  margin-top: var(--spacing-xxl);
 }
 
 .footer-content {
