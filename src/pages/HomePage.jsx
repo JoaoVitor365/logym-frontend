@@ -50,15 +50,6 @@ function HomePage() {
       state: 'SP',
       rating: 4.6,
       imageUrl: '/images/gavioes.jpeg'
-    },
-    {
-      id: '5',
-      name: 'Evoultion',
-      address: ' R. Salgueiro, 78 - Iputinga',
-      city: 'Barueri',
-      state: 'SP',
-      rating: 4.6,
-      imageUrl: 'https://images.unsplash.com/photo-1594914101186-b08ea0e84b7a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
     }
   ];
 

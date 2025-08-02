@@ -1,37 +1,38 @@
 /* src/styles/components/_button.css */
 
+/* Estilo base para todos os botões */
 .button {
   display: inline-block;
-  padding: var(--spacing-sm) var(--spacing-md); /* Usando variáveis de espaçamento */
-  font-size: var(--font-size-base);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-md); /* Usando font-size-md como base */
   font-weight: bold;
   text-align: center;
   text-decoration: none;
-  border-radius: var(--border-radius-sm); /* Usando variável de border-radius */
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-  -webkit-appearance: none; /* Reset para remover estilos padrão de navegador */
-  -moz-appearance: none;
-  appearance: none; /* Remove default button styles for consistency */
-}
-
-/* Variações de cor para o botão */
-.button-primary {
-  background-color: var(--primary-color); /* Fundo dos botões com azul marinho */
-  color: white;
-  border: none;
-  padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--border-radius-sm);
   cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.2s ease-in-out;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  /* Cor padrão para o botão, se nenhuma outra for especificada */
+  background-color: var(--primary-color);
+  color: white;
+  border: 1px solid var(--primary-color);
+}
+
+/* Variação principal */
+.button-primary {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
 }
 
 .button-primary:hover {
-  background-color: var(--hover-color); /* Hover com o cinza claro */
-  color: var(--primary-color); /* Mude a cor do texto no hover para azul marinho */
+  background-color: var(--hover-color);
+  color: var(--primary-color);
 }
 
+/* Variação secundária (se necessário) */
 .button-secondary {
   background-color: var(--secondary-color);
   color: white;
@@ -39,10 +40,11 @@
 }
 
 .button-secondary:hover {
-  background-color: #1976d2; /* Um azul um pouco mais escuro */
-  border-color: #1976d2;
+  background-color: var(--hover-color);
+  color: var(--secondary-color);
 }
 
+/* Botão sem preenchimento, apenas borda */
 .button-outline {
   background-color: transparent;
   color: var(--primary-color);
@@ -54,16 +56,18 @@
   color: white;
 }
 
+/* Variações de tamanho */
 .button-small {
   padding: var(--spacing-xs) var(--spacing-sm);
-  font-size: var(--font-size-small);
+  font-size: var(--font-size-sm);
 }
 
 .button-large {
   padding: var(--spacing-md) var(--spacing-lg);
-  font-size: var(--font-size-medium);
+  font-size: var(--font-size-lg);
 }
 
+/* Efeito desabilitado */
 .button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
