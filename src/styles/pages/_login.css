@@ -1,0 +1,98 @@
+ /* src/styles/pages/_login.css */
+
+ .login-page {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   min-height: calc(100vh - var(--header-height) - var(--footer-height));
+   padding: var(--spacing-xxl) var(--spacing-md);
+   background-color: var(--background-color);
+ }
+
+ .form-card {
+   background-color: var(--card-background);
+   padding: var(--spacing-xl);
+   border-radius: var(--border-radius-lg);
+   /* Aprimoramentos visuais para sombra e transição */
+   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+   width: 100%;
+   max-width: 400px;
+   text-align: center;
+ }
+
+ /* Efeito de movimento no hover */
+ .form-card:hover {
+   transform: translateY(-5px) scale(1.01);
+   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+ }
+
+ /* Estilos para o novo cabeçalho com logo */
+ .login-header {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   margin-bottom: var(--spacing-xl);
+ }
+
+ .login-logo {
+   width: 120px; /* Ajuste o tamanho conforme necessário */
+   height: auto;
+   margin-bottom: var(--spacing-md);
+ }
+
+ .login-form-container h1 {
+   /* margin-bottom: var(--spacing-xl); */ /* Removido para usar o espaçamento do login-header */
+   color: var(--text-color);
+   font-size: var(--font-size-xxl);
+   font-weight: bold;
+ }
+
+ .login-form-container form {
+   display: flex;
+   flex-direction: column;
+   gap: var(--spacing-md);
+   margin-bottom: var(--spacing-lg);
+ }
+
+ .login-form-container p {
+   color: var(--text-color-light);
+ }
+
+ .login-form-container .link {
+   color: var(--primary-color);
+   text-decoration: none;
+   font-weight: bold;
+ }
+
+ .login-form-container .link:hover {
+   text-decoration: underline;
+ }
+
+ /* Estilos para o componente de Input dentro do formulário */
+ .input-group {
+   text-align: left;
+ }
+ .input-group label {
+   display: block;
+   margin-bottom: var(--spacing-xs);
+   font-weight: bold;
+   color: var(--text-color);
+ }
+ .input-group input {
+   width: 100%;
+   padding: var(--spacing-sm);
+   border: 1px solid var(--border-color);
+   border-radius: var(--border-radius-sm);
+   font-size: var(--font-size-md);
+   box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+ }
+ .input-group input:focus {
+   outline: none;
+   border-color: var(--primary-color);
+   box-shadow: 0 0 0 2px rgba(13, 40, 76, 0.2);
+ }
+ .input-group input.has-error {
+   border-color: var(--error-color);
+ }
+ 

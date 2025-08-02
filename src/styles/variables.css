@@ -4,7 +4,7 @@
   /* Paleta de Cores */
   --primary-color: #0D284C;        /* Azul marinho (Cor principal dos botões e destaque) */
   --secondary-color: #495057;      /* Cinza azulado (Cor de fundo de seções, rodapé) */
-  --background-color: #F8F9FA;     /* Cinza muito claro (Fundo geral do site) */
+  --background-color: #e9ecef;     /* Cinza muito claro (Fundo geral do site) */
   --hover-color: #ADB5BD;          /* Cinza claro (Cor para o hover) */
   --text-color: #343A40;           /* Cinza escuro (Cor do texto) */
   --text-color-light: #6C757D;     /* Cinza mais claro (Texto secundário) */

@@ -67,7 +67,7 @@ function AcademyRegisterPage() {
 
   return (
     <div className="academy-register-page">
-      <div className="academy-register-form-container">
+      <div className="form-card">        
         <h1>Cadastrar Nova Academia</h1>
         <form onSubmit={handleSubmit}>
           {/* Informações Básicas */}

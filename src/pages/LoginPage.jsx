@@ -1,11 +1,13 @@
-// src/pages/LoginPage.jsx
-import React, { useState } from 'react';
-import Input from '../components/Input/Input';
-import Button from '../components/Button/Button';
-import { Link } from 'react-router-dom';
-import ErrorMessage from '../components/ErrorMessage/ErrorMessage';
+ // src/pages/LoginPage.jsx
+ import React, { useState } from 'react';
+ import Input from '../components/Input/Input';
+ import Button from '../components/Button/Button';
+ import { Link } from 'react-router-dom';
+ import ErrorMessage from '../components/ErrorMessage/ErrorMessage';
+ import '../styles/pages/_login.css';
+ import logo from '../assets/logo.png'; // Importe a sua logo aqui (ajuste o caminho se necessário)
 
-function LoginPage() {
+ function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
@@ -37,9 +39,10 @@ function LoginPage() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // Já estava aqui, mas é crucial para evitar o comportamento padrão do form
+    e.preventDefault();
     if (validateForm()) {
       console.log('Login:', { email, password });
+      // Aqui você faria a lógica de login real
       alert(`Tentando logar com: ${email}`);
     } else {
       console.log('Erros de validação:', errors);
@@ -47,10 +50,14 @@ function LoginPage() {
   };
 
   return (
-    <div className="register-page">
-      <div className="register-form-container">
-        <h1>Login</h1>
-        <form onSubmit={handleSubmit} noValidate> {/* Adicione noValidate aqui! */}
+    <div className="login-page">
+      <div className="form-card">
+        {/* Novo cabeçalho com logo e nome */}
+        <div className="login-header">
+          <img src={logo} alt="Logo da LOGYM" className="login-logo" />
+          <h1>LOGYM</h1>
+        </div>
+        <form onSubmit={handleSubmit} noValidate>
           <Input
             label="E-mail"
             type="email"
@@ -62,7 +69,6 @@ function LoginPage() {
               setEmail(e.target.value);
               setErrors(prev => ({ ...prev, email: '' }));
             }}
-            // REMOVA AQUI -> required
             className={errors.email ? 'has-error' : ''}
           />
           <ErrorMessage message={errors.email} />
@@ -78,7 +84,6 @@ function LoginPage() {
               setPassword(e.target.value);
               setErrors(prev => ({ ...prev, password: '' }));
             }}
-            // REMOVA AQUI -> required
             className={errors.password ? 'has-error' : ''}
           />
           <ErrorMessage message={errors.password} />
@@ -96,3 +101,4 @@ function LoginPage() {
 }
 
 export default LoginPage;
+ 

@@ -67,7 +67,7 @@ const validateForm = () => {
 
   return (
   <div className="register-page">
-    <div className="register-form-container">
+    <div className="form-card">
       <h1>Cadastre-se</h1>
       {/* Adicione noValidate para desativar a validação nativa do navegador */}
       <form onSubmit={handleSubmit} noValidate>

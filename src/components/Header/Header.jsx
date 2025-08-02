@@ -16,8 +16,8 @@ function Header() {
       <div className="header-container">
 
         {/* Logo Centralizado */}
-        <div className="logo-container">
-          <Link to="/" className="nav-link logo-text">LoGYM</Link>
+        <div className="logo-container">          
+          <Link to="/" className="nav-link logo-text">LOGYM</Link>
         </div>
 
         {/* Botão do Menu Hambúrguer (visível apenas em telas pequenas) */}
