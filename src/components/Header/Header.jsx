@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../../styles/layouts/_header.css';
+import logoSimples from '../../assets/logoSimples.png'; // Importação da imagem
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,9 +16,12 @@ function Header() {
     <header className="header">
       <div className="header-container">
 
-        {/* Logo Centralizado */}
-        <div className="logo-container">          
-          <Link to="/" className="nav-link logo-text">LOGYM</Link>
+        {/* Logo e Texto LOGYM */}
+        <div className="logo-container">
+          <Link to="/" className="logo-wrapper">
+            <img src={logoSimples} alt="Logo" className="logo-image" />
+            <span className="logo-text">LOGYM</span>
+          </Link>
         </div>
 
         {/* Botão do Menu Hambúrguer (visível apenas em telas pequenas) */}

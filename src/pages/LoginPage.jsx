@@ -5,7 +5,7 @@
  import { Link } from 'react-router-dom';
  import ErrorMessage from '../components/ErrorMessage/ErrorMessage';
  import '../styles/pages/_login.css';
- import logo from '../assets/logo.png'; // Importe a sua logo aqui (ajuste o caminho se necessário)
+ import logo from '../assets/logoFundo.png'; // Importe a sua logo aqui (ajuste o caminho se necessário)
 
  function LoginPage() {
   const [email, setEmail] = useState('');
