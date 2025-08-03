@@ -2,7 +2,9 @@
 import React, { useState } from 'react';
 import Input from '../components/Input/Input';
 import Button from '../components/Button/Button';
+import ErrorMessage from '../components/ErrorMessage/ErrorMessage'; // Importado conforme a sua solicitação
 import { Link } from 'react-router-dom';
+import '../styles/pages/_academyRegister.css'; // Caminho do CSS corrigido
 
 // Lista de estados e cidades (simplificada para demonstração)
 const states = [
@@ -12,7 +14,7 @@ const states = [
   { uf: 'MA', name: 'Maranhão' }, { uf: 'MT', name: 'Mato Grosso' }, { uf: 'MS', name: 'Mato Grosso do Sul' },
   { uf: 'MG', name: 'Minas Gerais' }, { uf: 'PA', name: 'Pará' }, { uf: 'PB', name: 'Paraíba' },
   { uf: 'PR', name: 'Paraná' }, { uf: 'PE', name: 'Pernambuco' }, { uf: 'PI', name: 'Piauí' },
-  { uf: 'RJ', name: 'Rio de Janeiro' }, { uf: 'RN', name: 'Rio Grande do Norte' }, { uf: 'RS', name: 'Rio Grande do Sul' },
+  { uf: 'RJ', name: 'Rio de Janeiro' }, { uf: 'RN', name:'Rio Grande do Norte' }, { uf: 'RS', name: 'Rio Grande do Sul' },
   { uf: 'RO', name: 'Rondônia' }, { uf: 'RR', name: 'Roraima' }, { uf: 'SC', name: 'Santa Catarina' },
   { uf: 'SP', name: 'São Paulo' }, { uf: 'SE', name: 'Sergipe' }, { uf: 'TO', name: 'Tocantins' }
 ];
@@ -36,12 +38,22 @@ function AcademyRegisterPage() {
     zipCode: '',
     phone: '',
     email: '',
+    password: '',
+    confirmPassword: '',
     description: '',
     facilities: [] // Array para as facilidades selecionadas
   });
+  const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    // Limpa o erro ao começar a digitar
+    if (errors[name]) {
+      setErrors(prevErrors => ({ ...prevErrors, [name]: '' }));
+    }
+    setSuccessMessage('');
 
     if (type === 'checkbox') {
       setFormData(prev => ({
@@ -58,18 +70,67 @@ function AcademyRegisterPage() {
     }
   };
 
+  const validateForm = () => {
+    let newErrors = {};
+    let isValid = true;
+
+    // Validação de campos obrigatórios
+    for (const key in formData) {
+      // Ignora facilities, que é um array, e password/confirmPassword que têm validação específica
+      if (key !== 'facilities' && key !== 'password' && key !== 'confirmPassword') {
+        if (!formData[key]) {
+          newErrors[key] = `O campo ${key} é obrigatório.`;
+          isValid = false;
+        }
+      }
+    }
+
+    // Validação de E-mail
+    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'E-mail inválido.';
+      isValid = false;
+    }
+
+    // Validação de Senha
+    if (!formData.password) {
+      newErrors.password = 'A senha é obrigatória.';
+      isValid = false;
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'A senha deve ter pelo menos 6 caracteres.';
+      isValid = false;
+    }
+
+    // Validação de Confirmação de Senha
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'A confirmação de senha é obrigatória.';
+      isValid = false;
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'As senhas não coincidem.';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Dados da Academia para Cadastro:', formData);
-    alert('Cadastro de academia em andamento! Verifique o console para os dados.');
-    // Aqui você fará a chamada para sua API para cadastrar a academia
+    if (validateForm()) {
+      setSuccessMessage('Cadastro de academia enviado com sucesso! Verifique o console para os dados.');
+      console.log('Dados da Academia para Cadastro:', formData);
+      setErrors({}); // Limpa os erros após o sucesso
+    } else {
+      setSuccessMessage('');
+      console.log('Erros de validação:', errors);
+    }
   };
 
   return (
     <div className="academy-register-page">
-      <div className="form-card">        
+      <div className="form-card">
         <h1>Cadastrar Nova Academia</h1>
-        <form onSubmit={handleSubmit}>
+        {successMessage && <div className="success-message">{successMessage}</div>}
+        <form onSubmit={handleSubmit} noValidate>
           {/* Informações Básicas */}
           <Input
             label="Nome da Academia"
@@ -81,6 +142,8 @@ function AcademyRegisterPage() {
             onChange={handleChange}
             required
           />
+          <ErrorMessage message={errors.name} />
+
           <Input
             label="CNPJ"
             type="text"
@@ -91,6 +154,8 @@ function AcademyRegisterPage() {
             onChange={handleChange}
             required
           />
+          <ErrorMessage message={errors.cnpj} />
+
           <Input
             label="E-mail de Contato"
             type="email"
@@ -101,6 +166,8 @@ function AcademyRegisterPage() {
             onChange={handleChange}
             required
           />
+          <ErrorMessage message={errors.email} />
+
           <Input
             label="Telefone"
             type="tel"
@@ -111,6 +178,32 @@ function AcademyRegisterPage() {
             onChange={handleChange}
             required
           />
+          <ErrorMessage message={errors.phone} />
+
+          {/* Novos campos de Senha */}
+          <Input
+            label="Senha"
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Crie uma senha"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <ErrorMessage message={errors.password} />
+
+          <Input
+            label="Confirmar Senha"
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            placeholder="Repita a senha"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+          <ErrorMessage message={errors.confirmPassword} />
 
           {/* Endereço */}
           <Input
@@ -123,6 +216,8 @@ function AcademyRegisterPage() {
             onChange={handleChange}
             required
           />
+          <ErrorMessage message={errors.address} />
+
           <Input
             label="Número"
             type="text"
@@ -133,6 +228,8 @@ function AcademyRegisterPage() {
             onChange={handleChange}
             required
           />
+          <ErrorMessage message={errors.number} />
+
           <Input
             label="Bairro"
             type="text"
@@ -143,6 +240,8 @@ function AcademyRegisterPage() {
             onChange={handleChange}
             required
           />
+          <ErrorMessage message={errors.neighborhood} />
+
           <Input
             label="CEP"
             type="text"
@@ -153,6 +252,7 @@ function AcademyRegisterPage() {
             onChange={handleChange}
             required
           />
+          <ErrorMessage message={errors.zipCode} />
 
           <div className="input-group">
             <label htmlFor="state" className="input-label">Estado</label>
@@ -170,6 +270,7 @@ function AcademyRegisterPage() {
               ))}
             </select>
           </div>
+          <ErrorMessage message={errors.state} />
 
           <Input
             label="Cidade"
@@ -181,6 +282,7 @@ function AcademyRegisterPage() {
             onChange={handleChange}
             required
           />
+          <ErrorMessage message={errors.city} />
 
           {/* Descrição */}
           <div className="input-group">
@@ -196,6 +298,7 @@ function AcademyRegisterPage() {
               required
             ></textarea>
           </div>
+          <ErrorMessage message={errors.description} />
 
           {/* Facilidades (Checkbox Group) */}
           <div className="input-group">
@@ -222,7 +325,7 @@ function AcademyRegisterPage() {
           </Button>
         </form>
         <p>
-          Quer visualizar as academias? <Link to="/" className="link">Voltar para a Busca</Link>
+          Já tem uma conta? <Link to="/login" className="link">Fazer Login</Link>
         </p>
       </div>
     </div>

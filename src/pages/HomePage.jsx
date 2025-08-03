@@ -55,7 +55,7 @@ function HomePage() {
 
   return (
     <div className="home-page">
-      <h1>LoGYM - Encontre sua Academia!</h1>
+      <h1>LOGYM - Encontre sua Academia!</h1>
       <p>
         Descubra as melhores academias perto de você.
         Use a barra de busca para encontrar por nome, local ou especialidade.
@@ -66,7 +66,7 @@ function HomePage() {
           type="text"
           id="search"
           name="search"
-          placeholder="Ex: Academia Fitness, Natação, São Paulo"
+          placeholder="Ex: Academia Fitness, Musculação, São Paulo"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="search-input"

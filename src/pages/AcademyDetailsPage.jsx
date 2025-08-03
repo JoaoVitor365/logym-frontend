@@ -1,6 +1,6 @@
 // src/pages/AcademyDetailsPage.jsx
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom'; // Importe useParams e Link
+import { useParams, Link, href } from 'react-router-dom'; // Importe useParams e Link
 // Importe outros componentes se necessário, como um componente de mapa futuro
 
 function AcademyDetailsPage() {
@@ -12,20 +12,19 @@ function AcademyDetailsPage() {
   const sampleAcademies = [
     {
       id: '1',
-      name: 'Academia Fitness Total',
-      address: 'Rua da Malhação, 100',
-      city: 'São Paulo',
+      name: 'Smart Fit',
+      address: 'Av. Vinte e Seis de Março, 701 - Centro',
+      city: 'Barueri',
       state: 'SP',
-      zipCode: '01234-567',
-      phone: '(11) 98765-4321',
-      email: 'contato@fitnesstotal.com',
-      description: 'A Academia Fitness Total oferece equipamentos de última geração, aulas variadas como spinning, zumba e musculação personalizada. Nossos instrutores são altamente qualificados para te ajudar a atingir seus objetivos.',
+      zipCode: ' 06401050',
+      phone: '(11) 99807-9600',
+      description: 'Na Smart Fit, unidade no centro de Barueri, a estrutura é de se impressionar! Contamos com a ajuda de professores formados, para te guiar em cada treino*, cadeira de massagem para relaxar. Precisa ir em alguma reunião após o treino? Contamos com ducha aquecida. Nosso equipamento é totalmente novo e moderno, além do peso livre, para sempre propor a melhor experiência. *: Vide o plano',
       rating: 4.8,
-      facilities: ['Musculação', 'Aulas Coletivas', 'Personal Trainer', 'Estacionamento'],
+      facilities: ['Cardio', 'Cadeira de Massagem', 'Sala de Ginástica', 'Peso Livre', 'Musculação', 'Ducha Aquecida', 'Ar Condicionado', 'Professores Formados'],
       gallery: [
-        'https://images.unsplash.com/photo-1571019613454-f02b93f780b4?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        'https://images.unsplash.com/photo-1599058917212-dbf8682a987a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        'https://images.unsplash.com/photo-1526506118085-60db85eaa5e0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+        '/images/academies/smartFit1.jpg',
+        '/images/academies/smartFit2.jpg',
+        '/images/academies/smartFit3.jpg'
       ],
       reviews: [
         { id: 'r1', author: 'Ana Silva', rating: 5, comment: 'Melhor academia da região! Equipamentos novos e aulas excelentes.' },
@@ -34,59 +33,63 @@ function AcademyDetailsPage() {
     },
     {
       id: '2',
-      name: 'CrossFit Extreme',
-      address: 'Av. Esportiva, 456',
-      city: 'Rio de Janeiro',
-      state: 'RJ',
-      zipCode: '20000-000',
-      phone: '(21) 91234-5678',
-      email: 'contato@crossfitextreme.com',
-      description: 'Box de CrossFit com coaches certificados e uma comunidade engajada. Treinos de alta intensidade para todos os níveis.',
+      name: 'BlueFit',
+      address: 'Av. Trindade, 344  Bethaville I',
+      city: ', Barueri',
+      state: 'SP',
+      zipCode: '06404-326',
+      contact: 'O contato deve ser feito através do site da BlueFit: www.bluefit.com.br/atendimento.',
+      description: 'A academia BlueFit, localizada no Bethaville, próximo ao Ginásio José Correa, é a academia feita para você! A estrutura conta com um estacionamento, além do ambiente ser climatizado, ter a Arena Fitness, Arena de Lutas e vestiários. A BlueFit espera por você!',
       rating: 4.9,
-      facilities: ['CrossFit', 'Personal Trainer', 'Vestiários'],
+      facilities: ['Ambiente Climatizado', 'Arena Fitness', 'Arena de Lutas', 'Armário Rotativo', 'Espaço B-Cross', 'Estacionamento', 'Vestiários'],
       gallery: [
-        'https://images.unsplash.com/photo-1534438747731-a8315124b8d7?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        'https://images.unsplash.com/photo-1534438870341-2a6234e405d4?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+        '/images/academies/blueFit1.jpg',
+        '/images/academies/blueFit2.jpg',
+        '/images/academies/blueFit3.jpg'
       ],
       reviews: [
-        { id: 'r3', author: 'Fernanda Lima', rating: 5, comment: 'Melhor box de CrossFit que já frequentei! Coaches atenciosos.' }
+        { id: 'r3', author: 'Fernanda Lima', rating: 5, comment: 'Academia com uma estrutura excelente! Sempre muito limpa e organizada!' }
       ]
     },
     {
       id: '3',
-      name: 'Yoga Zen Studio',
-      address: 'Praça da Paz, 789',
-      city: 'Belo Horizonte',
-      state: 'MG',
-      zipCode: '30000-000',
-      phone: '(31) 99876-5432',
-      email: 'contato@yogazen.com',
-      description: 'Espaço dedicado à prática de Yoga e Meditação. Aulas para iniciantes e avançados em um ambiente tranquilo e acolhedor.',
+      name: 'Bio Ritmo',
+      address: 'Av. Piracema, 669 - Tamboré',
+      city: 'Barueri',
+      state: 'SP',
+      zipCode: ' 06460-030',
+      phone: '(11) 99857-0402',
+      contact: 'Se preferir, entre em contato pelo site: www.bioritmosupport.zendesk.com/hc/pt-br/requests/new',
+      description: 'Aqui na BioRitmo do Shopping Tamboré, você só tem a ganhar! Aqui contamos com equipamentos sofisticados e de última geração, aulas de ginástica, programas para emagrecimento e avaliações de bioimpedância.',
       rating: 4.7,
-      facilities: ['Yoga', 'Meditação', 'Aulas Online'],
-      gallery: [
-        'https://images.unsplash.com/photo-1544367327-c104e7600860?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        'https://images.unsplash.com/photo-1552519500-ee228941785f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+      facilities: ['Equipamentos sofisticados e de última geração', 'Aulas de Torq, Burn, Race e Ginástica', 'Programas de emagrecimento e hipertrofia', 'Avaliação de Biompedância'],
+      gallery: [      
+        '/images/academies/bioRitmo2.jpg',
+        '/images/academies/bioRitmo1.jpg',
+        '/images/academies/bioRitmo3.jpg',
       ],
       reviews: []
     },
     {
       id: '4',
-      name: 'Academia Power Up',
-      address: 'Rua Força, 321',
-      city: 'Curitiba',
-      state: 'PR',
-      zipCode: '80000-000',
-      phone: '(41) 91234-5678',
-      email: 'contato@powerup.com',
-      description: 'Treinamento funcional e musculação com foco em resultados. Contamos com os melhores equipamentos e professores.',
-      rating: 4.6,
-      facilities: ['Treinamento Funcional', 'Musculação', 'Nutricionista'],
+      name: 'Gaviões',
+      address: 'Av. Juruá, 253 - Alphaville',
+      city: 'Barueri',
+      state: 'SP',
+      zipCode: '06455-010',
+      phone: '(11) 94074-7584',
+      email: 'sac@academiagavioes.com.br',
+      contact: 'Também pode entrar em contato pelo site: www.academiagavioes.com.br/contato',
+      description: 'Treine na Gaviões para encontrar o esporte que combina com você! Temos musculação, artes marciais, danças, sala de bike para cardio, aulas de pilates e aeróbicas. E o melhor de tudo! Somos uma academia 24 horas, a qualquer hora do dia, você treinando!',
+      rating: 4,
+      facilities: ['Musculação', 'Artes Marciais', 'Danças', 'Sala de Bike', 'Rooftop com Máquinas', 'Pilates', 'Aulas Aeróbicas'],
       gallery: [
-        'https://images.unsplash.com/photo-1594914101186-b08ea0e84b7a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+        '/images/academies/gavioes1.jpg',
+        '/images/academies/gavioes2.jpg',
+        '/images/academies/gavioes3.jpg',
       ],
       reviews: [
-        { id: 'r4', author: 'Pedro Costa', rating: 4, comment: 'Boa estrutura, mas o estacionamento é pequeno.' }
+        { id: 'r4', author: 'Pedro Costa', rating: 4, comment: 'Boa estrutura, porém deveria ser climatizado.' }
       ]
     }
   ];
@@ -150,6 +153,7 @@ function AcademyDetailsPage() {
           <li><strong>Telefone:</strong> {academy.phone}</li>
           <li><strong>E-mail:</strong> <a href={`mailto:${academy.email}`}>{academy.email}</a></li>
           <li><strong>CEP:</strong> {academy.zipCode}</li>
+          <li><strong>Outras formas de contato:</strong> {academy.contact}</li>
         </ul>
         <h2>Facilidades</h2>
         <ul>
