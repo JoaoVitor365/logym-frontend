@@ -1,15 +1,26 @@
 /* src/styles/pages/_home.css */
 
+/* Define as fontes padrão para o corpo do texto e títulos */
+:root {
+  /* ... (seus outros variáveis de cores, espaçamento, etc.) ... */
+  --font-heading: 'Bebas Neue', sans-serif;
+  --font-body: 'Poppins', sans-serif;
+}
+
 .home-page {
   text-align: center;
   padding: var(--spacing-xxl) var(--spacing-md);
   background-color: var(--page-background); /* Usando a nova variável de cor de fundo */
+  font-family: var(--font-body); /* Aplica a fonte Poppins como padrão */
 }
 
 .home-page h1 {
   font-size: var(--font-size-xxl);
   color: var(--text-color);
   margin-bottom: var(--spacing-md);
+  font-family: var(--font-heading); /* Aplica a fonte Bebas Neue para o título */
+  letter-spacing: 2px; /* Adiciona um espaçamento para o título ter mais impacto */
+  text-transform: uppercase;
 }
 
 .home-page p {
@@ -17,6 +28,7 @@
   color: var(--text-color-light);
   max-width: 600px;
   margin: 0 auto var(--spacing-xl) auto;
+  font-family: var(--font-body); /* Garante que o parágrafo usa a fonte de corpo */
 }
 
 /* Estilo para a seção de busca */
@@ -39,6 +51,7 @@
   border-radius: var(--border-radius-md);
   padding: var(--spacing-md);
   font-size: var(--font-size-medium);
+  font-family: var(--font-body); /* Garante que o input também usa Poppins */
 }
 
 /* Media query para a seção de busca em telas menores */

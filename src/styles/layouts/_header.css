@@ -1,5 +1,14 @@
 /* src/styles/layouts/_header.css */
 
+/* Certifique-se de que as variáveis de fonte estão definidas em _variables.css */
+:root {
+  --primary-color: #0D284C;
+  --text-color: #ffde59;
+  --font-heading: 'Bebas Neue', sans-serif;
+  --font-body: 'Poppins', sans-serif;
+  /* ... outras variáveis ... */
+}
+
 .header {
   background-color: var(--primary-color);
   color: white;
@@ -11,7 +20,7 @@
   z-index: 1000;
   display: flex;
   align-items: center;
-  justify-content: center; /* Centraliza o header-container na tela */
+  justify-content: center;
 }
 
 .header-container {
@@ -19,11 +28,10 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  max-width: var(--container-width); /* Mantém o tamanho máximo para telas maiores */
-  margin: 0 auto; /* Centraliza o contêiner dentro do header */
+  max-width: var(--container-width);
+  margin: 0 auto;
 }
 
-/* Logo e links principais */
 .logo-container {
   display: flex;
   align-items: center;
@@ -42,30 +50,38 @@
   width: auto;
 }
 
+/* Aplica a fonte Bebas Neue para o texto "LOGYM" */
 .logo-text {
+  font-family: var(--font-heading); /* Adicionado */
   font-size: var(--font-size-xl);
   font-weight: bold;
-  color: #FFDE59;
+  color: #ffde59;
   text-decoration: none;
+  text-transform: uppercase; /* Deixa em maiúsculas */
+  letter-spacing: 1px;
 }
 
-/* Ocultar o botão de menu em telas grandes */
 .menu-toggle {
   display: none;
 }
 
-/* Links de navegação */
 .nav-links {
   display: flex;
   gap: var(--spacing-lg);
 }
+
+/* Aplica a fonte Bebas Neue para os links de navegação */
 .nav-links a {
+  font-family: var(--font-heading); /* Adicionado */
   color: white;
   text-decoration: none;
   padding: var(--spacing-xxs) var(--spacing-xs);
   border-radius: var(--border-radius-sm);
   transition: background-color 0.3s ease;
+  text-transform: uppercase; /* Deixa em maiúsculas */
+  letter-spacing: 1px;
 }
+
 .nav-links a:hover {
   background-color: var(--primary-darker);
 }
@@ -102,22 +118,5 @@
     padding: var(--spacing-md);
     text-align: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .menu-toggle {
-    display: block;
-    cursor: pointer;
-    border: none;
-    background: transparent;
-    z-index: 1001;
-  }
-
-  .menu-icon {
-    display: block;
-    width: 25px;
-    height: 3px;
-    background: white;
-    margin: 5px 0;
-    transition: 0.4s;
   }
 }

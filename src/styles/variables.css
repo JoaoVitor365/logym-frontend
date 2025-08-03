@@ -6,15 +6,16 @@
   --secondary-color: #495057;      /* Cinza azulado (Cor de fundo de seções, rodapé) */
   --background-color: #e9ecef;     /* Cinza muito claro (Fundo geral do site) */
   --hover-color: #ADB5BD;          /* Cinza claro (Cor para o hover) */
-  --text-color: #343A40;           /* Cinza escuro (Cor do texto) */
-  --text-color-light: #6C757D;     /* Cinza mais claro (Texto secundário) */
+  --text-color: #ffde59;           /* Cinza escuro (Cor do texto) */
+  --text-color-light: #fdfdfd;     /* Cinza mais claro (Texto secundário) */
   --success-color: #28A745;        /* Verde (Feedback de sucesso) */
   --error-color: #DC3545;          /* Vermelho (Feedback de erro) */
-  --border-color: #DEE2E6;         /* Cinza para bordas */
-  --card-background: #FFFFFF;      /* Fundo branco para cards */
+  --border-color: #0D284C;         /* Cinza para bordas */
+  --card-background: #929292;      /* Fundo branco para cards */
   
   /* Tipografia */
-  --font-family: 'Arial', sans-serif;
+  --font-heading: 'Bebas Neue', sans-serif; /* Fonte para títulos e cabeçalhos */
+  --font-body: 'Poppins', sans-serif;       /* Fonte para o corpo do texto */
   --font-size-sm: 0.875rem;
   --font-size-md: 1rem;
   --font-size-lg: 1.25rem;

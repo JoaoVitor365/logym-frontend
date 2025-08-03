@@ -2,9 +2,10 @@
 
 .academy-details-page {
   padding: var(--spacing-xxl) var(--spacing-lg);
-  background-color: var(--background-color);
   max-width: 960px; /* Largura máxima para o conteúdo da página */
   margin: 0 auto; /* Centraliza a página */
+  /* Aplica a fonte padrão de corpo para toda a página */
+  font-family: var(--font-body); 
 }
 
 .academy-details-header {
@@ -12,14 +13,20 @@
   margin-bottom: var(--spacing-xl);
 }
 
+/* Aplica a fonte Bebas Neue para o título principal (nome da academia) */
 .academy-details-header h1 {
+  font-family: var(--font-heading); 
   font-size: var(--font-size-xxl);
   color: var(--primary-color);
   margin-bottom: var(--spacing-xs);
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
+/* Garante que o parágrafo use a fonte de corpo */
 .academy-details-header p {
-  font-size: var(--font-size-medium);
+  font-family: var(--font-body);
+  font-size: var(--font-size-md); /* Corrigido para font-size-md */
   color: var(--text-color-light);
 }
 
@@ -28,21 +35,26 @@
   padding: var(--spacing-lg);
   border-radius: var(--border-radius-md);
   box-shadow: var(--box-shadow-sm);
-  margin-bottom: var(--spacing-xl); /* Espaço entre as seções */
+  margin-bottom: var(--spacing-xl);
 }
 
+/* Aplica a fonte Bebas Neue para os subtítulos da seção */
 .academy-details-section h2 {
-  font-size: var(--font-size-large);
+  font-family: var(--font-heading); 
+  font-size: var(--font-size-lg); /* Corrigido para font-size-lg */
   color: var(--text-color);
   margin-top: 0;
   margin-bottom: var(--spacing-md);
   border-bottom: 2px solid var(--border-color);
   padding-bottom: var(--spacing-xs);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .academy-details-section p {
   line-height: 1.8;
   margin-bottom: var(--spacing-sm);
+  font-family: var(--font-body); /* Garante que os parágrafos usem a fonte de corpo */
 }
 
 .academy-details-gallery {
@@ -67,8 +79,9 @@
 
 .academy-details-info ul li {
   margin-bottom: var(--spacing-xs);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-md); /* Corrigido para font-size-md */
   color: var(--text-color);
+  font-family: var(--font-body); /* Garante que os itens de lista usem a fonte de corpo */
 }
 
 .academy-details-info ul li strong {
@@ -77,38 +90,41 @@
 }
 
 .academy-details-reviews .review {
-    background-color: var(--background-color);
-    padding: var(--spacing-md);
-    border-radius: var(--border-radius-sm);
-    margin-bottom: var(--spacing-sm);
+  background-color: var(--background-color);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-sm);
+  font-family: var(--font-body); /* Garante que o texto de review use a fonte de corpo */
 }
 
 .academy-details-reviews .review-author {
-    font-weight: bold;
-    color: var(--text-color);
+  font-weight: bold;
+  color: var(--text-color);
 }
 
 .academy-details-reviews .review-rating {
-    color: var(--accent-color); /* Amarelo para estrelas */
-    margin-left: var(--spacing-xxs);
+  color: var(--accent-color);
+  margin-left: var(--spacing-xxs);
 }
 
 /* Botão de voltar */
 .back-button {
-    display: inline-block;
-    margin-bottom: var(--spacing-lg);
-    background-color: var(--primary-color);
-    color: white;
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: var(--border-radius-sm);
-    text-decoration: none;
-    transition: background-color 0.3s ease;
+  display: inline-block;
+  margin-bottom: var(--spacing-lg);
+  background-color: var(--primary-color);
+  color: white;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-sm);
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  font-family: var(--font-heading); /* Aplica a fonte Bebas Neue no botão */
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .back-button:hover {
-    background-color: var(--secondary-color); /* Versão mais escura do secondary-color */
+  background-color: var(--secondary-color);
 }
-
 
 /* Media queries para responsividade */
 @media (max-width: 768px) {
@@ -131,6 +147,6 @@
   }
 
   .academy-details-gallery {
-    grid-template-columns: 1fr; /* Uma coluna em telas muito pequenas */
+    grid-template-columns: 1fr;
   }
 }

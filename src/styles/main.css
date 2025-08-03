@@ -6,6 +6,7 @@
 /* 2. Base e Reset */
 @import url('./base/_reset.css');
 @import url('./base/_base.css');
+@import url('./_global.css');
 
 /* 3. Layouts (Header, Footer, etc.) */
 @import url('./layouts/_header.css');

@@ -5,31 +5,59 @@
   justify-content: center;
   align-items: flex-start; /* Alinha o formulário mais para cima */
   padding: var(--spacing-xxl) var(--spacing-lg);
-  min-height: calc(100vh - var(--header-height, 80px) - var(--footer-height, 80px)); /* Ajustar depois de definir alturas reais */
-  background-color: var(--background-color);
+  min-height: calc(100vh - var(--header-height, 80px) - var(--footer-height, 80px));
+  /* Aplica a fonte padrão de corpo para toda a página */
+  font-family: var(--font-body);
 }
 
 .register-form-container {
-  background-color: white;
+  background-color: #929292;
   padding: var(--spacing-xl);
   border-radius: var(--border-radius-md);
   box-shadow: var(--box-shadow-md);
-  max-width: 500px; /* Largura máxima do formulário */
-  width: 100%; /* Garante que ocupe o espaço disponível */
+  max-width: 500px;
+  width: 100%;
   text-align: center;
 }
 
-.register-form-container h1 {
-  font-size: var(--font-size-xl);
-  margin-bottom: var(--spacing-lg);
-  color: var(--text-color);
+/* Estilo para a logo e o cabeçalho do formulário */
+.register-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--spacing-lg); /* Espaçamento entre o cabeçalho e o formulário */
 }
 
+.register-logo {
+  width: 120px; /* Tamanho da logo */
+  height: auto;
+  margin-bottom: var(--spacing-md); /* Espaço entre a logo e o título */
+}
+
+/* Aplica a fonte Bebas Neue para o título principal */
+.register-form-container h1 {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  color: var(--text-color);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Aplica a fonte Bebas Neue para o botão de cadastro */
 .register-form-container .button-primary {
-  width: 100%; /* Botão de submissão ocupa 100% da largura */
+  width: 100%;
   margin-top: var(--spacing-md);
-  padding: var(--spacing-md); /* Um pouco mais de padding para o botão */
+  padding: var(--spacing-md);
   font-size: var(--font-size-medium);
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Garante que os textos e links usem a fonte Poppins */
+.register-form-container p,
+.register-form-container p .link {
+  font-family: var(--font-body);
 }
 
 .register-form-container p {

@@ -2,10 +2,10 @@
 import React, { useState } from 'react';
 import Input from '../components/Input/Input';
 import Button from '../components/Button/Button';
-import ErrorMessage from '../components/ErrorMessage/ErrorMessage'; // Importado conforme a sua solicitação
+import ErrorMessage from '../components/ErrorMessage/ErrorMessage';
 import { Link } from 'react-router-dom';
-import '../styles/pages/_academyRegister.css'; // Caminho do CSS corrigido
-
+import '../styles/pages/_academyRegister.css';
+import logo from '../assets/logoFundo.png'; 
 // Lista de estados e cidades (simplificada para demonstração)
 const states = [
   { uf: 'AC', name: 'Acre' }, { uf: 'AL', name: 'Alagoas' }, { uf: 'AP', name: 'Amapá' },
@@ -127,8 +127,11 @@ function AcademyRegisterPage() {
 
   return (
     <div className="academy-register-page">
-      <div className="form-card">
-        <h1>Cadastrar Nova Academia</h1>
+      <div className="academy-register-form-container">
+        <div className="academy-register-header">
+          <img src={logo} alt="Logo da LOGYM" className="academy-register-logo" />
+          <h1>Cadastrar Nova Academia</h1>
+        </div>
         {successMessage && <div className="success-message">{successMessage}</div>}
         <form onSubmit={handleSubmit} noValidate>
           {/* Informações Básicas */}
