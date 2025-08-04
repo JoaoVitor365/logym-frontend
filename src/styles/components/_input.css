@@ -35,11 +35,6 @@
 }
 
 .input-field.error:focus {
-  box-shadow: 0 0 0 2px rgba(var(--error-color-rgb, 244, 67, 54), 0.2);
+  box-shadow: 0 0 0 2px rgba(var(--error-color), 0.2);
 }
 
-/* Adicione RGB versions of colors for rgba() usage, if not already in variables.css */
-:root {
-  --primary-color-rgb: 76, 175, 80; /* RGB de #4CAF50 */
-  --error-color-rgb: 244, 67, 54; /* RGB de #f44336 */
-}

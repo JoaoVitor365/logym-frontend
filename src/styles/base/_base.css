@@ -41,18 +41,18 @@ p {
 
 /* Estilos para validação de formulários */
 .input-group.has-error .input-label {
-  color: var(--danger-color); /* Muda a cor do label para vermelho */
+  color: var(--error-color); /* Muda a cor do label para vermelho */
 }
 
 .input-group.has-error .input-field,
 .input-group.has-error .textarea-field,
 .input-group.has-error .select-field {
-  border-color: var(--danger-color); /* Borda vermelha para campo com erro */
-  box-shadow: 0 0 0 2px rgba(var(--danger-color-rgb, 220, 53, 69), 0.2);
+  border-color: var(--error-color); /* Borda vermelha para campo com erro */
+  box-shadow: (var(--error-color), 0.2);
 }
 
 .error-message {
-  color: var(--danger-color); /* Cor vermelha para a mensagem de erro */
+  color: var(--error-color); /* Cor vermelha para a mensagem de erro */
   font-size: var(--font-size-small);
   margin-top: var(--spacing-xxs); /* Pequena margem acima */
   margin-bottom: var(--spacing-sm); /* Margem abaixo para separar do próximo input */

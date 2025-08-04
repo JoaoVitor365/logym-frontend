@@ -12,13 +12,21 @@
 }
 
 .academy-register-form-container {
-  background-color: #929292;
+  background-color: #ffffff;
   padding: var(--spacing-xl);
   border-radius: var(--border-radius-md);
-  box-shadow: var(--box-shadow-md);
-  max-width: 700px; /* Um pouco mais largo para acomodar mais campos */
+  /* Aprimoramentos visuais para sombra e transição */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  max-width: 500px; /* Um pouco mais largo para acomodar mais campos */
   width: 100%;
   text-align: center;
+}
+
+/* Efeito de movimento no hover */
+.academy-register-form-container:hover {
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: 0 50px 120px rgba(0, 0, 0, 0.2);
 }
 
 /* Novo estilo para a logo e o cabeçalho do formulário */
@@ -30,7 +38,7 @@
 }
 
 .academy-register-logo {
-  width: 120px; /* Tamanho da logo */
+  width: 250px; /* Tamanho da logo */
   height: auto;
   margin-bottom: var(--spacing-md); /* Espaço entre a logo e o título */
 }

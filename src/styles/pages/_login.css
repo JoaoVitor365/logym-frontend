@@ -18,14 +18,14 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
   text-align: center;
 }
 
 /* Efeito de movimento no hover */
 .form-card:hover {
   transform: translateY(-5px) scale(1.01);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 50px 120px rgba(0, 0, 0, 0.2);
 }
 
 /* Estilos para o novo cabeçalho com logo */
@@ -37,7 +37,7 @@
 }
 
 .login-logo {
-  width: 120px; /* Ajuste o tamanho conforme necessário */
+  width: 250px; /* Ajuste o tamanho conforme necessário */
   height: auto;
   margin-bottom: var(--spacing-md);
 }

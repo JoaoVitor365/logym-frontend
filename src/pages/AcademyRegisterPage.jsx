@@ -6,6 +6,7 @@ import ErrorMessage from '../components/ErrorMessage/ErrorMessage';
 import { Link } from 'react-router-dom';
 import '../styles/pages/_academyRegister.css';
 import logo from '../assets/logoFundo.png'; 
+
 // Lista de estados e cidades (simplificada para demonstração)
 const states = [
   { uf: 'AC', name: 'Acre' }, { uf: 'AL', name: 'Alagoas' }, { uf: 'AP', name: 'Amapá' },
@@ -46,6 +47,23 @@ function AcademyRegisterPage() {
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
 
+  // Mapeamento dos nomes de campos para exibição em português
+  const fieldNames = {
+    name: 'nome da academia',
+    cnpj: 'CNPJ',
+    address: 'endereço',
+    number: 'número',
+    neighborhood: 'bairro',
+    city: 'cidade',
+    state: 'estado',
+    zipCode: 'CEP',
+    phone: 'telefone',
+    email: 'e-mail de contato',
+    password: 'senha',
+    confirmPassword: 'confirmação de senha',
+    description: 'descrição da academia'
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -76,10 +94,10 @@ function AcademyRegisterPage() {
 
     // Validação de campos obrigatórios
     for (const key in formData) {
-      // Ignora facilities, que é um array, e password/confirmPassword que têm validação específica
       if (key !== 'facilities' && key !== 'password' && key !== 'confirmPassword') {
         if (!formData[key]) {
-          newErrors[key] = `O campo ${key} é obrigatório.`;
+          // Usa o mapeamento para pegar o nome do campo em português
+          newErrors[key] = `O campo ${fieldNames[key]} é obrigatório.`;
           isValid = false;
         }
       }
