@@ -17,7 +17,7 @@
   /* Aprimoramentos visuais para sombra e transição */
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  max-width: 500px;
+  max-width: 550px;
   width: 100%;
   text-align: center;
 }
@@ -45,7 +45,7 @@
 /* Aplica a fonte Bebas Neue para o título principal */
 .register-form-container h1 {
   font-family: var(--font-heading);
-  font-size: var(--font-size-xl);
+  font-size: 40px;
   color: var(--text-color);
   text-transform: uppercase;
   letter-spacing: 1px;

@@ -18,7 +18,7 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
   width: 100%;
-  max-width: 500px;
+  max-width: 550px;
   text-align: center;
 }
 
@@ -45,7 +45,7 @@
 /* Aplica a fonte Bebas Neue para o título principal "LOGYM" */
 .login-header h1 {
   font-family: var(--font-heading);
-  font-size: var(--font-size-xxl);
+  font-size: 40px;
   color: var(--text-color);
   text-transform: uppercase;
   letter-spacing: 2px;

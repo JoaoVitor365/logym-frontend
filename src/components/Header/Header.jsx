@@ -33,6 +33,7 @@ function Header() {
 
         {/* Links da Navegação */}
         <nav className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
+          <Link to="/" className='nav-link'>Início</Link>
           <Link to="/cadastrar-academia" className="nav-link">Cadastrar Academia</Link>
           <Link to="/login" className="nav-link">Login</Link>
           <Link to="/cadastrar" className="nav-link">Cadastrar</Link>
