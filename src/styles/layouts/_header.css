@@ -3,9 +3,19 @@
 /* Certifique-se de que as variáveis de fonte estão definidas em _variables.css */
 :root {
   --primary-color: #0D284C;
+  --primary-darker: #081d37;
   --font-heading: 'Bebas Neue', sans-serif;
   --font-body: 'Poppins', sans-serif;
-  /* ... outras variáveis ... */
+  --spacing-xxs: 0.25rem;
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --font-size-xl: 1.5rem;
+  --header-height: 60px;
+  --container-width: 1200px;
+  --box-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --border-radius-sm: 4px;
 }
 
 .header {
@@ -51,18 +61,59 @@
 
 /* Aplica a fonte Bebas Neue para o texto "LOGYM" */
 .logo-text {
-  font-family: var(--font-heading); /* Adicionado */
+  font-family: var(--font-heading);
   font-size: var(--font-size-xl);
   font-weight: bold;
   color: #ffde59;
   text-decoration: none;
-  text-transform: uppercase; /* Deixa em maiúsculas */
+  text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 .menu-toggle {
-  display: none;
+  display: none; /* Padrão: oculto em telas grandes */
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  position: relative;
+  z-index: 1001;
+  background: none;
+  border: none;
+  padding: 0;
 }
+
+/* Estilo para as barras do ícone de hambúrguer */
+.menu-icon {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background-color: white;
+  border-radius: 2px;
+  position: absolute;
+  left: 0;
+  transition: all 0.3s ease;
+}
+
+.menu-icon:nth-child(1) { top: 0; }
+.menu-icon:nth-child(2) { top: 50%; transform: translateY(-50%); }
+.menu-icon:nth-child(3) { bottom: 0; }
+
+/* Animação para o estado 'open' do menu */
+.menu-toggle.open .menu-icon:nth-child(1) {
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.menu-toggle.open .menu-icon:nth-child(2) {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.menu-toggle.open .menu-icon:nth-child(3) {
+  bottom: 50%;
+  transform: translateY(50%) rotate(-45deg);
+}
+
 
 .nav-links {
   display: flex;
@@ -71,13 +122,13 @@
 
 /* Aplica a fonte Bebas Neue para os links de navegação */
 .nav-links a {
-  font-family: var(--font-heading); /* Adicionado */
+  font-family: var(--font-heading);
   color: white;
   text-decoration: none;
   padding: var(--spacing-xxs) var(--spacing-xs);
   border-radius: var(--border-radius-sm);
   transition: background-color 0.3s ease;
-  text-transform: uppercase; /* Deixa em maiúsculas */
+  text-transform: uppercase;
   letter-spacing: 1px;
 }
 
@@ -94,7 +145,13 @@
   .logo-container {
     flex-grow: 0;
   }
+  
+  /* Faz o ícone do menu hambúrguer aparecer em telas menores */
+  .menu-toggle {
+    display: block;
+  }
 
+  /* Esconde o menu de links padrão em telas menores */
   .nav-links {
     display: none;
     flex-direction: column;
@@ -109,6 +166,7 @@
     z-index: 999;
   }
 
+  /* Classe para exibir o menu quando o hambúrguer é clicado */
   .nav-links.open {
     display: flex;
   }
