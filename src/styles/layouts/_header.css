@@ -45,14 +45,14 @@
 }
 
 .logo-image {
-  height: 40px;
+  height: 70px;
   width: auto;
 }
 
 /* Aplica a fonte Bebas Neue para o texto "LOGYM" */
 .logo-text {
   font-family: var(--font-heading); /* Adicionado */
-  font-size: var(--font-size-xl);
+  font-size: 40px;
   font-weight: bold;
   color: #ffde59;
   text-decoration: none;
