@@ -1,17 +1,24 @@
- // src/pages/LoginPage.jsx
- import React, { useState } from 'react';
- import Input from '../components/Input/Input';
- import Button from '../components/Button/Button';
- import { Link } from 'react-router-dom';
- import ErrorMessage from '../components/ErrorMessage/ErrorMessage';
- import '../styles/pages/_login.css';
- import logo from '../assets/logoFundo.png'; // Importe a sua logo aqui (ajuste o caminho se necessário)
+// src/pages/LoginPage.jsx - Página de login com integração ao backend
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { authAPI } from '../services/api';
+import Input from '../components/Input/Input';
+import Button from '../components/Button/Button';
+import ErrorMessage from '../components/ErrorMessage/ErrorMessage';
+import '../styles/pages/_login.css';
+import logo from '../assets/logoFundo.png';
 
- function LoginPage() {
+function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  
+  const { login } = useAuth(); // Hook para gerenciar autenticação
+  const navigate = useNavigate(); // Hook para navegação
 
+  // Validação do formulário
   const validateForm = () => {
     let newErrors = {};
     let isValid = true;
@@ -38,14 +45,39 @@
     return isValid;
   };
 
-  const handleSubmit = (e) => {
+  // Submissão do formulário com integração ao backend
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      console.log('Login:', { email, password });
-      // Aqui você faria a lógica de login real
-      alert(`Tentando logar com: ${email}`);
-    } else {
-      console.log('Erros de validação:', errors);
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setLoading(true);
+    setErrors({});
+
+    try {
+      // Fazer login via API
+      const response = await authAPI.login({ email, password });
+      
+      if (response.success) {
+        // Salvar dados do usuário no contexto
+        login(response.user, response.token);
+        
+        // Redirecionar para página inicial
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Erro no login:', error);
+      
+      // Tratar erros da API
+      if (error.response?.data?.message) {
+        setErrors({ general: error.response.data.message });
+      } else {
+        setErrors({ general: 'Erro ao fazer login. Tente novamente.' });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -88,8 +120,16 @@
           />
           <ErrorMessage message={errors.password} />
 
-          <Button type="submit" className="button-primary" style={{ width: '100%', marginTop: 'var(--spacing-md)' }}>
-            Entrar
+          {/* Mostrar erro geral se houver */}
+          <ErrorMessage message={errors.general} />
+          
+          <Button 
+            type="submit" 
+            className="button-primary" 
+            style={{ width: '100%', marginTop: 'var(--spacing-md)' }}
+            disabled={loading}
+          >
+            {loading ? 'Entrando...' : 'Entrar'}
           </Button>
         </form>
         <p>

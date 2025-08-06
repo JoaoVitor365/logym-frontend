@@ -121,7 +121,7 @@
 }
 
 /* Aplica a fonte Bebas Neue para os links de navegação */
-.nav-links a {
+.nav-link {
   font-family: var(--font-heading);
   color: white;
   text-decoration: none;
@@ -132,8 +132,35 @@
   letter-spacing: 1px;
 }
 
-.nav-links a:hover {
+.nav-link:hover {
   background-color: var(--primary-darker);
+}
+
+/* Informações do usuário */
+.user-info {
+  font-family: var(--font-body);
+  color: #ffde59;
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-xxs) var(--spacing-xs);
+}
+
+/* Botão de logout */
+.logout-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-heading);
+  color: white;
+  text-decoration: none;
+  padding: var(--spacing-xxs) var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+  transition: background-color 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background-color: var(--error-color);
 }
 
 /* ----- Estilos para Telas Pequenas (Menu Hambúrguer) ----- */

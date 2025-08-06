@@ -1,11 +1,13 @@
-// src/pages/RegisterPage.jsx
+// src/pages/RegisterPage.jsx - Página de cadastro com integração ao backend
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { authAPI } from '../services/api';
 import Input from '../components/Input/Input';
 import Button from '../components/Button/Button';
-import { Link } from 'react-router-dom';
 import ErrorMessage from '../components/ErrorMessage/ErrorMessage';
-import '../styles/pages/_register.css'; // Importe o CSS para a página
-import logo from '../assets/logoFundo.png'; // Importe a logo aqui
+import '../styles/pages/_register.css';
+import logo from '../assets/logoFundo.png';
 
 function RegisterPage() {
   const [name, setName] = useState('');
@@ -13,6 +15,10 @@ function RegisterPage() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  
+  const { login } = useAuth(); // Hook para gerenciar autenticação
+  const navigate = useNavigate(); // Hook para navegação
 
   const validateForm = () => {
     let newErrors = {};
@@ -51,15 +57,39 @@ function RegisterPage() {
     return isValid;
   };
 
-  const handleSubmit = (e) => {
+  // Submissão do formulário com integração ao backend
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
 
-    if (validateForm()) {
-      console.log('Cadastro do usuário:', { name, email, password });
-      // Lembre-se de substituir o alert por um componente de mensagem (modal, toast, etc.)
-      alert(`Cadastro em andamento para: ${email}`);
-    } else {
-      console.log('Erros de validação:', errors);
+    setLoading(true);
+    setErrors({});
+
+    try {
+      // Fazer cadastro via API
+      const response = await authAPI.register({ name, email, password });
+      
+      if (response.success) {
+        // Fazer login automático após cadastro
+        login(response.user, response.token);
+        
+        // Redirecionar para página inicial
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Erro no cadastro:', error);
+      
+      // Tratar erros da API
+      if (error.response?.data?.message) {
+        setErrors({ general: error.response.data.message });
+      } else {
+        setErrors({ general: 'Erro ao fazer cadastro. Tente novamente.' });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -132,8 +162,15 @@ function RegisterPage() {
           />
           <ErrorMessage message={errors.confirmPassword} />
 
-          <Button type="submit" className="button-primary">
-            Cadastrar
+          {/* Mostrar erro geral se houver */}
+          <ErrorMessage message={errors.general} />
+          
+          <Button 
+            type="submit" 
+            className="button-primary"
+            disabled={loading}
+          >
+            {loading ? 'Cadastrando...' : 'Cadastrar'}
           </Button>
         </form>
         <p>

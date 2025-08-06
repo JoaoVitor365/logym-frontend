@@ -1,9 +1,11 @@
-// src/pages/AcademyRegisterPage.jsx
+// src/pages/AcademyRegisterPage.jsx - Página de cadastro de academia com integração ao backend
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { academyAPI } from '../services/api';
 import Input from '../components/Input/Input';
 import Button from '../components/Button/Button';
 import ErrorMessage from '../components/ErrorMessage/ErrorMessage';
-import { Link } from 'react-router-dom';
 import '../styles/pages/_academyRegister.css';
 import logo from '../assets/logoFundo.png'; 
 
@@ -30,62 +32,50 @@ const commonFacilities = [
 function AcademyRegisterPage() {
   const [formData, setFormData] = useState({
     name: '',
-    cnpj: '',
     address: '',
-    number: '',
-    neighborhood: '',
     city: '',
     state: '',
-    zipCode: '',
     phone: '',
     email: '',
-    password: '',
-    confirmPassword: '',
     description: '',
-    facilities: [] // Array para as facilidades selecionadas
+    rating: 0
   });
   const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  
+  const { isAuthenticated } = useAuth(); // Verificar se usuário está logado
+  const navigate = useNavigate();
+
+  // Verificar se usuário está logado
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, navigate]);
 
   // Mapeamento dos nomes de campos para exibição em português
   const fieldNames = {
     name: 'nome da academia',
-    cnpj: 'CNPJ',
     address: 'endereço',
-    number: 'número',
-    neighborhood: 'bairro',
     city: 'cidade',
     state: 'estado',
-    zipCode: 'CEP',
     phone: 'telefone',
     email: 'e-mail de contato',
-    password: 'senha',
-    confirmPassword: 'confirmação de senha',
     description: 'descrição da academia'
   };
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
 
     // Limpa o erro ao começar a digitar
     if (errors[name]) {
       setErrors(prevErrors => ({ ...prevErrors, [name]: '' }));
     }
-    setSuccessMessage('');
 
-    if (type === 'checkbox') {
-      setFormData(prev => ({
-        ...prev,
-        facilities: checked
-          ? [...prev.facilities, value]
-          : prev.facilities.filter(item => item !== value)
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const validateForm = () => {
@@ -93,37 +83,18 @@ function AcademyRegisterPage() {
     let isValid = true;
 
     // Validação de campos obrigatórios
-    for (const key in formData) {
-      if (key !== 'facilities' && key !== 'password' && key !== 'confirmPassword') {
-        if (!formData[key]) {
-          // Usa o mapeamento para pegar o nome do campo em português
-          newErrors[key] = `O campo ${fieldNames[key]} é obrigatório.`;
-          isValid = false;
-        }
+    const requiredFields = ['name', 'address', 'city', 'state', 'description'];
+    
+    requiredFields.forEach(field => {
+      if (!formData[field]) {
+        newErrors[field] = `O campo ${fieldNames[field]} é obrigatório.`;
+        isValid = false;
       }
-    }
+    });
 
-    // Validação de E-mail
+    // Validação de E-mail (opcional)
     if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'E-mail inválido.';
-      isValid = false;
-    }
-
-    // Validação de Senha
-    if (!formData.password) {
-      newErrors.password = 'A senha é obrigatória.';
-      isValid = false;
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'A senha deve ter pelo menos 6 caracteres.';
-      isValid = false;
-    }
-
-    // Validação de Confirmação de Senha
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'A confirmação de senha é obrigatória.';
-      isValid = false;
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'As senhas não coincidem.';
       isValid = false;
     }
 
@@ -131,15 +102,35 @@ function AcademyRegisterPage() {
     return isValid;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      setSuccessMessage('Cadastro de academia enviado com sucesso! Verifique o console para os dados.');
-      console.log('Dados da Academia para Cadastro:', formData);
-      setErrors({}); // Limpa os erros após o sucesso
-    } else {
-      setSuccessMessage('');
-      console.log('Erros de validação:', errors);
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setLoading(true);
+    setErrors({});
+
+    try {
+      // Criar academia via API
+      const response = await academyAPI.create(formData);
+      
+      if (response.success) {
+        // Redirecionar para página inicial com sucesso
+        navigate('/', { state: { message: 'Academia cadastrada com sucesso!' } });
+      }
+    } catch (error) {
+      console.error('Erro ao cadastrar academia:', error);
+      
+      // Tratar erros da API
+      if (error.response?.data?.message) {
+        setErrors({ general: error.response.data.message });
+      } else {
+        setErrors({ general: 'Erro ao cadastrar academia. Tente novamente.' });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -150,7 +141,8 @@ function AcademyRegisterPage() {
           <img src={logo} alt="Logo da LOGYM" className="academy-register-logo" />
           <h1>Cadastrar Nova Academia</h1>
         </div>
-        {successMessage && <div className="success-message">{successMessage}</div>}
+        {/* Mostrar erro geral se houver */}
+        <ErrorMessage message={errors.general} />
         <form onSubmit={handleSubmit} noValidate>
           {/* Informações Básicas */}
           <Input
@@ -166,114 +158,39 @@ function AcademyRegisterPage() {
           <ErrorMessage message={errors.name} />
 
           <Input
-            label="CNPJ"
-            type="text"
-            id="cnpj"
-            name="cnpj"
-            placeholder="Ex: 00.000.000/0000-00"
-            value={formData.cnpj}
-            onChange={handleChange}
-            required
-          />
-          <ErrorMessage message={errors.cnpj} />
-
-          <Input
-            label="E-mail de Contato"
+            label="E-mail de Contato (Opcional)"
             type="email"
             id="email"
             name="email"
             placeholder="contato@suaacademia.com"
             value={formData.email}
             onChange={handleChange}
-            required
           />
           <ErrorMessage message={errors.email} />
 
           <Input
-            label="Telefone"
+            label="Telefone (Opcional)"
             type="tel"
             id="phone"
             name="phone"
             placeholder="(XX) XXXX-XXXX"
             value={formData.phone}
             onChange={handleChange}
-            required
           />
           <ErrorMessage message={errors.phone} />
 
-          {/* Novos campos de Senha */}
-          <Input
-            label="Senha"
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Crie uma senha"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          <ErrorMessage message={errors.password} />
-
-          <Input
-            label="Confirmar Senha"
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            placeholder="Repita a senha"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-          />
-          <ErrorMessage message={errors.confirmPassword} />
-
           {/* Endereço */}
           <Input
-            label="Endereço"
+            label="Endereço Completo"
             type="text"
             id="address"
             name="address"
-            placeholder="Nome da Rua/Avenida"
+            placeholder="Rua/Avenida, Número, Bairro"
             value={formData.address}
             onChange={handleChange}
             required
           />
           <ErrorMessage message={errors.address} />
-
-          <Input
-            label="Número"
-            type="text"
-            id="number"
-            name="number"
-            placeholder="123"
-            value={formData.number}
-            onChange={handleChange}
-            required
-          />
-          <ErrorMessage message={errors.number} />
-
-          <Input
-            label="Bairro"
-            type="text"
-            id="neighborhood"
-            name="neighborhood"
-            placeholder="Centro"
-            value={formData.neighborhood}
-            onChange={handleChange}
-            required
-          />
-          <ErrorMessage message={errors.neighborhood} />
-
-          <Input
-            label="CEP"
-            type="text"
-            id="zipCode"
-            name="zipCode"
-            placeholder="00000-000"
-            value={formData.zipCode}
-            onChange={handleChange}
-            required
-          />
-          <ErrorMessage message={errors.zipCode} />
 
           <div className="input-group">
             <label htmlFor="state" className="input-label">Estado</label>
@@ -321,28 +238,32 @@ function AcademyRegisterPage() {
           </div>
           <ErrorMessage message={errors.description} />
 
-          {/* Facilidades (Checkbox Group) */}
+          {/* Avaliação inicial */}
           <div className="input-group">
-            <label className="input-label">Facilidades Oferecidas</label>
-            <div className="checkbox-group">
-              {commonFacilities.map((facility) => (
-                <label key={facility}>
-                  <input
-                    type="checkbox"
-                    name="facilities"
-                    value={facility}
-                    checked={formData.facilities.includes(facility)}
-                    onChange={handleChange}
-                  />
-                  {facility}
-                </label>
-              ))}
-            </div>
+            <label htmlFor="rating" className="input-label">Avaliação Inicial (0-5)</label>
+            <select
+              id="rating"
+              name="rating"
+              className="select-field"
+              value={formData.rating}
+              onChange={handleChange}
+            >
+              <option value="0">0 - Sem avaliação</option>
+              <option value="1">1 ⭐</option>
+              <option value="2">2 ⭐⭐</option>
+              <option value="3">3 ⭐⭐⭐</option>
+              <option value="4">4 ⭐⭐⭐⭐</option>
+              <option value="5">5 ⭐⭐⭐⭐⭐</option>
+            </select>
           </div>
 
           {/* Botão de Cadastro */}
-          <Button type="submit" className="button-primary">
-            Cadastrar Academia
+          <Button 
+            type="submit" 
+            className="button-primary"
+            disabled={loading}
+          >
+            {loading ? 'Cadastrando...' : 'Cadastrar Academia'}
           </Button>
         </form>
         <p>

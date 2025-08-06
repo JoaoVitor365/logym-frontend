@@ -1,57 +1,61 @@
-// src/pages/HomePage.jsx
-import React, { useState } from 'react';
+// src/pages/HomePage.jsx - Página inicial com busca de academias do backend
+import React, { useState, useEffect } from 'react';
+import { academyAPI } from '../services/api';
 import Input from '../components/Input/Input';
 import Button from '../components/Button/Button';
-import Card from '../components/Card/Card'; // <-- Importe o componente Card
+import Card from '../components/Card/Card';
 
 function HomePage() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [academies, setAcademies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    console.log('Buscando academias por:', searchTerm);
-    alert(`Buscando academias por: "${searchTerm}"`);
+  // Carregar academias ao montar o componente
+  useEffect(() => {
+    loadAcademies();
+  }, []);
+
+  // Função para carregar todas as academias
+  const loadAcademies = async () => {
+    try {
+      setLoading(true);
+      const response = await academyAPI.getAll();
+      
+      if (response.success) {
+        setAcademies(response.data);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar academias:', error);
+      setError('Erro ao carregar academias');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Dados de academias de exemplo (substitua por dados reais da API depois)
-  const sampleAcademies = [
-    {
-      id: '1',
-      name: 'Smart Fit',
-      address: 'Av. Vinte e Seis de Março, 701 - Centro',
-      city: 'Barueri',
-      state: 'SP',
-      rating: 4.8,
-      imageUrl: '/images/smartFit.jpeg'
-    },
-    {
-      id: '2',
-      name: 'Blue Fit',
-      address: 'Av. Trindade, - 344 Bethaville I',
-      city: 'Barueri',
-      state: 'SP',
-      rating: 4.9,
-      imageUrl: '/images/blueFit.jpeg'
-    },
-    {
-      id: '3',
-      name: 'Bio Ritmo',
-      address: 'Av. Piracema, 669 - Tamboré',
-      city: 'Barueri',
-      state: 'SP',
-      rating: 4.7,
-      imageUrl: '/images/bioRitmo.jpeg'
-    },
-    {
-      id: '4',
-      name: 'Gaviões',
-      address: 'Av. Juruá, 253 - Alphaville',
-      city: 'Barueri',
-      state: 'SP',
-      rating: 4.6,
-      imageUrl: '/images/gavioes.jpeg'
+  // Função para buscar academias
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    
+    if (!searchTerm.trim()) {
+      loadAcademies();
+      return;
     }
-  ];
+
+    try {
+      setLoading(true);
+      const response = await academyAPI.search(searchTerm);
+      
+      if (response.success) {
+        setAcademies(response.data);
+      }
+    } catch (error) {
+      console.error('Erro na busca:', error);
+      setError('Erro ao buscar academias');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="home-page">
@@ -76,9 +80,26 @@ function HomePage() {
         </Button>
       </form>
 
-      <div className="academies-grid"> {/* Nova div para a grade de academias */}
-        {sampleAcademies.map(academy => (
-          <Card key={academy.id} academy={academy} />
+      {/* Mostrar erro se houver */}
+      {error && <p className="error-message">{error}</p>}
+      
+      {/* Mostrar loading */}
+      {loading && <p>Carregando academias...</p>}
+      
+      {/* Grade de academias */}
+      <div className="academies-grid">
+        {!loading && academies.length === 0 && (
+          <p>Nenhuma academia encontrada.</p>
+        )}
+        
+        {academies.map(academy => (
+          <Card 
+            key={academy.id} 
+            academy={{
+              ...academy,
+              imageUrl: academy.image_url // Mapear campo do banco para o componente
+            }} 
+          />
         ))}
       </div>
     </div>
