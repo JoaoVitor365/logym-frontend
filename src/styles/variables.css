@@ -11,7 +11,8 @@
   --success-color: #28A745;        /* Verde (Feedback de sucesso) */
   --error-color: #DC3545;          /* Vermelho (Feedback de erro) */
   --border-color: #0D284C;         /* Cinza para bordas */
-  --card-background: #ffffff;      /* Fundo branco para cards */
+  --card-background: #fafafa;      /* Fundo branco para cards */
+  
   
   /* Tipografia */
   --font-heading: 'Bebas Neue', sans-serif; /* Fonte para títulos e cabeçalhos */
