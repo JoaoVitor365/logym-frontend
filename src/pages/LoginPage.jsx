@@ -135,6 +135,9 @@ function LoginPage() {
         <p>
           Não tem uma conta? <Link to="/cadastrar" className="link">Cadastre-se</Link>
         </p>
+        <p>
+          Esqueceu a senha? <Link to='/esqueci-minha-senha' className='link'>Esqueci Minha Senha</Link>
+        </p>
       </div>
     </div>
   );

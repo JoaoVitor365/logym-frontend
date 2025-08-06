@@ -3,19 +3,18 @@
 /* Certifique-se de que as variáveis de fonte estão definidas em _variables.css */
 :root {
   --primary-color: #0D284C;
-  --primary-darker: #081d37;
   --font-heading: 'Bebas Neue', sans-serif;
   --font-body: 'Poppins', sans-serif;
-  --spacing-xxs: 0.25rem;
-  --spacing-xs: 0.5rem;
-  --spacing-sm: 0.75rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --font-size-xl: 1.5rem;
-  --header-height: 60px;
-  --container-width: 1200px;
-  --box-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --border-radius-sm: 4px;
+  --header-height: 80px; /* Adicionado ou verificado se existe em _variables.css */
+  --spacing-sm: 8px; /* Adicionado ou verificado se existe em _variables.css */
+  --spacing-lg: 24px; /* Adicionado ou verificado se existe em _variables.css */
+  --box-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1); /* Adicionado ou verificado se existe em _variables.css */
+  --container-width: 1200px; /* Adicionado ou verificado se existe em _variables.css */
+  --spacing-md: 16px; /* Adicionado ou verificado se existe em _variables.css */
+  --font-size-xl: 1.5rem; /* Adicionado ou verificado se existe em _variables.css */
+  --spacing-xxs: 4px; /* Adicionado ou verificado se existe em _variables.css */
+  --primary-darker: #091e36; /* Exemplo de cor mais escura para hover, ajuste conforme seu _variables.css */
+  --border-radius-sm: 4px; /* Adicionado ou verificado se existe em _variables.css */
 }
 
 .header {
@@ -55,7 +54,7 @@
 }
 
 .logo-image {
-  height: 60px;
+  height: 75px;
   width: auto;
 }
 
@@ -71,47 +70,35 @@
 }
 
 .menu-toggle {
-  display: none; /* Padrão: oculto em telas grandes */
+  display: none; /* Esconde o botão por padrão em telas grandes */
   cursor: pointer;
-  width: 30px;
-  height: 30px;
-  position: relative;
-  z-index: 1001;
-  background: none;
   border: none;
-  padding: 0;
+  background: transparent;
+  padding: 0; /* Remover padding padrão do botão */
+  z-index: 1001; /* Garante que o botão esteja acima do menu */
 }
 
-/* Estilo para as barras do ícone de hambúrguer */
+/* Estilos para as barras do ícone do hambúrguer */
 .menu-icon {
   display: block;
-  width: 100%;
+  width: 25px;
   height: 3px;
-  background-color: white;
-  border-radius: 2px;
-  position: absolute;
-  left: 0;
-  transition: all 0.3s ease;
+  background: white;
+  margin: 5px 0;
+  transition: 0.4s;
 }
 
-.menu-icon:nth-child(1) { top: 0; }
-.menu-icon:nth-child(2) { top: 50%; transform: translateY(-50%); }
-.menu-icon:nth-child(3) { bottom: 0; }
-
-/* Animação para o estado 'open' do menu */
+/* Estilos para o ícone de "X" quando o menu está aberto */
 .menu-toggle.open .menu-icon:nth-child(1) {
-  top: 50%;
-  transform: translateY(-50%) rotate(45deg);
+  transform: rotate(-45deg) translate(-5px, 6px);
 }
 
 .menu-toggle.open .menu-icon:nth-child(2) {
   opacity: 0;
-  transform: translateX(-20px);
 }
 
 .menu-toggle.open .menu-icon:nth-child(3) {
-  bottom: 50%;
-  transform: translateY(50%) rotate(-45deg);
+  transform: rotate(45deg) translate(-5px, -6px);
 }
 
 
@@ -172,15 +159,13 @@
   .logo-container {
     flex-grow: 0;
   }
-  
-  /* Faz o ícone do menu hambúrguer aparecer em telas menores */
+
   .menu-toggle {
-    display: block;
+    display: block; /* Torna o botão visível em telas menores */
   }
 
-  /* Esconde o menu de links padrão em telas menores */
   .nav-links {
-    display: none;
+    display: none; /* Esconde os links por padrão em telas menores */
     flex-direction: column;
     position: absolute;
     top: var(--header-height);
@@ -193,9 +178,8 @@
     z-index: 999;
   }
 
-  /* Classe para exibir o menu quando o hambúrguer é clicado */
   .nav-links.open {
-    display: flex;
+    display: flex; /* Exibe os links quando a classe 'open' está presente */
   }
 
   .nav-links a {

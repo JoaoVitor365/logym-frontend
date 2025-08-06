@@ -11,6 +11,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import AcademyDetailsPage from './pages/AcademyDetailsPage';
 import AcademyRegisterPage from './pages/AcademyRegisterPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 
 function App() {
   return (
@@ -26,7 +27,7 @@ function App() {
             <Route path="/cadastrar" element={<RegisterPage />} />
             <Route path="/academia/:id" element={<AcademyDetailsPage />} />
             <Route path="/cadastrar-academia" element={<AcademyRegisterPage />} />
-            {/* Rota para páginas não encontradas */}
+            <Route path="/esqueci-minha-senha" element={<ForgotPasswordPage />} />
             <Route path="*" element={<h1>Página Não Encontrada</h1>} />
           </Routes>
         </main>

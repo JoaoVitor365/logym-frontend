@@ -18,7 +18,7 @@
   /* Aprimoramentos visuais para sombra e transição */
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  max-width: 550px; /* Um pouco mais largo para acomodar mais campos */
+  max-width: 500px; /* Um pouco mais largo para acomodar mais campos */
   width: 100%;
   text-align: center;
 }
@@ -46,7 +46,7 @@
 /* Aplica a fonte Bebas Neue para o título principal */
 .academy-register-form-container h1 {
   font-family: var(--font-heading);
-  font-size: 40px;
+  font-size: var(--font-size-xl);
   margin-bottom: var(--spacing-lg);
   color: var(--text-color);
   text-transform: uppercase;

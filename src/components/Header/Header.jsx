@@ -6,10 +6,12 @@ import '../../styles/layouts/_header.css';
 import logoSimples from '../../assets/logoSimples.png';
 
 function Header() {
+  // Estado para controlar a abertura/fechamento do menu
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, isAuthenticated, logout } = useAuth(); // Hook de autenticação
   const navigate = useNavigate();
 
+  // Função para alternar o estado do menu
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -33,7 +35,12 @@ function Header() {
         </div>
 
         {/* Botão do Menu Hambúrguer (visível apenas em telas pequenas) */}
-        <button className="menu-toggle" onClick={toggleMenu}>
+        {/* A classe 'open' é adicionada aqui para que o CSS possa animar o ícone */}
+        <button 
+          className={`menu-toggle ${isMenuOpen ? 'open' : ''}`}
+          onClick={toggleMenu}
+        >
+          {/* As três barras do ícone do hambúrguer */}
           <span className="menu-icon"></span>
           <span className="menu-icon"></span>
           <span className="menu-icon"></span>
@@ -41,13 +48,13 @@ function Header() {
 
         {/* Links da Navegação */}
         <nav className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
-          <Link to="/" className='nav-link'>Início</Link>
+          <Link to="/" className='nav-link' onClick={toggleMenu}>Início</Link>
           
           {/* Mostrar links diferentes baseado na autenticação */}
           {isAuthenticated ? (
             // Usuário logado
             <>
-              <Link to="/cadastrar-academia" className="nav-link">Cadastrar Academia</Link>
+              <Link to="/cadastrar-academia" className="nav-link" onClick={toggleMenu}>Cadastrar Academia</Link>
               <span className="user-info">Olá, {user?.name}</span>
               <button onClick={handleLogout} className="nav-link logout-btn">
                 Sair
@@ -56,8 +63,8 @@ function Header() {
           ) : (
             // Usuário não logado
             <>
-              <Link to="/login" className="nav-link">Login</Link>
-              <Link to="/cadastrar" className="nav-link">Cadastrar</Link>
+              <Link to="/login" className="nav-link" onClick={toggleMenu}>Login</Link>
+              <Link to="/cadastrar" className="nav-link" onClick={toggleMenu}>Cadastrar</Link>
             </>
           )}
         </nav>
