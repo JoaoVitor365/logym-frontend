@@ -1,0 +1,18 @@
+/* src/styles/_global.css */
+
+body {
+    /* Define a imagem de fundo */
+    background-image: url('../assets/planoFundo.png');
+    
+    /* Faz a imagem se repetir para preencher todo o fundo */
+    background-repeat: repeat;
+    
+    /* Garante que o fundo não se mova quando a página é rolada */
+    background-attachment: fixed;
+    
+    /* Remove a cor de fundo cinza */
+    background-color: transparent;
+    
+    /* Garante que o texto seja legível sobre o fundo */
+    color: #333;
+}

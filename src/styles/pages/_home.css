@@ -1,0 +1,85 @@
+/* src/styles/pages/_home.css */
+
+/* Define as fontes padrão para o corpo do texto e títulos */
+:root {
+  /* ... (seus outros variáveis de cores, espaçamento, etc.) ... */
+  --font-heading: 'Bebas Neue', sans-serif;
+  --font-body: 'Poppins', sans-serif;
+}
+
+.home-page {
+  text-align: center;
+  padding: var(--spacing-xxl) var(--spacing-md);
+  background-color: var(--page-background); /* Usando a nova variável de cor de fundo */
+  font-family: var(--font-body); /* Aplica a fonte Poppins como padrão */
+}
+
+.home-page h1 {
+  font-size: var(--font-size-xxl);
+  color: var(--text-color);
+  margin-bottom: var(--spacing-md);
+  font-family: var(--font-heading); /* Aplica a fonte Bebas Neue para o título */
+  letter-spacing: 2px; /* Adiciona um espaçamento para o título ter mais impacto */
+  text-transform: uppercase;
+}
+
+.home-page p {
+  font-size: var(--font-size-large);
+  color: var(--text-color-light);
+  max-width: 600px;
+  margin: 0 auto var(--spacing-xl) auto;
+  font-family: var(--font-body); /* Garante que o parágrafo usa a fonte de corpo */
+}
+
+/* Estilo para a seção de busca */
+.search-section {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.search-section .input-group {
+  margin-bottom: 0;
+  flex-grow: 1;
+}
+
+.search-section .input-field {
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  font-size: var(--font-size-medium);
+  font-family: var(--font-body); /* Garante que o input também usa Poppins */
+}
+
+/* Media query para a seção de busca em telas menores */
+@media (max-width: 768px) {
+  .search-section {
+    flex-direction: column;
+    align-items: center;
+  }
+  .search-section .input-field,
+  .search-section .button {
+    width: 100%;
+  }
+}
+
+/* Estilo para a grade de cards */
+.academies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Auto-ajustável e responsivo */
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-xl);
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Ajustes para telas muito pequenas, para que o grid tenha apenas 1 coluna */
+@media (max-width: 600px) {
+  .academies-grid {
+    grid-template-columns: 1fr;
+  }
+}

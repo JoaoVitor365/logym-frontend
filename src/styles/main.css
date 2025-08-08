@@ -1,0 +1,33 @@
+/* src/styles/main.css */
+
+/* 1. Variáveis */
+@import url('./variables.css');
+
+/* 2. Base e Reset */
+@import url('./base/_reset.css');
+@import url('./base/_base.css');
+@import url('./_global.css');
+
+/* 3. Layouts (Header, Footer, etc.) */
+@import url('./layouts/_header.css');
+@import url('./layouts/_footer.css'); /* Mantenha comentado por enquanto */
+
+/* 4. Componentes */
+@import url('./components/_button.css');
+@import url('./components/_input.css');
+@import url('./components/_card.css'); /* Mantenha comentado por enquanto */
+
+/* 5. Páginas */
+@import url('./pages/_home.css'); /* Mantenha comentado por enquanto */
+@import url('./pages/_login.css'); /* Mantenha comentado por enquanto */
+@import url('./pages/_register.css');
+@import url('./pages/_academyDetails.css');
+@import url('./pages/_academyRegister.css');
+
+/* 6. Utilitários */
+@import url('./utils/_utilities.css');
+
+/* ESTILOS GERAIS DO APP - Você pode adicionar aqui ou em _base.css */
+.App main {
+  padding: 20px; /* Isso deve ser o único estilo que estava no seu antigo App.css e agora pode ir para cá ou para _base.css */
+}

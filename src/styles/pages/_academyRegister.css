@@ -1,0 +1,159 @@
+/* src/styles/pages/_academyRegister.css */
+
+/* Reutiliza a base de layout dos formulários de login/cadastro */
+.academy-register-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Alinha o formulário mais para cima */
+  padding: var(--spacing-xxl) var(--spacing-lg);
+  min-height: calc(100vh - var(--header-height, 80px) - var(--footer-height, 80px));
+  /* Aplica a fonte padrão de corpo para toda a página */
+  font-family: var(--font-body);
+}
+
+.academy-register-form-container {
+  background-color: #ffffff;
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-md);
+  /* Aprimoramentos visuais para sombra e transição */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  max-width: 500px; /* Um pouco mais largo para acomodar mais campos */
+  width: 100%;
+  text-align: center;
+}
+
+/* Efeito de movimento no hover */
+.academy-register-form-container:hover {
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: 0 50px 120px rgba(0, 0, 0, 0.2);
+}
+
+/* Novo estilo para a logo e o cabeçalho do formulário */
+.academy-register-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--spacing-lg); /* Espaçamento entre o cabeçalho e o formulário */
+}
+
+.academy-register-logo {
+  width: 250px; /* Tamanho da logo */
+  height: auto;
+  margin-bottom: var(--spacing-md); /* Espaço entre a logo e o título */
+}
+
+/* Aplica a fonte Bebas Neue para o título principal */
+.academy-register-form-container h1 {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-color);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Estilo para áreas de texto (textarea) */
+.textarea-field {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-base);
+  color: var(--text-color);
+  background-color: rgb(255, 255, 255);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  min-height: 100px; /* Altura mínima para o campo de descrição */
+  resize: vertical; /* Permite redimensionamento vertical */
+  font-family: var(--font-body); /* Garante que o texto use a fonte de corpo */
+}
+
+.textarea-field:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb, 76, 175, 80), 0.2);
+}
+
+/* Estilo para seletores (select) */
+.select-field {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-base);
+  color: var(--text-color);
+  background-color: rgb(255, 255, 255);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  font-family: var(--font-body); /* Garante que o texto use a fonte de corpo */
+}
+
+.select-field:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb, 76, 175, 80), 0.2);
+}
+
+/* Checkbox/Checkbox Group */
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap; /* Permite que os checkboxes quebrem linha */
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  justify-content: flex-start; /* Alinha à esquerda */
+  padding: var(--spacing-sm) 0;
+  border-top: 1px solid var(--border-color-light);
+  border-bottom: 1px solid var(--border-color-light);
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  font-size: var(--font-size-base);
+  color: var(--text-color-light);
+  cursor: pointer;
+  font-family: var(--font-body); /* Garante que o texto dos checkboxes use a fonte de corpo */
+}
+
+.checkbox-group input[type="checkbox"] {
+  margin-right: var(--spacing-xxs);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* Aplica a fonte Bebas Neue para o botão de cadastro */
+.academy-register-form-container .button-primary {
+  width: 100%;
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  font-size: var(--font-size-medium);
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Estilo para o link de login */
+.academy-register-form-container p, .academy-register-form-container .link {
+  font-family: var(--font-body);
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+  .academy-register-page {
+    padding: var(--spacing-lg) var(--spacing-sm);
+  }
+
+  .academy-register-form-container {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .academy-register-form-container h1 {
+    font-size: var(--font-size-large);
+  }
+
+  .checkbox-group {
+    flex-direction: column; /* Empilha checkboxes em telas menores */
+    align-items: flex-start;
+  }
+}

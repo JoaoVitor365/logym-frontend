@@ -1,0 +1,55 @@
+/* src/styles/components/_card.css */
+
+.card {
+  background-color: var(--card-background); /* Fundo branco usando variável */
+  border: 1px solid var(--border-color); /* ADICIONE ESTA LINHA para a borda sutil */
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--box-shadow-sm); /* Sombra leve */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  width: 100%;
+}
+
+.card:hover {
+  transform: translateY(-5px); /* Efeito de levantar no hover */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); /* MODIFIQUE ESTA LINHA para uma sombra mais pronunciada */
+}
+
+.card-image {
+  width: 100%;
+  height: 200px; /* Altura fixa para as imagens */
+  object-fit: cover; /* Garante que a imagem cubra a área sem distorcer */
+  border-bottom: 1px solid var(--border-color);
+}
+
+.card-content {
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Faz o conteúdo ocupar o espaço restante */
+}
+
+.card-title {
+  font-size: var(--font-size-large);
+  color: var(--text-color);
+  margin-top: 0;
+  margin-bottom: var(--spacing-xs);
+}
+
+.card-address,
+.card-rating {
+  font-size: var(--font-size-small);
+  color: var(--text-color-light);
+  margin-bottom: var(--spacing-xs);
+}
+
+.card-details-link {
+  margin-top: auto; /* Empurra o botão para o final do card-content */
+  align-self: flex-start; /* Alinha o botão à esquerda dentro do card-content */
+}
+
+.card-details-link .button {
+  width: auto; /* Botão não ocupa 100% da largura, mas sim o necessário */
+}

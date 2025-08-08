@@ -1,0 +1,42 @@
+/* src/styles/_variables.css */
+
+:root {
+  /* Paleta de Cores */
+  --primary-color: #0D284C;        /* Azul marinho (Cor principal dos botões e destaque) */
+  --secondary-color: #495057;      /* Cinza azulado (Cor de fundo de seções, rodapé) */
+  --background-color: #e9ecef;     /* Cinza muito claro (Fundo geral do site) */
+  --hover-color: #ADB5BD;          /* Cinza claro (Cor para o hover) */
+  --text-color: #0D284C;           /* Cinza escuro (Cor do texto) */
+  --text-color-light: #495057;     /* Cinza mais claro (Texto secundário) */
+  --success-color: #28A745;        /* Verde (Feedback de sucesso) */
+  --error-color: #DC3545;          /* Vermelho (Feedback de erro) */
+  --border-color: #0D284C;         /* Cinza para bordas */
+  --card-background: #ffffff;      /* Fundo branco para cards */
+  
+  /* Tipografia */
+  --font-heading: 'Bebas Neue', sans-serif; /* Fonte para títulos e cabeçalhos */
+  --font-body: 'Poppins', sans-serif;       /* Fonte para o corpo do texto */
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-xxl: 2rem;
+
+  /* Espaçamento */
+  --spacing-xxs: 0.25rem;
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
+
+  /* Bordas e Sombras */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --box-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  /* Outras variáveis */
+  --container-width: 1200px;
+  --header-height: 70px;
+}
