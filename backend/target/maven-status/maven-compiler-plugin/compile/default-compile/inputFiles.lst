@@ -1,0 +1,12 @@
+/workspaces/logym-frontend/backend/src/main/java/com/logym/dto/RegisterRequest.java
+/workspaces/logym-frontend/backend/src/main/java/com/logym/controller/AuthController.java
+/workspaces/logym-frontend/backend/src/main/java/com/logym/service/AcademyService.java
+/workspaces/logym-frontend/backend/src/main/java/com/logym/dto/LoginRequest.java
+/workspaces/logym-frontend/backend/src/main/java/com/logym/controller/AcademyController.java
+/workspaces/logym-frontend/backend/src/main/java/com/logym/config/SecurityConfig.java
+/workspaces/logym-frontend/backend/src/main/java/com/logym/model/Academy.java
+/workspaces/logym-frontend/backend/src/main/java/com/logym/repository/AcademyRepository.java
+/workspaces/logym-frontend/backend/src/main/java/com/logym/LogymApplication.java
+/workspaces/logym-frontend/backend/src/main/java/com/logym/repository/UserRepository.java
+/workspaces/logym-frontend/backend/src/main/java/com/logym/model/User.java
+/workspaces/logym-frontend/backend/src/main/java/com/logym/service/UserService.java

@@ -1,0 +1,12 @@
+com/logym/config/SecurityConfig.class
+com/logym/dto/RegisterRequest.class
+com/logym/model/Academy.class
+com/logym/controller/AuthController.class
+com/logym/repository/AcademyRepository.class
+com/logym/dto/LoginRequest.class
+com/logym/controller/AcademyController.class
+com/logym/LogymApplication.class
+com/logym/service/AcademyService.class
+com/logym/model/User.class
+com/logym/service/UserService.class
+com/logym/repository/UserRepository.class

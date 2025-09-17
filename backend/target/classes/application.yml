@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: logym-backend
+  datasource:
+    url: jdbc:sqlserver://LOGYM01.mssql.somee.com:1433;databaseName=LOGYM01;trustServerCertificate=true;encrypt=false
+    username: LOGYM
+    password: '@ITB123456'
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.SQLServerDialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.SQLServerDialect
+        format_sql: true
+
+server:
+  port: 8080
