@@ -1,0 +1,60 @@
+/* src/styles/base/_base.css */
+
+body {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  -webkit-font-smoothing: antialiased; /* Para melhor renderização de fontes */
+  -moz-osx-font-smoothing: grayscale; /* Para melhor renderização de fontes */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-headings);
+  color: var(--text-color);
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-sm);
+  line-height: 1.2;
+}
+
+h1 { font-size: var(--font-size-xxl); }
+h2 { font-size: var(--font-size-xl); }
+h3 { font-size: var(--font-size-large); }
+h4 { font-size: var(--font-size-medium); }
+
+p {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Estilos para o contêiner principal do App */
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Garante que o App ocupe toda a altura da viewport */
+}
+
+.App main {
+  flex-grow: 1; /* Faz com que o conteúdo principal ocupe o espaço restante */
+  padding: var(--spacing-lg); /* Usa variável de espaçamento */
+}
+
+/* Estilos para validação de formulários */
+.input-group.has-error .input-label {
+  color: var(--error-color); /* Muda a cor do label para vermelho */
+}
+
+.input-group.has-error .input-field,
+.input-group.has-error .textarea-field,
+.input-group.has-error .select-field {
+  border-color: var(--error-color); /* Borda vermelha para campo com erro */
+  box-shadow: (var(--error-color), 0.2);
+}
+
+.error-message {
+  color: var(--error-color); /* Cor vermelha para a mensagem de erro */
+  font-size: var(--font-size-small);
+  margin-top: var(--spacing-xxs); /* Pequena margem acima */
+  margin-bottom: var(--spacing-sm); /* Margem abaixo para separar do próximo input */
+  text-align: left; /* Alinha a mensagem à esquerda */
+}

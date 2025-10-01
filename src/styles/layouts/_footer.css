@@ -1,0 +1,55 @@
+/* src/styles/layouts/_footer.css */
+
+.footer {
+  background-color: var(--secondary-color); /* Fundo do rodapé com o cinza azulado */
+  color: white;
+  padding: var(--spacing-lg) var(--spacing-lg); /* Aumentei o padding para melhor visualização */
+  text-align: center;
+  margin-top: var(--spacing-xxl);
+}
+
+.footer-content {
+  max-width: var(--container-width); /* Mantém o tamanho máximo para telas maiores */
+  margin: 0 auto; /* Centraliza o conteúdo */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* Estilo para o parágrafo de copyright */
+.footer-text {
+  font-family: var(--font-body); /* Usando a fonte Poppins */
+  font-size: var(--font-size-sm);
+  color: #ccc; /* Cor do texto ligeiramente mais clara */
+}
+
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap; /* Permite quebrar linha em telas pequenas */
+  justify-content: center;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-sm);
+}
+
+.footer-link {
+  font-family: var(--font-heading); /* Usando a fonte Bebas Neue */
+  color: white;
+  text-decoration: none;
+  font-size: var(--font-size-md);
+  transition: color 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.footer-link:hover {
+  color: var(--primary-color);
+}
+
+/* Media query para telas menores */
+@media (max-width: 768px) {
+  .footer-nav {
+    flex-direction: column; /* Links empilham em telas pequenas */
+    gap: var(--spacing-xs);
+  }
+}

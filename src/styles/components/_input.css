@@ -1,0 +1,40 @@
+/* src/styles/components/_input.css */
+
+.input-group {
+  margin-bottom: var(--spacing-md); /* Espaçamento entre grupos de input */
+}
+
+.input-label {
+  display: block; /* Garante que o label fique em sua própria linha */
+  margin-bottom: var(--spacing-xxs); /* Pequeno espaço abaixo do label */
+  font-size: var(--font-size-small);
+  color: var(--text-color-light);
+  font-weight: bold;
+}
+
+.input-field {
+  width: 100%; /* Ocupa a largura total do seu contêiner pai */
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-base);
+  color: var(--text-color);
+  background-color: white;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-field:focus {
+  outline: none; /* Remove o contorno padrão do navegador */
+  border-color: var(--primary-color); /* Borda primária ao focar */
+  box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb, 76, 175, 80), 0.2); /* Sombra ao focar */
+}
+
+/* Estilo para input com erro (opcional, mas bom para validação) */
+.input-field.error {
+  border-color: var(--error-color);
+}
+
+.input-field.error:focus {
+  box-shadow: 0 0 0 2px rgba(var(--error-color), 0.2);
+}
+

@@ -1,0 +1,133 @@
+/* src/styles/pages/_profile.css - Estilo baseado em _variables.css */
+
+/* --- Layout Principal --- */
+.profile-page-container {
+    /* Usa a largura máxima do container, mas centralizado */
+    max-width: var(--container-width); 
+    margin: 0 auto;
+    /* Usa o espaçamento XXL para margens laterais */
+    padding: var(--spacing-xl) var(--spacing-xxl); 
+    min-height: calc(100vh - var(--header-height) - 100px); /* Garante que preencha a tela */
+}
+
+/* --- Títulos e Subtítulos --- */
+.profile-page-container h1 {
+    font-family: var(--font-heading); /* Aplica a fonte de título (Bebas Neue) */
+    color: var(--primary-color); 
+    font-size: var(--font-size-xxl);
+    margin-bottom: var(--spacing-xs);
+}
+
+.subtitle {
+    font-family: var(--font-body); /* Aplica a fonte de corpo (Poppins) */
+    color: var(--text-color-light); 
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+/* --- Container do Formulário --- */
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg); /* Espaçamento mais generoso entre campos */
+    padding: var(--spacing-xxl);
+    background-color: var(--card-background); /* Fundo branco do card */
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md); 
+    box-shadow: var(--box-shadow-sm); 
+}
+
+/* --- Labels e Inputs --- */
+.profile-form label {
+    font-family: var(--font-body);
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: var(--spacing-xxs);
+    margin-top: var(--spacing-xs);
+}
+
+.profile-form input {
+    font-family: var(--font-body);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm); 
+    font-size: var(--font-size-md);
+    color: var(--text-color);
+}
+
+.profile-form input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(13, 40, 76, 0.2); /* Sombra do foco com a cor primária */
+}
+
+/* Estilo para inputs desabilitados (E-mail) */
+.profile-form input:disabled {
+    background-color: var(--background-color); /* Cinza muito claro */
+    color: var(--text-color-light);
+    cursor: not-allowed;
+}
+
+/* --- Botões de Ação --- */
+.button-group {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+}
+
+.edit-button,
+.save-button,
+.cancel-button {
+    font-family: var(--font-heading); /* Botões com a fonte de título */
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: none;
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-lg);
+    cursor: pointer;
+    transition: background-color 0.3s, opacity 0.3s;
+    text-transform: uppercase;
+}
+
+/* Botão de Edição (Cor Primária) */
+.edit-button {
+    background-color: var(--primary-color); 
+    color: var(--card-background); /* Texto branco */
+}
+.edit-button:hover {
+    background-color: var(--hover-color); /* Cinza claro no hover */
+    color: var(--primary-color); /* Texto volta a ser azul */
+}
+
+/* Botão Salvar (Cor Primária) */
+.save-button {
+    background-color: var(--primary-color); 
+    color: var(--card-background);
+}
+.save-button:hover {
+    background-color: var(--hover-color);
+    color: var(--primary-color);
+}
+
+/* Botão Cancelar (Neutro) */
+.cancel-button {
+    background-color: var(--secondary-color);
+    color: var(--card-background);
+}
+.cancel-button:hover {
+    background-color: var(--hover-color);
+    color: var(--text-color);
+}
+
+/* Ajuste do botão de voltar */
+.back-button {
+    display: inline-block;
+    margin-bottom: var(--spacing-lg);
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: bold;
+    font-family: var(--font-body);
+}
+.back-button:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
