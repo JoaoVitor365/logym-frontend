@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import Input from '../components/Input/Input';
 import Button from '../components/Button/Button';
 import ErrorMessage from '../components/ErrorMessage/ErrorMessage';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import ApiService from '../services/api';
 import '../styles/pages/_academyRegister.css';
 import logo from '../assets/logoFundo.png'; 
 
@@ -28,6 +29,7 @@ const commonFacilities = [
 
 
 function AcademyRegisterPage() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     cnpj: '',
@@ -42,10 +44,11 @@ function AcademyRegisterPage() {
     password: '',
     confirmPassword: '',
     description: '',
-    facilities: [] // Array para as facilidades selecionadas
+    facilities: []
   });
   const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [apiMessage, setApiMessage] = useState('');
 
   // Mapeamento dos nomes de campos para exibição em português
   const fieldNames = {
@@ -71,7 +74,7 @@ function AcademyRegisterPage() {
     if (errors[name]) {
       setErrors(prevErrors => ({ ...prevErrors, [name]: '' }));
     }
-    setSuccessMessage('');
+    setApiMessage('');
 
     if (type === 'checkbox') {
       setFormData(prev => ({
@@ -131,15 +134,43 @@ function AcademyRegisterPage() {
     return isValid;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setApiMessage('');
+    
     if (validateForm()) {
-      setSuccessMessage('Cadastro de academia enviado com sucesso! Verifique o console para os dados.');
-      console.log('Dados da Academia para Cadastro:', formData);
-      setErrors({}); // Limpa os erros após o sucesso
-    } else {
-      setSuccessMessage('');
-      console.log('Erros de validação:', errors);
+      setLoading(true);
+      
+      try {
+        const academiaData = {
+          nome: formData.name,
+          cnpj: formData.cnpj,
+          endereco: formData.address,
+          numero: formData.number,
+          bairro: formData.neighborhood,
+          cidade: formData.city,
+          estado: formData.state,
+          cep: formData.zipCode,
+          telefone: formData.phone,
+          email: formData.email,
+          password: formData.password,
+          descricao: formData.description,
+          facilidades: formData.facilities
+        };
+        
+        const novaAcademia = await ApiService.registerAcademia(academiaData);
+        
+        setApiMessage(`🎉 Academia ${novaAcademia.nome} cadastrada com sucesso! Redirecionando...`);
+        
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+        
+      } catch (error) {
+        setApiMessage(`Erro: ${error.message}`);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -150,7 +181,17 @@ function AcademyRegisterPage() {
           <img src={logo} alt="Logo da LOGYM" className="academy-register-logo" />
           <h1>Cadastrar Nova Academia</h1>
         </div>
-        {successMessage && <div className="success-message">{successMessage}</div>}
+        {apiMessage && (
+          <p className={apiMessage.startsWith('Erro') ? 'error-message' : 'success-message'} style={{
+            padding: '10px', 
+            borderRadius: '5px',
+            backgroundColor: apiMessage.startsWith('Erro') ? '#f8d7da' : '#d4edda', 
+            color: apiMessage.startsWith('Erro') ? '#721c24' : '#155724',
+            marginBottom: '15px'
+          }}>
+            {apiMessage}
+          </p>
+        )}
         <form onSubmit={handleSubmit} noValidate>
           {/* Informações Básicas */}
           <Input
@@ -159,7 +200,7 @@ function AcademyRegisterPage() {
             id="name"
             name="name"
             placeholder="Ex: Academia Fitness Total"
-            value={formData.name}
+            value={formData.name || ''}
             onChange={handleChange}
             required
           />
@@ -171,7 +212,7 @@ function AcademyRegisterPage() {
             id="cnpj"
             name="cnpj"
             placeholder="Ex: 00.000.000/0000-00"
-            value={formData.cnpj}
+            value={formData.cnpj || ''}
             onChange={handleChange}
             required
           />
@@ -183,7 +224,7 @@ function AcademyRegisterPage() {
             id="email"
             name="email"
             placeholder="contato@suaacademia.com"
-            value={formData.email}
+            value={formData.email || ''}
             onChange={handleChange}
             required
           />
@@ -195,7 +236,7 @@ function AcademyRegisterPage() {
             id="phone"
             name="phone"
             placeholder="(XX) XXXX-XXXX"
-            value={formData.phone}
+            value={formData.phone || ''}
             onChange={handleChange}
             required
           />
@@ -208,7 +249,7 @@ function AcademyRegisterPage() {
             id="password"
             name="password"
             placeholder="Crie uma senha"
-            value={formData.password}
+            value={formData.password || ''}
             onChange={handleChange}
             required
           />
@@ -220,7 +261,7 @@ function AcademyRegisterPage() {
             id="confirmPassword"
             name="confirmPassword"
             placeholder="Repita a senha"
-            value={formData.confirmPassword}
+            value={formData.confirmPassword || ''}
             onChange={handleChange}
             required
           />
@@ -233,7 +274,7 @@ function AcademyRegisterPage() {
             id="address"
             name="address"
             placeholder="Nome da Rua/Avenida"
-            value={formData.address}
+            value={formData.address || ''}
             onChange={handleChange}
             required
           />
@@ -245,7 +286,7 @@ function AcademyRegisterPage() {
             id="number"
             name="number"
             placeholder="123"
-            value={formData.number}
+            value={formData.number || ''}
             onChange={handleChange}
             required
           />
@@ -257,7 +298,7 @@ function AcademyRegisterPage() {
             id="neighborhood"
             name="neighborhood"
             placeholder="Centro"
-            value={formData.neighborhood}
+            value={formData.neighborhood || ''}
             onChange={handleChange}
             required
           />
@@ -269,7 +310,7 @@ function AcademyRegisterPage() {
             id="zipCode"
             name="zipCode"
             placeholder="00000-000"
-            value={formData.zipCode}
+            value={formData.zipCode || ''}
             onChange={handleChange}
             required
           />
@@ -299,7 +340,7 @@ function AcademyRegisterPage() {
             id="city"
             name="city"
             placeholder="Sua Cidade"
-            value={formData.city}
+            value={formData.city || ''}
             onChange={handleChange}
             required
           />
@@ -314,7 +355,7 @@ function AcademyRegisterPage() {
               className="textarea-field"
               rows="5"
               placeholder="Descreva sua academia, seus diferenciais, ambiente, etc."
-              value={formData.description}
+              value={formData.description || ''}
               onChange={handleChange}
               required
             ></textarea>
@@ -341,8 +382,8 @@ function AcademyRegisterPage() {
           </div>
 
           {/* Botão de Cadastro */}
-          <Button type="submit" className="button-primary">
-            Cadastrar Academia
+          <Button type="submit" className="button-primary" disabled={loading}>
+            {loading ? 'Cadastrando...' : 'Cadastrar Academia'}
           </Button>
         </form>
         <p>

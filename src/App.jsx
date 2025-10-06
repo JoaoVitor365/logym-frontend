@@ -1,5 +1,4 @@
-// src/App.jsx
-import React, { useState } from 'react'; // 👈 1. IMPORTAMOS O useState
+import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Footer from './components/Footer/Footer';
 
@@ -16,27 +15,35 @@ import Header from './components/Header/Header';
 
 function App() {
   
-  // 2. ESTADO CENTRAL DE AUTENTICAÇÃO
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Começa como deslogado
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
-  // 3. FUNÇÃO DE LOGIN (Simulação)
-  const handleLogin = () => {
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const user = JSON.parse(userData);
+      setCurrentUser(user);
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogin = (user) => {
+    setCurrentUser(user);
     setIsLoggedIn(true);
-    console.log('Login bem-sucedido! O estado do App mudou para true.');
   };
 
-  // 4. FUNÇÃO DE LOGOUT (Simulação)
   const handleLogout = () => {
+    localStorage.removeItem('user');
+    setCurrentUser(null);
     setIsLoggedIn(false);
-    console.log('Logout realizado. O estado do App mudou para false.');
   };
 
   return (
     <div className="App">
       
-      {/* 5. PASSAMOS O ESTADO E O HANDLER DE LOGOUT PARA O HEADER */}
       <Header 
         isLoggedIn={isLoggedIn} 
+        currentUser={currentUser}
         onLogout={handleLogout} 
       /> 
 
@@ -44,7 +51,6 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           
-          {/* 6. PASSAMOS O HANDLER DE LOGIN PARA A PÁGINA DE LOGIN */}
           <Route 
             path="/login" 
             element={<LoginPage onLogin={handleLogin} />} 

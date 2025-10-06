@@ -7,8 +7,7 @@ import ErrorMessage from '../components/ErrorMessage/ErrorMessage';
 import '../styles/pages/_register.css';
 import logo from '../assets/logoFundo.png';
 
-// URL base da sua API em Java/Spring Boot
-const BASE_API_URL = 'http://localhost:8080'; 
+import ApiService from '../services/api'; 
 
 function RegisterPage() {
     const navigate = useNavigate();
@@ -71,7 +70,6 @@ function RegisterPage() {
         if (validateForm()) {
             setLoading(true);
 
-            // DTO/JSON que seu Controller @PostMapping espera
             const userData = {
                 nome: name,      
                 email: email,    
@@ -79,44 +77,21 @@ function RegisterPage() {
             };
 
             try {
-                // ----------------------------------------------------
-                // CONEXÃO REAL COM O BACKEND
-                // ----------------------------------------------------
-                const response = await fetch(`${BASE_API_URL}/api/v1/usuario`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(userData),
-                });
-
-                if (!response.ok) {
-                    // Seu Controller retorna JSONs detalhados em caso de erro
-                    const errorData = await response.json(); 
-                    // Tenta usar a mensagem do Backend (message) ou usa uma default
-                    throw new Error(errorData.message || 'Erro ao cadastrar. Verifique os dados.');
-                }
-
-                // Sucesso (Status 201 CREATED)
-                const novoUsuario = await response.json();
+                const novoUsuario = await ApiService.registerUser(userData);
                 
                 setApiMessage(`🎉 Usuário ${novoUsuario.nome} cadastrado com sucesso! Redirecionando...`);
                 
-                // Limpa campos (opcional, pois vamos redirecionar)
                 setName('');
                 setEmail('');
                 setPassword('');
                 setConfirmPassword('');
                 
-                // Redireciona para o Login após um breve atraso (para o usuário ver a mensagem)
                 setTimeout(() => {
                     navigate('/login'); 
                 }, 1500);
 
-
             } catch (error) {
-                console.error('Falha no Cadastro:', error);
-                setApiMessage(`Erro: ${error.message || 'Não foi possível conectar ao servidor.'}`);
+                setApiMessage(`Erro: ${error.message}`);
             } finally {
                 setLoading(false);
             }
