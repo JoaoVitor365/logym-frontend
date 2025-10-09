@@ -103,13 +103,7 @@ function ProfilePage() {
     setLoading(true);
     
     try {
-      const updateData = {
-        nome: user.nome,
-        email: user.email,
-        statusUsuario: false
-      };
-
-      await ApiService.updateUser(user.id, updateData);
+      await ApiService.inactivateUser(user.id);
       
       localStorage.removeItem('user');
       setApiMessage('Conta inativada com sucesso! Redirecionando...');

@@ -36,7 +36,7 @@ class ApiService {
         nome: userData.nome,
         email: userData.email,
         senha: userData.senha,
-        statusUsuario: true
+        statusUsuario: 'ATIVO'
       }),
     });
   }
@@ -50,7 +50,7 @@ class ApiService {
       throw new Error('Email ou senha incorretos');
     }
     
-    if (user.statusUsuario === false) {
+    if (user.statusUsuario === 'INATIVO') {
       throw new Error('Conta inativada. Entre em contato com o suporte.');
     }
     
@@ -67,6 +67,22 @@ class ApiService {
     return this.request(`/usuario/${id}`, {
       method: 'PUT',
       body: JSON.stringify(userData),
+    });
+  }
+
+  // Inativar conta
+  async inactivateUser(id) {
+    return this.request(`/usuario/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ statusUsuario: 'INATIVO' }),
+    });
+  }
+
+  // Reativar conta
+  async reactivateUser(id) {
+    return this.request(`/usuario/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ statusUsuario: 'ATIVO' }),
     });
   }
 

@@ -14,7 +14,37 @@ function LoginPage({ onLogin }) {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [apiMessage, setApiMessage] = useState('');
+  const [showReactivateOption, setShowReactivateOption] = useState(false);
+  const [inactiveUser, setInactiveUser] = useState(null);
   const navigate = useNavigate();
+
+  const handleReactivateAccount = async () => {
+    setLoading(true);
+    try {
+      await ApiService.reactivateUser(inactiveUser.id);
+      setApiMessage('Conta reativada com sucesso! Fazendo login...');
+      
+      // Fazer login automático após reativação
+      const updatedUser = { ...inactiveUser, statusUsuario: 'ATIVO' };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      onLogin(updatedUser);
+      
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
+    } catch (error) {
+      setApiMessage(`Erro ao reativar conta: ${error.message}`);
+    } finally {
+      setLoading(false);
+      setShowReactivateOption(false);
+    }
+  };
+
+  const handleCancelReactivation = () => {
+    setShowReactivateOption(false);
+    setInactiveUser(null);
+    setApiMessage('');
+  };
 
   const validateForm = () => {
     let newErrors = {};
@@ -61,7 +91,22 @@ function LoginPage({ onLogin }) {
         onLogin(loginData);
         navigate('/');
       } catch (error) {
-        setApiMessage(`Erro: ${error.message}`);
+        if (error.message === 'Conta inativada. Entre em contato com o suporte.') {
+          // Buscar o usuário inativo para oferecer reativação
+          try {
+            const users = await ApiService.request('/usuario');
+            const user = users.find(u => u.email === email && u.senha === password);
+            if (user) {
+              setInactiveUser(user);
+              setShowReactivateOption(true);
+              setApiMessage('Sua conta está inativa. Deseja reativá-la?');
+            }
+          } catch (searchError) {
+            setApiMessage(`Erro: ${error.message}`);
+          }
+        } else {
+          setApiMessage(`Erro: ${error.message}`);
+        }
       } finally {
         setLoading(false);
       }
@@ -77,15 +122,47 @@ function LoginPage({ onLogin }) {
         </div>
         
         {apiMessage && (
-          <p className="error-message" style={{
-            padding: '10px', 
-            borderRadius: '5px',
-            backgroundColor: '#f8d7da', 
-            color: '#721c24',
-            marginBottom: '15px'
-          }}>
-            {apiMessage}
-          </p>
+          <div style={{ marginBottom: '15px' }}>
+            <p className={showReactivateOption ? 'info-message' : 'error-message'} style={{
+              padding: '10px', 
+              borderRadius: '5px',
+              backgroundColor: showReactivateOption ? '#d1ecf1' : '#f8d7da', 
+              color: showReactivateOption ? '#0c5460' : '#721c24',
+              marginBottom: showReactivateOption ? '10px' : '0'
+            }}>
+              {apiMessage}
+            </p>
+            
+            {showReactivateOption && (
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+                <Button 
+                  type="button" 
+                  onClick={handleReactivateAccount}
+                  disabled={loading}
+                  style={{ 
+                    backgroundColor: '#28a745', 
+                    color: 'white',
+                    padding: '8px 16px',
+                    fontSize: '14px'
+                  }}
+                >
+                  {loading ? 'Reativando...' : 'Sim, Reativar'}
+                </Button>
+                <Button 
+                  type="button" 
+                  onClick={handleCancelReactivation}
+                  style={{ 
+                    backgroundColor: '#6c757d', 
+                    color: 'white',
+                    padding: '8px 16px',
+                    fontSize: '14px'
+                  }}
+                >
+                  Cancelar
+                </Button>
+              </div>
+            )}
+          </div>
         )}
         
         <form onSubmit={handleSubmit} noValidate>
@@ -145,7 +222,7 @@ function LoginPage({ onLogin }) {
           />
           <ErrorMessage message={errors.password} />
 
-          <Button type="submit" className="button-primary" disabled={loading} style={{ width: '100%', marginTop: 'var(--spacing-md)' }}>
+          <Button type="submit" className="button-primary" disabled={loading || showReactivateOption} style={{ width: '100%', marginTop: 'var(--spacing-md)' }}>
             {loading ? 'Entrando...' : 'Entrar'}
           </Button>
         </form>
