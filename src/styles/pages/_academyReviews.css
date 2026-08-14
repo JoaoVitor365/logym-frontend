@@ -1,0 +1,231 @@
+/* src/styles/pages/_academyReviews.css */
+
+.review-form-section {
+  border: 1px solid #000000;
+  border-radius: 10px;
+  background-color: #ffffff;
+}
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.review-form label {
+  font-weight: 700;
+  color: #000000;
+}
+
+.review-form select,
+.review-form textarea {
+  border: 1px solid #000000;
+  border-radius: 6px;
+  padding: 10px;
+  font-family: var(--font-body);
+  color: #000000;
+}
+
+.review-form select:focus,
+.review-form textarea:focus {
+  outline: none;
+  border-color: #f97316;
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.25);
+}
+
+.review-form small {
+  color: #666666;
+}
+
+.review {
+  border: 1px solid #000000;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 12px;
+  background-color: #ffffff;
+}
+
+.review-author {
+  color: #000000;
+}
+
+.review-rating {
+  color: #f97316;
+}
+
+.remove-review-button {
+  margin-top: 8px;
+  background-color: #ffffff;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.remove-review-button:hover {
+  background-color: #dc3545;
+  color: #ffffff;
+}
+
+.review-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.edit-review-button {
+  margin-top: 8px;
+  background-color: #000000;
+  color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.edit-review-button:hover {
+  background-color: #f97316;
+  color: #000000;
+  border-color: #f97316;
+}
+
+.review-edit-main-button,
+.review-submit-button,
+.review-cancel-edit-button {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  margin-top: 12px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.review-edit-main-button,
+.review-submit-button {
+  background-color: #000000;
+  color: #ffffff;
+  border: 1px solid #000000;
+}
+
+.review-edit-main-button:hover,
+.review-submit-button:hover {
+  background-color: #f97316;
+  color: #000000;
+  border-color: #f97316;
+  transform: translateY(-1px);
+}
+
+.review-submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.review-cancel-edit-button {
+  background-color: #ffffff;
+  color: #000000;
+  border: 1px solid #000000;
+}
+
+.review-cancel-edit-button:hover {
+  background-color: #f97316;
+  color: #000000;
+  border-color: #f97316;
+  transform: translateY(-1px);
+}
+
+.review-form-section p {
+  margin-bottom: 14px;
+  line-height: 1.6;
+}
+
+.review-form textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.review-form-help {
+  margin-bottom: 8px;
+  color: #333333;
+}
+
+.review-item-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 12px;
+  background-color: #fafafa;
+}
+
+.review-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.review-item-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #eeeeee;
+  padding: 6px 0;
+}
+
+.review-item-row:last-child {
+  border-bottom: none;
+}
+
+.review-star-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.review-star-button {
+  border: none;
+  background-color: transparent;
+  color: #cccccc;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px;
+  transition: 0.2s ease;
+}
+
+.review-star-button:hover,
+.review-star-button-active {
+  color: #f97316;
+  transform: scale(1.08);
+}
+
+.review-star-value {
+  margin-left: 8px;
+  color: #333333;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.review-item-stars {
+  color: #f97316;
+  white-space: nowrap;
+}
+
+.review-item-stars span {
+  color: #000000;
+}

@@ -1,0 +1,281 @@
+/* src/styles/pages/_profile.css - Estilo baseado em _variables.css */
+
+/* --- Layout Principal --- */
+.profile-page-container {
+    /* Usa a largura máxima do container, mas centralizado */
+    max-width: var(--container-width); 
+    margin: 0 auto;
+    /* Usa o espaçamento XXL para margens laterais */
+    padding: var(--spacing-xl) var(--spacing-xxl); 
+    min-height: calc(100vh - var(--header-height) - 100px); /* Garante que preencha a tela */
+}
+
+/* --- Títulos e Subtítulos --- */
+.profile-page-container h1 {
+    font-family: var(--font-heading); /* Aplica a fonte de título (Bebas Neue) */
+    color: var(--primary-color); 
+    font-size: var(--font-size-xxl);
+    margin-bottom: var(--spacing-xs);
+}
+
+.subtitle {
+    font-family: var(--font-body); /* Aplica a fonte de corpo (Poppins) */
+    color: var(--text-color-light); 
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+/* --- Container do Formulário --- */
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg); /* Espaçamento mais generoso entre campos */
+    padding: var(--spacing-xxl);
+    background-color: var(--card-background); /* Fundo branco do card */
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md); 
+    box-shadow: var(--box-shadow-sm); 
+}
+
+/* --- Labels e Inputs --- */
+.profile-form label {
+    font-family: var(--font-body);
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: var(--spacing-xxs);
+    margin-top: var(--spacing-xs);
+}
+
+.profile-form input {
+    font-family: var(--font-body);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm); 
+    font-size: var(--font-size-md);
+    color: var(--text-color);
+}
+
+.profile-form input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(13, 40, 76, 0.2); /* Sombra do foco com a cor primária */
+}
+
+/* Estilo para inputs desabilitados (E-mail) */
+.profile-form input:disabled {
+    background-color: var(--background-color); /* Cinza muito claro */
+    color: var(--text-color-light);
+    cursor: not-allowed;
+}
+
+/* --- Botões de Ação --- */
+.button-group {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+}
+
+.edit-button,
+.save-button,
+.cancel-button {
+    font-family: var(--font-heading); /* Botões com a fonte de título */
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: none;
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-lg);
+    cursor: pointer;
+    transition: background-color 0.3s, opacity 0.3s;
+    text-transform: uppercase;
+}
+
+/* Botão de Edição (Cor Primária) */
+.edit-button {
+    background-color: var(--primary-color); 
+    color: var(--card-background); /* Texto branco */
+}
+.edit-button:hover {
+    background-color: var(--hover-color); /* Cinza claro no hover */
+    color: var(--primary-color); /* Texto volta a ser azul */
+}
+
+/* Botão Salvar (Cor Primária) */
+.save-button {
+    background-color: var(--primary-color); 
+    color: var(--card-background);
+}
+.save-button:hover {
+    background-color: var(--hover-color);
+    color: var(--primary-color);
+}
+
+/* Botão Cancelar (Neutro) */
+.cancel-button {
+    background-color: var(--secondary-color);
+    color: var(--card-background);
+}
+.cancel-button:hover {
+    background-color: var(--hover-color);
+    color: var(--text-color);
+}
+
+/* Ajuste do botão de voltar */
+.back-button {
+    display: inline-block;
+    margin-bottom: var(--spacing-lg);
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: bold;
+    font-family: var(--font-body);
+}
+.back-button:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+.profile-photo-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 30px 0;
+}
+
+.profile-photo-wrapper {
+  position: relative;
+  width: 145px;
+  height: 145px;
+}
+
+.profile-photo,
+.profile-photo-placeholder {
+  width: 145px;
+  height: 145px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #f97316;
+  background-color: #ffffff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.14);
+}
+
+.profile-photo-placeholder {
+  background-color: #f1f5f9;
+  color: #08294d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-photo-edit-button {
+  position: absolute;
+  right: 2px;
+  bottom: 8px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  background-color: #000000;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+}
+
+.profile-photo-edit-button:hover {
+  transform: scale(1.08);
+  background-color: #f97316;
+  color: #000000;
+}
+
+.profile-photo-edit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.profile-photo-hidden-input {
+  display: none;
+}
+
+.profile-photo-help {
+  margin: 0;
+  color: #666666;
+  font-size: 14px;
+  text-align: center;
+}
+
+.profile-photo-loading {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* Card de endereço ViaCEP no Meu Perfil */
+.profile-viacep-box {
+  margin: 18px 0 22px 0;
+  padding: 20px;
+  border: 1px solid #d9d9d9;
+  border-radius: 12px;
+  background-color: #fafafa;
+}
+
+.profile-viacep-box h3 {
+  margin: 0 0 16px 0;
+  color: #000000;
+  font-size: 18px;
+  font-weight: 700;
+  border-bottom: 1px solid #dddddd;
+  padding-bottom: 10px;
+}
+
+.profile-address-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 16px;
+}
+
+.profile-address-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-address-field label {
+  font-weight: 700;
+  color: #000000;
+  font-size: 14px;
+}
+
+.profile-address-field input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #bdbdbd;
+  border-radius: 6px;
+  background-color: #f1f1f1;
+  color: #333333;
+  cursor: not-allowed;
+}
+
+.profile-address-large {
+  grid-column: span 2;
+}
+
+.profile-address-small {
+  max-width: 160px;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .profile-address-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-address-large {
+    grid-column: span 1;
+  }
+
+  .profile-address-small {
+    max-width: 100%;
+  }
+}

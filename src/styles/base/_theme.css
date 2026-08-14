@@ -1,0 +1,191 @@
+/* src/styles/base/_theme.css */
+
+/* ============================= */
+/* TEMA LOGYM - PRETO + LARANJA  */
+/* ============================= */
+
+h1,
+h2,
+h3,
+.card-title,
+.profile-page-container h1,
+.academy-register-form-container h1,
+.academy-form-section-title,
+.checkbox-section h3 {
+  color: #000000 !important;
+}
+
+.header {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+.nav-links a,
+.logo-text {
+  color: #ffffff !important;
+}
+
+.nav-links a:hover {
+  background-color: #f97316 !important;
+  color: #000000 !important;
+}
+
+.menu-icon {
+  background-color: #ffffff !important;
+}
+
+/* Botões principais */
+.button,
+.button-primary,
+.edit-button,
+.save-button,
+.back-button {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-color: #000000 !important;
+}
+
+.button:hover,
+.button-primary:hover,
+.edit-button:hover,
+.save-button:hover,
+.back-button:hover {
+  background-color: #f97316 !important;
+  color: #000000 !important;
+  border-color: #f97316 !important;
+}
+
+/* Botões secundários/cancelar */
+.cancel-button,
+.button-cancel {
+  background-color: #f97316 !important;
+  color: #000000 !important;
+  border-color: #f97316 !important;
+}
+
+.cancel-button:hover,
+.button-cancel:hover {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-color: #000000 !important;
+}
+
+/* Botões outline */
+.button-outline {
+  background-color: transparent !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+}
+
+.button-outline:hover {
+  background-color: #f97316 !important;
+  color: #000000 !important;
+  border-color: #f97316 !important;
+}
+
+/* Inputs */
+.input-field,
+.profile-form input,
+.textarea-field,
+.select-field,
+input,
+textarea,
+select {
+  border-color: #000000 !important;
+  color: #000000 !important;
+}
+
+.input-field:focus,
+.profile-form input:focus,
+.textarea-field:focus,
+.select-field:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #f97316 !important;
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.25) !important;
+  outline: none !important;
+}
+
+/* Cards e containers */
+.card,
+.profile-form,
+.academia-card-list-item,
+.academy-register-form-container,
+.form-card,
+.register-form-container {
+  border-color: #000000 !important;
+}
+
+.card-image {
+  border-bottom-color: #000000 !important;
+}
+
+/* Checkboxes */
+.checkbox-section {
+  border-color: #000000 !important;
+  background-color: #fff7ed !important;
+}
+
+.checkbox-card {
+  border-color: #000000 !important;
+  color: #000000 !important;
+}
+
+.checkbox-card:hover {
+  background-color: #ffedd5 !important;
+  border-color: #f97316 !important;
+}
+
+.checkbox-card input {
+  accent-color: #f97316 !important;
+}
+
+/* Foto de perfil */
+.profile-photo,
+.profile-photo-placeholder {
+  border-color: #f97316 !important;
+  color: #000000 !important;
+}
+
+/* Links gerais */
+a,
+.link {
+  color: #000000;
+}
+
+a:hover,
+.link:hover {
+  color: #f97316;
+}
+
+/* Status ativo no painel */
+.academia-card-list-item span {
+  border: 1px solid #f97316;
+}
+
+/* Destaques pequenos */
+strong {
+  color: #000000;
+}
+
+::selection {
+  background-color: #f97316;
+  color: #000000;
+}
+
+/* Footer na nova paleta */
+.footer {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+.footer p,
+.footer span,
+.footer a {
+  color: #ffffff !important;
+}
+
+.footer a:hover {
+  color: #f97316 !important;
+}

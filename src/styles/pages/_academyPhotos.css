@@ -1,0 +1,95 @@
+/* src/styles/pages/_academyPhotos.css */
+
+.academy-photo-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.academy-photo-gallery-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border: 1px solid #000000;
+  border-radius: 10px;
+  background-color: #ffffff;
+}
+
+.academy-photo-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.academy-photo-preview {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border: 1px solid #000000;
+  border-radius: 10px;
+  background-color: #ffffff;
+}
+
+.academy-photo-manager-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.academy-photo-manager-card {
+  border: 1px solid #000000;
+  border-radius: 10px;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+
+.academy-photo-manager-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  display: block;
+}
+
+.academy-photo-remove-button {
+  width: 100%;
+  border: none;
+  border-top: 1px solid #000000;
+  background-color: #ffffff;
+  color: #dc3545;
+  padding: 10px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.academy-photo-remove-button:hover {
+  background-color: #dc3545;
+  color: #ffffff;
+}
+
+.academy-photo-upload-area {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.academy-photo-upload-area label {
+  font-weight: 700;
+  color: #000000;
+}
+
+.academy-photo-upload-area input[type="file"] {
+  border: 1px solid #000000;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: #ffffff;
+}
+
+.academy-photo-upload-area small {
+  color: #666666;
+}

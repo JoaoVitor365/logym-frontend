@@ -1,0 +1,154 @@
+/* src/styles/pages/_academyCleanup.css */
+
+/* Ajustes da Etapa 4 da organização do CSS.
+   Este arquivo concentra estilos que antes estavam inline
+   nas páginas de academia e no componente de avaliações. */
+
+.academy-page-loading {
+  padding: 100px;
+  text-align: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 30px;
+}
+
+.academy-api-message,
+.academy-review-message {
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+.academy-api-message-success,
+.academy-review-message-success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.academy-api-message-error,
+.academy-review-message-error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.academy-manager-warning-page {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+}
+
+.academy-manager-warning-card {
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 14px;
+  padding: 40px 35px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.academy-manager-warning-icon {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 20px auto;
+  border-radius: 50%;
+  border: 2px solid #f97316;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  font-weight: bold;
+  color: #f97316;
+  background-color: #fff7ed;
+}
+
+.academy-manager-warning-title {
+  color: #000000;
+  font-size: 30px;
+  margin-bottom: 12px;
+}
+
+.academy-manager-warning-text {
+  color: #333333;
+  font-size: 17px;
+  line-height: 1.6;
+  margin: 0 auto 28px auto;
+  max-width: 500px;
+}
+
+.academy-manager-warning-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.academy-manager-warning-button {
+  width: 100%;
+  max-width: 320px;
+  padding: 12px 20px;
+  font-size: 16px;
+}
+
+.academy-details-state {
+  text-align: center;
+  padding: var(--spacing-xxl);
+}
+
+.academy-suspended-box {
+  max-width: 760px;
+  margin: 40px auto;
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  border-radius: 12px;
+  padding: 28px;
+}
+
+.academy-suspended-title {
+  color: #856404;
+  margin-bottom: 12px;
+}
+
+.academy-admin-warning,
+.academy-review-suspended-warning,
+.review-suspended-warning {
+  padding: 12px;
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  border-radius: 8px;
+}
+
+.academy-admin-warning {
+  margin-bottom: 20px;
+}
+
+.review-suspended-warning {
+  margin-top: 10px;
+}
+
+.academy-details-placeholder {
+  max-width: 260px;
+  margin: 0 auto 25px auto;
+  border-radius: 10px;
+}
+
+.review-rating {
+  margin-left: 10px;
+}
+
+.review-date {
+  font-size: 13px;
+  color: #666666;
+  margin-top: -6px;
+}
+
+.review-form-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}

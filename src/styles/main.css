@@ -1,0 +1,44 @@
+/* src/styles/main.css */
+
+/* 1. Variáveis */
+@import url('./variables.css');
+
+/* 2. Base */
+@import url('./base/_reset.css');
+@import url('./base/_base.css');
+@import url('./_global.css');
+
+/* 3. Layouts */
+@import url('./layouts/_header.css');
+@import url('./layouts/_footer.css');
+
+/* 4. Componentes */
+@import url('./components/_button.css');
+@import url('./components/_input.css');
+@import url('./components/_card.css');
+@import url('./components/_messages.css');
+
+/* 5. Páginas */
+@import url('./pages/_home.css');
+@import url('./pages/_login.css');
+@import url('./pages/_register.css');
+@import url('./pages/_forgotPassword.css');
+@import url('./pages/_profile.css');
+@import url('./pages/_academyDetails.css');
+@import url('./pages/_academyRegister.css');
+@import url('./pages/_favorites.css');
+@import url('./pages/_academyReviews.css');
+@import url('./pages/_academyPhotos.css');
+@import url('./pages/_academyCleanup.css');
+@import url('./pages/_viacep.css');
+@import url('./pages/_admin.css');
+@import url('./pages/_managerPanel.css');
+
+/* 6. Utilitários */
+@import url('./utils/_utilities.css');
+
+/* 7. Tema visual final do LOGYM */
+@import url('./base/_theme.css');
+
+/* 8. Correções finais das telas de autenticação e perfil */
+@import url('./pages/_authProfileCleanup.css');

@@ -1,0 +1,321 @@
+/* src/styles/pages/_managerPanel.css */
+
+/* Página principal do painel do gerente */
+.manager-page {
+  max-width: 1200px;
+  min-height: 70vh;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.manager-page-small {
+  max-width: 900px;
+}
+
+.manager-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.manager-header h1 {
+  color: #000000;
+  font-size: 28px;
+  margin-bottom: 5px;
+}
+
+.manager-header p {
+  color: #666666;
+  font-size: 16px;
+}
+
+.manager-main-button {
+  padding: 12px 24px;
+  font-size: 16px;
+}
+
+.manager-section {
+  margin-bottom: 45px;
+}
+
+.manager-section-last {
+  margin-bottom: 0;
+}
+
+.manager-section-title {
+  color: #000000;
+  font-size: 24px;
+  margin-bottom: 18px;
+  border-bottom: 2px solid #f97316;
+  padding-bottom: 8px;
+}
+
+.manager-panel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Cards de academia do painel */
+.manager-academy-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 25px;
+  padding: 22px;
+  border: 1px solid #dddddd;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.05);
+}
+
+.manager-academy-content {
+  flex: 1;
+  min-width: 350px;
+}
+
+.manager-academy-title {
+  color: #000000;
+  margin-bottom: 15px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.manager-academy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.manager-info-text,
+.manager-info-line {
+  color: #333333;
+  font-size: 15px;
+}
+
+.manager-info-text {
+  margin: 0;
+}
+
+.manager-info-line {
+  margin: 0 0 10px;
+}
+
+.manager-status-line {
+  color: #333333;
+  margin: 0;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.manager-status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.manager-status-active {
+  color: #155724;
+  background-color: #d4edda;
+}
+
+.manager-status-inactive {
+  color: #721c24;
+  background-color: #f8d7da;
+}
+
+.manager-status-suspended {
+  color: #856404;
+  background-color: #fff3cd;
+}
+
+/* Ações dos cards */
+.manager-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.manager-button {
+  min-width: 100px;
+  padding: 10px 20px;
+}
+
+.manager-button-secondary {
+  background-color: #f0f0f0;
+  color: #333333;
+  border: 1px solid #cccccc;
+}
+
+.manager-button-danger-outline {
+  background-color: #ffffff;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+}
+
+.manager-button-reactivate {
+  background-color: #f97316;
+  color: #000000;
+  border: 1px solid #f97316;
+}
+
+.manager-button-disabled {
+  min-width: 160px;
+  background-color: #e9ecef;
+  color: #6c757d;
+  border: 1px solid #ced4da;
+  cursor: not-allowed;
+}
+
+/* Mensagens e estados */
+.manager-warning-box {
+  padding: 12px;
+  margin-bottom: 15px;
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  border-radius: 8px;
+}
+
+.manager-api-message {
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.manager-api-message-error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.manager-empty-state {
+  text-align: center;
+  padding: 50px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  border: 1px dashed #cccccc;
+}
+
+.manager-empty-state h2 {
+  color: #000000;
+  margin-bottom: 10px;
+}
+
+.manager-empty-state p {
+  color: #666666;
+  margin-bottom: 20px;
+}
+
+.manager-empty-section {
+  padding: 25px;
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.manager-empty-card {
+  text-align: center;
+  padding: 45px;
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 10px;
+}
+
+.manager-empty-card h1 {
+  color: #000000;
+  font-size: 28px;
+  margin-bottom: 15px;
+}
+
+.manager-empty-card p {
+  color: #666666;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.manager-loading-box {
+  text-align: center;
+  padding: 50px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #dddddd;
+  max-width: 900px;
+  margin: 60px auto;
+}
+
+.manager-loading-box h2 {
+  color: #000000;
+}
+
+/* Completar cadastro de gerente */
+.manager-complete-description {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #666666;
+}
+
+.manager-form-message {
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.manager-form-message-error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.manager-form-message-success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.manager-complete-submit {
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .manager-page {
+    padding: 28px 16px;
+  }
+
+  .manager-header {
+    align-items: flex-start;
+  }
+
+  .manager-header h1 {
+    font-size: 24px;
+  }
+
+  .manager-academy-card {
+    flex-direction: column;
+  }
+
+  .manager-academy-content {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .manager-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .manager-button {
+    width: 100%;
+  }
+}

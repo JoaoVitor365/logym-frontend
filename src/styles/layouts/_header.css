@@ -1,0 +1,217 @@
+/* src/styles/layouts/_header.css */
+
+/* Certifique-se de que as variáveis de fonte estão definidas em _variables.css */
+:root {
+  --primary-color: #000000;
+  --primary-darker: #1a1a1a;
+  --secondary-color: #f97316;
+  --secondary-darker: #ea580c;
+
+  --font-heading: 'Bebas Neue', sans-serif;
+  --font-body: 'Poppins', sans-serif;
+  --header-height: 80px;
+  --spacing-sm: 8px;
+  --spacing-lg: 24px;
+  --box-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --container-width: 1200px;
+  --spacing-md: 16px;
+  --font-size-xl: 1.5rem;
+  --spacing-xxs: 4px;
+  --border-radius-sm: 4px;
+}
+
+.header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  box-shadow: var(--box-shadow-sm);
+  height: var(--header-height);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: var(--container-width);
+  margin: 0 auto;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  gap: var(--spacing-sm);
+}
+
+.logo-image {
+  height: 75px;
+  width: auto;
+}
+
+/* Aplica a fonte Bebas Neue para o texto "LOGYM" */
+.logo-text {
+  font-family: var(--font-heading);
+  font-size: 40px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.menu-toggle {
+  display: none; /* Esconde o botão por padrão em telas grandes */
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  padding: 0; /* Remover padding padrão do botão */
+  z-index: 1001; /* Garante que o botão esteja acima do menu */
+}
+
+/* Estilos para as barras do ícone do hambúrguer */
+.menu-icon {
+  display: block;
+  width: 25px;
+  height: 3px;
+  background: #ffffff;
+}
+
+/* Estilos para o ícone de "X" quando o menu está aberto */
+.menu-toggle.open .menu-icon:nth-child(1) {
+  transform: rotate(-45deg) translate(-5px, 6px);
+}
+
+.menu-toggle.open .menu-icon:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.open .menu-icon:nth-child(3) {
+  transform: rotate(45deg) translate(-5px, -6px);
+}
+
+
+.nav-links {
+  display: flex;
+  gap: var(--spacing-lg);
+}
+
+/* Aplica a fonte Bebas Neue para os links de navegação */
+.nav-links a {
+  font-family: var(--font-heading);
+  color: #ffffff;
+}
+
+.nav-links a:hover {
+  background-color: #f97316;
+  color: #000000;
+}
+
+/* ----- Estilos para Telas Pequenas (Menu Hambúrguer) ----- */
+@media (max-width: 768px) {
+  .header-container {
+    justify-content: space-between;
+  }
+
+  .logo-container {
+    flex-grow: 0;
+  }
+
+  .menu-toggle {
+    display: block; /* Torna o botão visível em telas menores */
+  }
+
+  .nav-links {
+    display: none; /* Esconde os links por padrão em telas menores */
+    flex-direction: column;
+    position: absolute;
+    top: var(--header-height);
+    right: 0;
+    width: 100%;
+    background-color: var(--primary-color);
+    padding: var(--spacing-lg);
+    box-shadow: var(--box-shadow-sm);
+    transition: transform 0.3s ease-in-out;
+    z-index: 999;
+  }
+
+  .nav-links.open {
+    display: flex; /* Exibe os links quando a classe 'open' está presente */
+  }
+
+  .nav-links a {
+    padding: var(--spacing-md);
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+
+/* Ajuste visual dos botões do Header */
+.nav-links a {
+  padding: 8px 14px !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.nav-links a:hover {
+  background-color: #f97316 !important;
+  color: #000000 !important;
+  border-radius: 6px !important;
+  transform: translateY(-1px);
+}
+
+.nav-links a.active,
+.nav-links a[aria-current="page"] {
+  background-color: #f97316 !important;
+  color: #000000 !important;
+  border-radius: 6px !important;
+}
+
+/* Usuário logado no Header */
+.header-user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 12px;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.header-user-photo,
+.header-user-placeholder {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid #f97316;
+  background-color: #ffffff;
+  color: #000000;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-user-name {
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .header-user-info {
+    justify-content: center;
+    margin-right: 0;
+    margin-bottom: 8px;
+  }
+}

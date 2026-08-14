@@ -1,0 +1,249 @@
+/* src/styles/pages/_home.css */
+
+/* Define as fontes padrão para o corpo do texto e títulos */
+:root {
+  /* ... (seus outros variáveis de cores, espaçamento, etc.) ... */
+  --font-heading: 'Bebas Neue', sans-serif;
+  --font-body: 'Poppins', sans-serif;
+}
+
+.home-page {
+  text-align: center;
+  padding: var(--spacing-xxl) var(--spacing-md);
+  background-color: var(--page-background); /* Usando a nova variável de cor de fundo */
+  font-family: var(--font-body); /* Aplica a fonte Poppins como padrão */
+}
+
+.home-page h1 {
+  font-size: var(--font-size-xxl);
+  color: var(--text-color);
+  margin-bottom: var(--spacing-md);
+  font-family: var(--font-heading); /* Aplica a fonte Bebas Neue para o título */
+  letter-spacing: 2px; /* Adiciona um espaçamento para o título ter mais impacto */
+  text-transform: uppercase;
+}
+
+.home-page p {
+  font-size: var(--font-size-large);
+  color: var(--text-color-light);
+  max-width: 600px;
+  margin: 0 auto var(--spacing-xl) auto;
+  font-family: var(--font-body); /* Garante que o parágrafo usa a fonte de corpo */
+}
+
+/* Estilo para a seção de busca */
+.search-section {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.search-section .input-group {
+  margin-bottom: 0;
+  flex-grow: 1;
+}
+
+.search-section .input-field {
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  font-size: var(--font-size-medium);
+  font-family: var(--font-body); /* Garante que o input também usa Poppins */
+}
+
+/* Media query para a seção de busca em telas menores */
+@media (max-width: 768px) {
+  .search-section {
+    flex-direction: column;
+    align-items: center;
+  }
+  .search-section .input-field,
+  .search-section .button {
+    width: 100%;
+  }
+}
+
+/* Estilo para a grade de cards */
+.academies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Auto-ajustável e responsivo */
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-xl);
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Ajustes para telas muito pequenas, para que o grid tenha apenas 1 coluna */
+@media (max-width: 600px) {
+  .academies-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Complementos da Home movidos do main.css */
+
+.card-image-placeholder {
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(135deg, #000000, #f97316);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #000000;
+}
+
+.card-image-placeholder span {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 42px;
+  font-weight: bold;
+  border: 3px solid #f97316;
+}
+
+.card-categories {
+  font-size: 13px;
+  color: #333333;
+  margin: 8px 0 12px 0;
+}
+
+.home-filters-section {
+  max-width: 900px;
+  margin: 22px auto 10px auto;
+  padding: 18px 20px;
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.home-filters-section h3 {
+  margin: 0 0 14px 0;
+  color: #000000;
+  font-size: 22px;
+  letter-spacing: 1px;
+}
+
+.home-filters-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.home-filter-button {
+  background-color: #ffffff;
+  color: #000000;
+  border: 1px solid #000000;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.home-filter-button:hover {
+  background-color: #f97316;
+  color: #000000;
+  border-color: #f97316;
+  transform: translateY(-1px);
+}
+
+.home-filter-button.active {
+  background-color: #f97316;
+  color: #000000;
+  border-color: #f97316;
+}
+
+.home-clear-filters-button {
+  margin-top: 16px;
+  background-color: #000000;
+  color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.home-clear-filters-button:hover {
+  background-color: #f97316;
+  color: #000000;
+  border-color: #f97316;
+}
+
+.home-search-summary {
+  max-width: 900px;
+  margin: 16px auto 0 auto;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.home-search-summary span {
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 999px;
+  padding: 7px 14px;
+}
+
+.home-location-info {
+  max-width: 900px;
+  margin: 18px auto 10px auto;
+  padding: 12px 16px;
+  background-color: #fff7ed;
+  border: 1px solid #f97316;
+  border-radius: 8px;
+  color: #000000;
+  text-align: center;
+  font-size: 14px;
+}
+
+.home-location-info strong {
+  color: #000000;
+}
+
+.card-distance {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000000;
+  margin: 6px 0 10px 0;
+}
+
+@media (max-width: 600px) {
+  .home-filters-section {
+    max-width: 95%;
+    padding: 14px;
+  }
+
+  .home-filter-button {
+    width: 100%;
+  }
+
+  .home-search-summary {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .home-search-summary span {
+    width: 90%;
+    text-align: center;
+  }
+}

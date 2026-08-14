@@ -1,0 +1,147 @@
+/* src/styles/pages/_register.css */
+
+.register-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Alinha o formulário mais para cima */
+  padding: var(--spacing-xxl) var(--spacing-lg);
+  min-height: calc(100vh - var(--header-height, 80px) - var(--footer-height, 80px));
+  /* Aplica a fonte padrão de corpo para toda a página */
+  font-family: var(--font-body);
+}
+
+.register-form-container {
+  background-color: #ffffff;
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-md);
+  /* Aprimoramentos visuais para sombra e transição */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Efeito de movimento no hover */
+.register-form-container:hover {
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: 0 50px 120px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo para a logo e o cabeçalho do formulário */
+.register-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--spacing-lg); /* Espaçamento entre o cabeçalho e o formulário */
+}
+
+.register-logo {
+  width: 250px; /* Tamanho da logo */
+  height: auto;
+  margin-bottom: var(--spacing-md); /* Espaço entre a logo e o título */
+}
+
+/* Aplica a fonte Bebas Neue para o título principal */
+.register-form-container h1 {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  color: var(--text-color);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Aplica a fonte Bebas Neue para o botão de cadastro */
+.register-form-container .button-primary {
+  width: 100%;
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  font-size: var(--font-size-medium);
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Garante que os textos e links usem a fonte Poppins */
+.register-form-container p,
+.register-form-container p .link {
+  font-family: var(--font-body);
+}
+
+.register-form-container p {
+  margin-top: var(--spacing-lg);
+  font-size: var(--font-size-small);
+  color: var(--text-color-light);
+}
+
+.register-form-container p .link {
+  color: var(--primary-color);
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.register-form-container p .link:hover {
+  color: var(--secondary-color);
+}
+
+/* Media query para telas menores */
+@media (max-width: 600px) {
+  .register-page {
+    padding: var(--spacing-lg) var(--spacing-sm);
+  }
+
+  .register-form-container {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .register-form-container h1 {
+    font-size: var(--font-size-large);
+  }
+}
+
+/* --- ESTILOS DO PAINEL DO GERENTE --- */
+.manager-panel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 30px; 
+}
+
+.academia-card-list-item {
+  background-color: #fff;
+  /* Borda mais escura e definida para separar bem do fundo */
+  border: 1px solid #c4c4c4; 
+  border-radius: 12px; 
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  
+  /* Sombra inicial mais forte e visível antes mesmo do mouse passar */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  
+  transition: all 0.3s ease; 
+  position: relative; 
+  z-index: 1;
+}
+
+.academia-card-list-item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+  border-color: rgba(26, 43, 76, 0.2); 
+  z-index: 2; 
+}
+
+/* Estilo para as mensagens de erro abaixo dos inputs */
+.error-message {
+    color: #dc3545; /* Um vermelho vibrante e padrão para erros */
+    font-size: 14px;
+    margin-top: 5px;
+    font-weight: 500;
+    display: block;
+    text-align: left; /* Garante que fique alinhado com o input */
+    font-family: 'Poppins', sans-serif; /* Mantém a identidade do site */
+}

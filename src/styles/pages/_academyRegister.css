@@ -1,0 +1,587 @@
+/* src/styles/pages/_academyRegister.css */
+
+/* Reutiliza a base de layout dos formulários de login/cadastro */
+.academy-register-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Alinha o formulário mais para cima */
+  padding: var(--spacing-xxl) var(--spacing-lg);
+  min-height: calc(100vh - var(--header-height, 80px) - var(--footer-height, 80px));
+  /* Aplica a fonte padrão de corpo para toda a página */
+  font-family: var(--font-body);
+}
+
+.academy-register-form-container {
+  background-color: #ffffff;
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-md);
+  /* Aprimoramentos visuais para sombra e transição */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  max-width: 600px; /* Aumentado para dar respiro aos campos */
+  width: 95%;       /* Garante que não cole nas bordas em telas médias */
+  text-align: left; /* Alinhamento à esquerda fica mais profissional em forms largos */
+}
+
+/* Efeito de movimento no hover */
+.academy-register-form-container:hover {
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: 0 50px 120px rgba(0, 0, 0, 0.2);
+}
+
+/* Novo estilo para a logo e o cabeçalho do formulário */
+.academy-register-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--spacing-lg); /* Espaçamento entre o cabeçalho e o formulário */
+}
+
+.academy-register-logo {
+  width: 250px; /* Tamanho da logo */
+  height: auto;
+  margin-bottom: var(--spacing-md); /* Espaço entre a logo e o título */
+}
+
+/* Aplica a fonte Bebas Neue para o título principal */
+.academy-register-form-container h1 {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-color);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Estilo para áreas de texto (textarea) */
+.textarea-field {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-base);
+  color: var(--text-color);
+  background-color: rgb(255, 255, 255);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  min-height: 100px; /* Altura mínima para o campo de descrição */
+  resize: vertical; /* Permite redimensionamento vertical */
+  font-family: var(--font-body); /* Garante que o texto use a fonte de corpo */
+}
+
+.textarea-field:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb, 76, 175, 80), 0.2);
+}
+
+/* Estilo para seletores (select) */
+.select-field {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-base);
+  color: var(--text-color);
+  background-color: rgb(255, 255, 255);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  font-family: var(--font-body); /* Garante que o texto use a fonte de corpo */
+}
+
+.select-field:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb, 76, 175, 80), 0.2);
+}
+
+/* Checkbox/Checkbox Group */
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap; /* Permite que os checkboxes quebrem linha */
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  justify-content: flex-start; /* Alinha à esquerda */
+  padding: var(--spacing-sm) 0;
+  border-top: 1px solid var(--border-color-light);
+  border-bottom: 1px solid var(--border-color-light);
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  font-size: var(--font-size-base);
+  color: var(--text-color-light);
+  cursor: pointer;
+  font-family: var(--font-body); /* Garante que o texto dos checkboxes use a fonte de corpo */
+}
+
+.checkbox-group input[type="checkbox"] {
+  margin-right: var(--spacing-xxs);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* Aplica a fonte Bebas Neue para o botão de cadastro */
+.academy-register-form-container .button-primary {
+  width: 100%;
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  font-size: var(--font-size-medium);
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Estilo para o link de login */
+.academy-register-form-container p, .academy-register-form-container .link {
+  font-family: var(--font-body);
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+  .academy-register-page {
+    padding: var(--spacing-lg) var(--spacing-sm);
+  }
+
+  .academy-register-form-container {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .academy-register-form-container h1 {
+    font-size: var(--font-size-large);
+  }
+
+  .checkbox-group {
+    flex-direction: column; /* Empilha checkboxes em telas menores */
+    align-items: flex-start;
+  }
+}
+
+.checkbox-section {
+  margin-top: 28px;
+  margin-bottom: 28px;
+  padding: 22px;
+  border: 1px solid #d6dde8;
+  border-radius: 10px;
+  background-color: #f8fafc;
+}
+
+.checkbox-section h3 {
+  margin: 0 0 6px 0;
+  color: #08294d;
+  font-size: 22px;
+  letter-spacing: 1px;
+}
+
+.checkbox-section p {
+  margin: 0 0 18px 0;
+  color: #5f6b7a;
+  font-size: 14px;
+}
+
+.checkbox-grid-improved {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.checkbox-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #ccd6e2;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #08294d;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.checkbox-card:hover {
+  border-color: #08294d;
+  background-color: #eef4fb;
+}
+
+.checkbox-card input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #08294d;
+}
+
+.checkbox-card span {
+  font-size: 14px;
+}
+
+.academy-form-actions {
+  display: flex;
+  gap: 18px;
+  margin-top: 34px;
+  align-items: center;
+}
+
+.academy-form-actions button {
+  flex: 1;
+}
+
+.button-cancel {
+  background-color: #6c757d;
+  color: #ffffff;
+  border: none;
+}
+
+.button-cancel:hover {
+  background-color: #5a6268;
+}
+
+@media (max-width: 600px) {
+  .academy-form-actions {
+    flex-direction: column;
+  }
+
+  .academy-form-actions button {
+    width: 100%;
+  }
+
+  .checkbox-grid-improved {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Layout mais largo para cadastro/edição de academia */
+
+.academy-register-form-container {
+  width: 100%;
+  max-width: 1100px;
+  padding: 36px 46px;
+}
+
+.academy-form-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: 22px;
+  row-gap: 12px;
+}
+
+.academy-field-full {
+  grid-column: span 12;
+}
+
+.academy-field-half {
+  grid-column: span 6;
+}
+
+.academy-field-third {
+  grid-column: span 4;
+}
+
+.academy-field-small {
+  grid-column: span 3;
+}
+
+.academy-field-large {
+  grid-column: span 9;
+}
+
+.academy-form-section-title {
+  grid-column: span 12;
+  margin-top: 20px;
+  margin-bottom: 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #d6dde8;
+  color: #08294d;
+  font-size: 22px;
+  letter-spacing: 1px;
+}
+
+.academy-form-section-title:first-child {
+  margin-top: 0;
+}
+
+.academy-form-actions {
+  display: flex;
+  gap: 24px;
+  margin-top: 34px;
+  align-items: center;
+}
+
+.academy-form-actions button {
+  flex: 1;
+  min-height: 44px;
+}
+
+.button-cancel {
+  background-color: #6c757d;
+  color: #ffffff;
+  border: none;
+}
+
+.button-cancel:hover {
+  background-color: #5a6268;
+}
+
+@media (max-width: 900px) {
+  .academy-register-form-container {
+    max-width: 95%;
+    padding: 28px 24px;
+  }
+
+  .academy-field-half,
+  .academy-field-third,
+  .academy-field-small,
+  .academy-field-large {
+    grid-column: span 12;
+  }
+}
+
+@media (max-width: 600px) {
+  .academy-form-actions {
+    flex-direction: column;
+  }
+
+  .academy-form-actions button {
+    width: 100%;
+  }
+}
+
+/* Upload de fotos da academia */
+.academy-photo-upload-section {
+  margin-top: 28px;
+  padding: 24px;
+  border: 1px solid #000000;
+  border-radius: 12px;
+  background-color: #ffffff;
+}
+
+.academy-photo-upload-header {
+  margin-bottom: 18px;
+  border-bottom: 1px solid #dddddd;
+  padding-bottom: 12px;
+}
+
+.academy-photo-upload-header h2 {
+  margin: 0 0 6px 0;
+  color: #000000;
+  font-size: 24px;
+}
+
+.academy-photo-upload-header p {
+  margin: 0;
+  color: #666666;
+  font-size: 14px;
+}
+
+.academy-photo-upload-box {
+  min-height: 150px;
+  border: 2px dashed #f97316;
+  border-radius: 12px;
+  background-color: #fff7ed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.academy-photo-upload-box:hover {
+  background-color: #ffedd5;
+  border-color: #000000;
+  transform: translateY(-2px);
+}
+
+.academy-photo-upload-icon {
+  width: 72px;
+  height: 72px;
+  min-width: 72px;
+  border-radius: 50%;
+  background-color: #000000;
+  color: #f97316;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.academy-photo-upload-text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.academy-photo-upload-text strong {
+  font-size: 18px;
+  color: #000000;
+}
+
+.academy-photo-upload-text span {
+  font-size: 14px;
+  color: #333333;
+}
+
+.academy-photo-upload-text small {
+  font-size: 12px;
+  color: #666666;
+}
+
+.academy-photo-upload-input {
+  display: none;
+}
+
+.academy-photo-preview-area {
+  margin-top: 22px;
+}
+
+.academy-photo-preview-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  gap: 12px;
+}
+
+.academy-photo-preview-title h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #000000;
+}
+
+.academy-photo-preview-title span {
+  background-color: #000000;
+  color: #ffffff;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.academy-photo-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+.academy-photo-preview-card {
+  position: relative;
+  border: 1px solid #dddddd;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.academy-photo-preview {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+}
+
+.academy-photo-preview-badge {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  background-color: rgba(0, 0, 0, 0.82);
+  color: #ffffff;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .academy-photo-upload-box {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .academy-photo-preview-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Complemento para edição de fotos da academia */
+.academy-photo-current-area {
+  margin-bottom: 22px;
+}
+
+.academy-photo-empty-state {
+  margin-bottom: 22px;
+  padding: 22px;
+  border: 1px dashed #d9d9d9;
+  border-radius: 12px;
+  background-color: #fafafa;
+  color: #333333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.academy-photo-empty-icon {
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  background-color: #000000;
+  color: #f97316;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.academy-photo-empty-state strong {
+  font-size: 17px;
+  color: #000000;
+  margin-bottom: 5px;
+}
+
+.academy-photo-empty-state span {
+  font-size: 14px;
+  color: #666666;
+}
+
+.academy-photo-remove-button {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  border: none;
+  border-radius: 999px;
+  padding: 6px 12px;
+  background-color: #dc3545;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.academy-photo-remove-button:hover {
+  transform: scale(1.05);
+  background-color: #b02a37;
+}
+
+.academy-photo-edit-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.academy-photo-edit-actions button {
+  min-width: 180px;
+}
+
+@media (max-width: 768px) {
+  .academy-photo-edit-actions {
+    flex-direction: column;
+  }
+
+  .academy-photo-edit-actions button {
+    width: 100%;
+  }
+}

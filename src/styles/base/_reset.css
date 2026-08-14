@@ -1,0 +1,49 @@
+/* src/styles/base/_reset.css */
+
+/* Box sizing para facilitar o layout */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Remove padding e margin padrão */
+body, h1, h2, h3, h4, h5, h6, p, ul, ol, li, figure, figcaption, blockquote, dl, dd {
+  margin: 0;
+  padding: 0;
+}
+
+/* Define o tamanho da fonte padrão para o elemento raiz (para usar rem) */
+html {
+  font-size: 100%; /* 1rem = 16px (padrão do navegador) */
+}
+
+/* Elementos de lista sem estilos padrão */
+ul, ol {
+  list-style: none;
+}
+
+/* Redefine links */
+a {
+  text-decoration: none;
+  color: inherit; /* Links herdam a cor do texto pai por padrão */
+}
+
+/* Redefine campos de formulário e botões */
+button, input, optgroup, select, textarea {
+  font-family: inherit; /* Campos de formulário e botões herdam a fonte do body */
+  font-size: 100%;
+  line-height: 1.15; /* Consistência de linha */
+  margin: 0; /* Remover margin em Firefox */
+}
+
+button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* Imagens responsivas */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}

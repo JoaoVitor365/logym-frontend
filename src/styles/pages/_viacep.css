@@ -1,0 +1,21 @@
+/* src/styles/pages/_viacep.css */
+
+.viacep-address-box,
+.profile-viacep-box {
+  margin: 12px 0 18px 0;
+  padding: 14px;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  background-color: #fafafa;
+}
+
+.viacep-address-box .input-group {
+  margin-bottom: 10px;
+}
+
+.viacep-address-box input:disabled,
+.profile-viacep-box input:disabled {
+  background-color: #f1f1f1;
+  color: #333333;
+  cursor: not-allowed;
+}
