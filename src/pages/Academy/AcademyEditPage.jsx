@@ -1,4 +1,4 @@
-// src/pages/AcademyEditPage.jsx
+﻿// src/pages/AcademyEditPage.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -7,6 +7,7 @@ import Button from '../../components/Button/Button';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import AcademiaService from '../../services/AcademiaService';
 import FotoAcademiaService from '../../services/FotoAcademiaService';
+import CategoriaService from '../../services/CategoriaService';
 import { isValidCNPJ } from '../../utils/documentValidators';
 
 import '../../styles/pages/_academyRegister.css';
@@ -51,6 +52,35 @@ const formatCelular = (value) => {
   return rawValue.replace(/^(\d{2})(\d{5})(\d)/, '($1) $2-$3');
 };
 
+const normalizarTexto = (texto) => {
+  return String(texto || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+};
+
+const normalizarId = (idCategoria) => Number(idCategoria);
+
+const getCategoriaIdsSelecionadas = (academia, categoriasAtivas) => {
+  if (Array.isArray(academia.categoriaIds) && academia.categoriaIds.length > 0) {
+    return academia.categoriaIds.map(normalizarId).filter(Number.isFinite);
+  }
+
+  if (!academia.categorias) {
+    return [];
+  }
+
+  const nomesAntigos = academia.categorias
+    .split(',')
+    .map((item) => normalizarTexto(item.trim()))
+    .filter(Boolean);
+
+  return categoriasAtivas
+    .filter((categoria) => nomesAntigos.includes(normalizarTexto(categoria.nome)))
+    .map((categoria) => normalizarId(categoria.id))
+    .filter(Number.isFinite);
+};
+
 function AcademyEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -69,7 +99,7 @@ function AcademyEditPage() {
     celular: '',
     email: '',
     descricao: '',
-    categorias: [],
+    categoriaIds: [],
     facilidades: []
   });
 
@@ -84,18 +114,8 @@ function AcademyEditPage() {
   const [previewNovasFotos, setPreviewNovasFotos] = useState([]);
   const [salvandoFotos, setSalvandoFotos] = useState(false);
 
-  const categoryOptions = [
-    'Musculação',
-    'Crossfit',
-    'Pilates',
-    'Yoga',
-    'Funcional',
-    'Natação',
-    'Lutas',
-    'Dança',
-    'Spinning',
-    'Personal Trainer'
-  ];
+  const [categoryOptions, setCategoryOptions] = useState([]);
+  const [categoriasMessage, setCategoriasMessage] = useState('');
 
   const facilityOptions = [
     'Estacionamento',
@@ -115,12 +135,29 @@ function AcademyEditPage() {
       try {
         setLoading(true);
 
-        const [academiaResponse, fotosResponse] = await Promise.all([
+        const [academiaResponse, fotosResponse, categoriasResponse] = await Promise.all([
           AcademiaService.findById(id),
-          FotoAcademiaService.listarPorAcademia(id)
+          FotoAcademiaService.listarPorAcademia(id),
+          CategoriaService.findAtivas().catch((error) => {
+            console.error('Erro ao carregar categorias:', error);
+            setCategoriasMessage('Não foi possível carregar as categorias agora.');
+            return { data: [] };
+          })
         ]);
 
         const academia = academiaResponse.data;
+        const dadosCategorias = categoriasResponse.data;
+        const categoriasAtivas = Array.isArray(dadosCategorias)
+          ? dadosCategorias
+          : Array.isArray(dadosCategorias?.content)
+            ? dadosCategorias.content
+            : [];
+
+        if (!Array.isArray(dadosCategorias) && !Array.isArray(dadosCategorias?.content)) {
+          setCategoriasMessage('Não foi possível carregar as categorias agora.');
+        }
+
+        setCategoryOptions(categoriasAtivas);
 
         setFormData({
           nome: academia.nome || '',
@@ -136,9 +173,7 @@ function AcademyEditPage() {
           celular: formatCelular(academia.celular || ''),
           email: academia.email || '',
           descricao: academia.descricao || '',
-          categorias: academia.categorias
-            ? academia.categorias.split(',').map((item) => item.trim()).filter(Boolean)
-            : [],
+          categoriaIds: getCategoriaIdsSelecionadas(academia, categoriasAtivas),
           facilidades: academia.facilidades
             ? academia.facilidades.split(',').map((item) => item.trim()).filter(Boolean)
             : []
@@ -476,7 +511,7 @@ function AcademyEditPage() {
         celular: formData.celular,
         email: formData.email,
         descricao: formData.descricao,
-        categorias: formData.categorias.join(', '),
+        categoriaIds: formData.categoriaIds,
         facilidades: formData.facilidades.join(', ')
       };
 
@@ -726,16 +761,22 @@ function AcademyEditPage() {
 
             <div className="checkbox-grid-improved">
               {categoryOptions.map((category) => (
-                <label key={category} className="checkbox-card">
+                <label key={category.id} className="checkbox-card">
                   <input
                     type="checkbox"
-                    checked={formData.categorias.includes(category)}
-                    onChange={() => handleCheckboxChange('categorias', category)}
+                    checked={formData.categoriaIds.includes(normalizarId(category.id))}
+                    onChange={() => handleCheckboxChange('categoriaIds', normalizarId(category.id))}
                   />
-                  <span>{category}</span>
+                  <span>{category.nome}</span>
                 </label>
               ))}
             </div>
+
+            {categoriasMessage && (
+              <p className="academy-checkbox-message academy-checkbox-message-error">
+                {categoriasMessage}
+              </p>
+            )}
           </div>
 
           <div className="checkbox-section">
@@ -922,3 +963,5 @@ function AcademyEditPage() {
 }
 
 export default AcademyEditPage;
+
+

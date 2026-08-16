@@ -168,6 +168,17 @@
   border-color: #f97316;
 }
 
+.home-filter-message {
+  max-width: none;
+  margin: 12px auto 0 auto;
+  font-size: 13px;
+  color: #333333;
+}
+
+.home-filter-message-error {
+  color: #721c24;
+}
+
 .home-clear-filters-button {
   margin-top: 16px;
   background-color: #000000;

@@ -1,10 +1,10 @@
-// src/components/Card/Card.jsx
+﻿// src/components/Card/Card.jsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../Button/Button';
 import FavoritoService from '../../services/FavoritoService';
 
-function Card({ academy, onFavoriteChange }) {
+function Card({ academy, onFavoriteChange, categoriasAtivas }) {
   const [favoritado, setFavoritado] = useState(false);
   const [loadingFavorito, setLoadingFavorito] = useState(false);
 
@@ -56,6 +56,24 @@ function Card({ academy, onFavoriteChange }) {
 
     return Number(academy.nota).toFixed(1);
   };
+
+  const getCategoriasExibidas = () => {
+    const categoriaIds = Array.isArray(academy.categoriaIds)
+      ? academy.categoriaIds.map((categoriaId) => Number(categoriaId)).filter(Number.isFinite)
+      : [];
+
+    if (categoriaIds.length > 0 && Array.isArray(categoriasAtivas)) {
+      return categoriasAtivas
+        .filter((categoria) => categoriaIds.includes(Number(categoria.id)))
+        .map((categoria) => categoria.nome)
+        .filter(Boolean)
+        .join(', ');
+    }
+
+    return academy.categorias || '';
+  };
+
+  const categoriasExibidas = getCategoriasExibidas();
 
   const handleToggleFavorito = async () => {
     if (!usuarioLogado) {
@@ -122,9 +140,9 @@ function Card({ academy, onFavoriteChange }) {
           )}
         </p>
 
-        {academy.categorias && (
+        {categoriasExibidas && (
           <p className="card-categories">
-            {academy.categorias}
+            {categoriasExibidas}
           </p>
         )}
 
@@ -139,3 +157,4 @@ function Card({ academy, onFavoriteChange }) {
 }
 
 export default Card;
+

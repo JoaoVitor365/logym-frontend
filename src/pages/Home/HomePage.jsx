@@ -1,5 +1,5 @@
-// src/pages/HomePage.jsx
-import React, { useEffect, useMemo, useState } from 'react';
+﻿// src/pages/HomePage.jsx
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Input from '../../components/Input/Input';
@@ -7,13 +7,15 @@ import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import GerenteService from '../../services/GerenteService';
 import AcademiaService from '../../services/AcademiaService';
+import CategoriaService from '../../services/CategoriaService';
 
 function HomePage({ currentUser }) {
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [termoPesquisado, setTermoPesquisado] = useState('');
-  const [filtrosAtivos, setFiltrosAtivos] = useState([]);
+  const [categoriasSelecionadas, setCategoriasSelecionadas] = useState([]);
+  const [facilidadesSelecionadas, setFacilidadesSelecionadas] = useState([]);
 
   const [gerente, setGerente] = useState(null);
   const [verificandoGerente, setVerificandoGerente] = useState(false);
@@ -22,21 +24,16 @@ function HomePage({ currentUser }) {
   const [loadingAcademias, setLoadingAcademias] = useState(true);
   const [mensagemAcademias, setMensagemAcademias] = useState('');
 
-  const filtros = [
-    'Musculação',
-    'Crossfit',
-    'Pilates',
-    'Yoga',
-    'Funcional',
-    'Natação',
-    'Lutas',
-    'Dança',
-    'Spinning',
+  const [categoriasAtivas, setCategoriasAtivas] = useState([]);
+  const [loadingCategorias, setLoadingCategorias] = useState(true);
+  const [mensagemCategorias, setMensagemCategorias] = useState('');
+
+  const filtrosFacilidades = [
     'Wi-Fi',
     'Estacionamento',
     'Acessibilidade',
     'Ar Condicionado',
-    'Vestiário'
+    'Vestiario'
   ];
 
   useEffect(() => {
@@ -104,14 +101,67 @@ function HomePage({ currentUser }) {
     carregarAcademias();
   }, []);
 
-  const normalizarTexto = (texto) => {
+  useEffect(() => {
+    const carregarCategorias = async () => {
+      setLoadingCategorias(true);
+      setMensagemCategorias('');
+
+      try {
+        const response = await CategoriaService.findAtivas();
+        const dados = response.data;
+
+        if (Array.isArray(dados)) {
+          setCategoriasAtivas(dados);
+        } else if (Array.isArray(dados?.content)) {
+          setCategoriasAtivas(dados.content);
+        } else {
+          console.error('Resposta inesperada ao carregar categorias:', dados);
+          setCategoriasAtivas([]);
+          setMensagemCategorias('Não foi possível carregar as categorias.');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar categorias:', error);
+        setCategoriasAtivas([]);
+        setMensagemCategorias('Não foi possível carregar as categorias.');
+      } finally {
+        setLoadingCategorias(false);
+      }
+    };
+
+    carregarCategorias();
+  }, []);
+
+  const normalizarTexto = useCallback((texto) => {
     return String(texto || '')
       .toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '');
-  };
+  }, []);
 
-  const academiaContemTermo = (academia, termo) => {
+  const normalizarId = useCallback((idCategoria) => Number(idCategoria), []);
+
+  const getCategoriaIdsAcademia = useCallback((academia) => {
+    if (!Array.isArray(academia?.categoriaIds)) {
+      return [];
+    }
+
+    return academia.categoriaIds.map(normalizarId).filter(Number.isFinite);
+  }, [normalizarId]);
+
+  const getNomesCategoriasAcademia = useCallback((academia) => {
+    const categoriaIdsAcademia = getCategoriaIdsAcademia(academia);
+
+    if (categoriaIdsAcademia.length === 0) {
+      return '';
+    }
+
+    return categoriasAtivas
+      .filter((categoria) => categoriaIdsAcademia.includes(normalizarId(categoria.id)))
+      .map((categoria) => categoria.nome)
+      .join(' ');
+  }, [categoriasAtivas, getCategoriaIdsAcademia, normalizarId]);
+
+  const academiaContemTermo = useCallback((academia, termo) => {
     const textoPesquisavel = normalizarTexto(`
       ${academia.nome}
       ${academia.descricao}
@@ -126,11 +176,23 @@ function HomePage({ currentUser }) {
       ${academia.celular}
       ${academia.email}
       ${academia.categorias}
+      ${getNomesCategoriasAcademia(academia)}
       ${academia.facilidades}
     `);
 
     return textoPesquisavel.includes(termo);
-  };
+  }, [getNomesCategoriasAcademia, normalizarTexto]);
+
+  const academiaPossuiCategoria = useCallback((academia, categoria) => {
+    const categoriaId = normalizarId(categoria.id);
+    const categoriaIdsAcademia = getCategoriaIdsAcademia(academia);
+
+    if (categoriaIdsAcademia.length > 0 && Number.isFinite(categoriaId)) {
+      return categoriaIdsAcademia.includes(categoriaId);
+    }
+
+    return academiaContemTermo(academia, normalizarTexto(categoria.nome));
+  }, [academiaContemTermo, getCategoriaIdsAcademia, normalizarId, normalizarTexto]);
 
   const academiasFiltradas = useMemo(() => {
     const termoBusca = normalizarTexto(termoPesquisado.trim());
@@ -142,13 +204,23 @@ function HomePage({ currentUser }) {
         ? academiaContemTermo(academia, termoBusca)
         : true;
 
-      const passaNosFiltros = filtrosAtivos.length > 0
-        ? filtrosAtivos.every((filtro) =>
-          academiaContemTermo(academia, normalizarTexto(filtro))
+      const passaNasCategorias = categoriasSelecionadas.length > 0
+        ? categoriasSelecionadas.every((categoriaId) => {
+          const categoria = categoriasAtivas.find(
+            (item) => normalizarId(item.id) === normalizarId(categoriaId)
+          );
+
+          return categoria ? academiaPossuiCategoria(academia, categoria) : false;
+        })
+        : true;
+
+      const passaNasFacilidades = facilidadesSelecionadas.length > 0
+        ? facilidadesSelecionadas.every((facilidade) =>
+          academiaContemTermo(academia, normalizarTexto(facilidade))
         )
         : true;
 
-      return passaNaBusca && passaNosFiltros;
+      return passaNaBusca && passaNasCategorias && passaNasFacilidades;
     });
 
     return [...filtradas].sort((a, b) => {
@@ -160,7 +232,13 @@ function HomePage({ currentUser }) {
   }, [
     academias,
     termoPesquisado,
-    filtrosAtivos
+    categoriasSelecionadas,
+    facilidadesSelecionadas,
+    categoriasAtivas,
+    academiaContemTermo,
+    academiaPossuiCategoria,
+    normalizarTexto,
+    normalizarId
   ]);
 
   const handleSearch = (e) => {
@@ -168,13 +246,25 @@ function HomePage({ currentUser }) {
     setTermoPesquisado(searchTerm);
   };
 
-  const aplicarFiltro = (filtro) => {
-    setFiltrosAtivos((filtrosAtuais) => {
-      if (filtrosAtuais.includes(filtro)) {
-        return filtrosAtuais.filter((item) => item !== filtro);
+  const alternarCategoria = (categoriaId) => {
+    const idNormalizado = normalizarId(categoriaId);
+
+    setCategoriasSelecionadas((categoriasAtuais) => {
+      if (categoriasAtuais.includes(idNormalizado)) {
+        return categoriasAtuais.filter((item) => item !== idNormalizado);
       }
 
-      return [...filtrosAtuais, filtro];
+      return [...categoriasAtuais, idNormalizado];
+    });
+  };
+
+  const alternarFacilidade = (facilidade) => {
+    setFacilidadesSelecionadas((facilidadesAtuais) => {
+      if (facilidadesAtuais.includes(facilidade)) {
+        return facilidadesAtuais.filter((item) => item !== facilidade);
+      }
+
+      return [...facilidadesAtuais, facilidade];
     });
   };
 
@@ -186,8 +276,15 @@ function HomePage({ currentUser }) {
   const limparTudo = () => {
     setSearchTerm('');
     setTermoPesquisado('');
-    setFiltrosAtivos([]);
+    setCategoriasSelecionadas([]);
+    setFacilidadesSelecionadas([]);
   };
+
+  const categoriasSelecionadasNomes = categoriasSelecionadas
+    .map((categoriaId) => categoriasAtivas.find(
+      (categoria) => normalizarId(categoria.id) === normalizarId(categoriaId)
+    )?.nome)
+    .filter(Boolean);
 
   return (
     <div className="home-page">
@@ -270,7 +367,7 @@ function HomePage({ currentUser }) {
           type="text"
           id="search"
           name="search"
-          placeholder="Ex: Musculação, Crossfit, Paulista, Wi-Fi, Consolação"
+          placeholder="Ex: categoria, bairro, Wi-Fi, Paulista"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="search-input"
@@ -295,19 +392,44 @@ function HomePage({ currentUser }) {
         <h3>Filtros rápidos</h3>
 
         <div className="home-filters-list">
-          {filtros.map((filtro) => (
+          {categoriasAtivas.map((categoria) => {
+            const categoriaId = normalizarId(categoria.id);
+
+            return (
+              <button
+                key={categoria.id}
+                type="button"
+                className={`home-filter-button ${categoriasSelecionadas.includes(categoriaId) ? 'active' : ''}`}
+                onClick={() => alternarCategoria(categoria.id)}
+              >
+                {categoria.nome}
+              </button>
+            );
+          })}
+
+          {filtrosFacilidades.map((filtro) => (
             <button
               key={filtro}
               type="button"
-              className={`home-filter-button ${filtrosAtivos.includes(filtro) ? 'active' : ''}`}
-              onClick={() => aplicarFiltro(filtro)}
+              className={`home-filter-button ${facilidadesSelecionadas.includes(filtro) ? 'active' : ''}`}
+              onClick={() => alternarFacilidade(filtro)}
             >
               {filtro}
             </button>
           ))}
         </div>
 
-        {(termoPesquisado || filtrosAtivos.length > 0) && (
+        {loadingCategorias && (
+          <p className="home-filter-message">Carregando categorias...</p>
+        )}
+
+        {mensagemCategorias && (
+          <p className="home-filter-message home-filter-message-error">
+            {mensagemCategorias}
+          </p>
+        )}
+
+        {(termoPesquisado || categoriasSelecionadas.length > 0 || facilidadesSelecionadas.length > 0) && (
           <button
             type="button"
             className="home-clear-filters-button"
@@ -318,7 +440,7 @@ function HomePage({ currentUser }) {
         )}
       </div>
 
-      {(termoPesquisado || filtrosAtivos.length > 0) && !loadingAcademias && (
+      {(termoPesquisado || categoriasSelecionadas.length > 0 || facilidadesSelecionadas.length > 0) && !loadingAcademias && (
         <div className="home-search-summary">
           {termoPesquisado && (
             <span>
@@ -326,9 +448,15 @@ function HomePage({ currentUser }) {
             </span>
           )}
 
-          {filtrosAtivos.length > 0 && (
+          {categoriasSelecionadasNomes.length > 0 && (
             <span>
-              Filtros: <strong>{filtrosAtivos.join(' + ')}</strong>
+              Categorias: <strong>{categoriasSelecionadasNomes.join(' + ')}</strong>
+            </span>
+          )}
+
+          {facilidadesSelecionadas.length > 0 && (
+            <span>
+              Facilidades: <strong>{facilidadesSelecionadas.join(' + ')}</strong>
             </span>
           )}
 
@@ -406,6 +534,7 @@ function HomePage({ currentUser }) {
             <Card
               key={academia.id}
               academy={academia}
+              categoriasAtivas={categoriasAtivas}
             />
           ))}
         </div>
@@ -415,3 +544,7 @@ function HomePage({ currentUser }) {
 }
 
 export default HomePage;
+
+
+
+

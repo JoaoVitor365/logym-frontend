@@ -1,4 +1,4 @@
-// src/pages/Admin/AdminPanelPage.jsx
+﻿// src/pages/Admin/AdminPanelPage.jsx
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,6 +7,7 @@ import UsuarioService from '../../services/UsuarioService';
 import AcademiaService from '../../services/AcademiaService';
 import GerenteService from '../../services/GerenteService';
 import AvaliacaoService from '../../services/AvaliacaoService';
+import CategoriaService from '../../services/CategoriaService';
 
 import AdminSidebar from './AdminSidebar';
 import AdminDashboard from './AdminDashboard';
@@ -14,6 +15,7 @@ import AdminUsersSection from './AdminUsersSection';
 import AdminManagersSection from './AdminManagersSection';
 import AdminAcademiesSection from './AdminAcademiesSection';
 import AdminReviewsSection from './AdminReviewsSection';
+import AdminCategoriesSection from './AdminCategoriesSection';
 
 function AdminPanelPage({ currentUser }) {
   const navigate = useNavigate();
@@ -24,6 +26,7 @@ function AdminPanelPage({ currentUser }) {
   const [academias, setAcademias] = useState([]);
   const [gerentes, setGerentes] = useState([]);
   const [avaliacoes, setAvaliacoes] = useState([]);
+  const [categorias, setCategorias] = useState([]);
 
   const [loading, setLoading] = useState(true);
   const [apiMessage, setApiMessage] = useState('');
@@ -49,17 +52,19 @@ function AdminPanelPage({ currentUser }) {
     setApiMessage('');
 
     try {
-      const [usuariosResponse, academiasResponse, gerentesResponse, avaliacoesResponse] = await Promise.all([
+      const [usuariosResponse, academiasResponse, gerentesResponse, avaliacoesResponse, categoriasResponse] = await Promise.all([
         UsuarioService.findAll(),
         AcademiaService.findAllAdmin(),
         GerenteService.findAll(),
-        AvaliacaoService.findAllAdmin()
+        AvaliacaoService.findAllAdmin(),
+        CategoriaService.findAllAdmin()
       ]);
 
       setUsuarios(Array.isArray(usuariosResponse.data) ? usuariosResponse.data : []);
       setAcademias(Array.isArray(academiasResponse.data) ? academiasResponse.data : []);
       setGerentes(Array.isArray(gerentesResponse.data) ? gerentesResponse.data : []);
       setAvaliacoes(Array.isArray(avaliacoesResponse.data) ? avaliacoesResponse.data : []);
+      setCategorias(Array.isArray(categoriasResponse.data) ? categoriasResponse.data : []);
     } catch (error) {
       console.error('Erro ao carregar painel admin:', error);
       setApiMessage('Erro ao carregar dados do painel administrativo.');
@@ -67,6 +72,7 @@ function AdminPanelPage({ currentUser }) {
       setAcademias([]);
       setGerentes([]);
       setAvaliacoes([]);
+      setCategorias([]);
     } finally {
       setLoading(false);
     }
@@ -84,6 +90,9 @@ function AdminPanelPage({ currentUser }) {
     const avaliacoesAtivas = avaliacoes.filter((avaliacao) => avaliacao.statusAvaliacao === 'ATIVO');
     const avaliacoesInativas = avaliacoes.filter((avaliacao) => avaliacao.statusAvaliacao === 'INATIVO');
     const avaliacoesSuspensas = avaliacoes.filter((avaliacao) => avaliacao.statusAvaliacao === 'SUSPENSA');
+
+    const categoriasAtivas = categorias.filter((categoria) => categoria.statusCategoria === 'ATIVO');
+    const categoriasInativas = categorias.filter((categoria) => categoria.statusCategoria === 'INATIVO');
 
     return {
       usuarios: usuarios.length,
@@ -105,9 +114,13 @@ function AdminPanelPage({ currentUser }) {
       avaliacoes: avaliacoes.length,
       avaliacoesAtivas: avaliacoesAtivas.length,
       avaliacoesInativas: avaliacoesInativas.length,
-      avaliacoesSuspensas: avaliacoesSuspensas.length
+      avaliacoesSuspensas: avaliacoesSuspensas.length,
+
+      categorias: categorias.length,
+      categoriasAtivas: categoriasAtivas.length,
+      categoriasInativas: categoriasInativas.length
     };
-  }, [usuarios, academias, gerentes, avaliacoes]);
+  }, [usuarios, academias, gerentes, avaliacoes, categorias]);
 
   const handleAtivarUsuario = async (id) => {
     const confirmar = window.confirm('Tem certeza que deseja reativar este usuário?');
@@ -265,6 +278,77 @@ function AdminPanelPage({ currentUser }) {
     }
   };
 
+  const getMensagemErroCategoria = (error, fallback) => {
+    const mensagemErro =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.response?.data ||
+      fallback;
+
+    return String(mensagemErro);
+  };
+
+  const recarregarCategoriasAdmin = async () => {
+    const response = await CategoriaService.findAllAdmin();
+    setCategorias(Array.isArray(response.data) ? response.data : []);
+  };
+
+  const handleCadastrarCategoria = async (categoriaData) => {
+    try {
+      await CategoriaService.create(categoriaData);
+      await recarregarCategoriasAdmin();
+      setApiMessage('Categoria cadastrada com sucesso.');
+      return true;
+    } catch (error) {
+      console.error('Erro ao cadastrar categoria:', error);
+      setApiMessage(`Erro: ${getMensagemErroCategoria(error, 'Erro ao cadastrar categoria.')}`);
+      return false;
+    }
+  };
+
+  const handleEditarCategoria = async (id, categoriaData) => {
+    try {
+      await CategoriaService.update(id, categoriaData);
+      await recarregarCategoriasAdmin();
+      setApiMessage('Categoria atualizada com sucesso.');
+      return true;
+    } catch (error) {
+      console.error('Erro ao editar categoria:', error);
+      setApiMessage(`Erro: ${getMensagemErroCategoria(error, 'Erro ao editar categoria.')}`);
+      return false;
+    }
+  };
+
+  const handleInativarCategoria = async (id) => {
+    const confirmar = window.confirm('Tem certeza que deseja inativar esta categoria?');
+
+    if (!confirmar) return;
+
+    try {
+      await CategoriaService.inativar(id);
+      await recarregarCategoriasAdmin();
+      setApiMessage('Categoria inativada com sucesso.');
+    } catch (error) {
+      console.error('Erro ao inativar categoria:', error);
+      setApiMessage(`Erro: ${getMensagemErroCategoria(error, 'Erro ao inativar categoria.')}`);
+    }
+  };
+
+  const handleReativarCategoria = async (id) => {
+    const confirmar = window.confirm('Tem certeza que deseja reativar esta categoria?');
+
+    if (!confirmar) return;
+
+    try {
+      await CategoriaService.reativar(id);
+      await recarregarCategoriasAdmin();
+      setApiMessage('Categoria reativada com sucesso.');
+    } catch (error) {
+      console.error('Erro ao reativar categoria:', error);
+      setApiMessage(`Erro: ${getMensagemErroCategoria(error, 'Erro ao reativar categoria.')}`);
+    }
+  };
+
   const recarregarAcademiasAdmin = async () => {
     const response = await AcademiaService.findAllAdmin();
     setAcademias(Array.isArray(response.data) ? response.data : []);
@@ -280,7 +364,8 @@ function AdminPanelPage({ currentUser }) {
     { id: 'usuarios', label: 'Usuários', description: `${totais.usuarios} cadastro(s)` },
     { id: 'gerentes', label: 'Gerentes', description: `${totais.gerentes} completo(s)` },
     { id: 'academias', label: 'Academias', description: `${totais.academias} cadastro(s)` },
-    { id: 'avaliacoes', label: 'Avaliações', description: `${totais.avaliacoes} registro(s)` }
+    { id: 'avaliacoes', label: 'Avaliações', description: `${totais.avaliacoes} registro(s)` },
+    { id: 'categorias', label: 'Categorias', description: `${totais.categorias} cadastro(s)` }
   ];
 
   const getTituloSecao = () => {
@@ -294,6 +379,7 @@ function AdminPanelPage({ currentUser }) {
     if (activeSection === 'gerentes') return 'Consulte os dados dos gerentes que completaram o cadastro.';
     if (activeSection === 'academias') return 'Gerencie academias ativas, inativas e suspensas.';
     if (activeSection === 'avaliacoes') return 'Gerencie avaliações ativas, inativas e suspensas.';
+    if (activeSection === 'categorias') return 'Gerencie categorias ativas e inativas.';
     return '';
   };
 
@@ -327,6 +413,18 @@ function AdminPanelPage({ currentUser }) {
           avaliacoes={avaliacoes}
           onSuspenderAvaliacao={handleSuspenderAvaliacao}
           onReativarAvaliacao={handleReativarAvaliacao}
+        />
+      );
+    }
+
+    if (activeSection === 'categorias') {
+      return (
+        <AdminCategoriesSection
+          categorias={categorias}
+          onCadastrarCategoria={handleCadastrarCategoria}
+          onEditarCategoria={handleEditarCategoria}
+          onInativarCategoria={handleInativarCategoria}
+          onReativarCategoria={handleReativarCategoria}
         />
       );
     }
@@ -377,3 +475,5 @@ function AdminPanelPage({ currentUser }) {
 }
 
 export default AdminPanelPage;
+
+

@@ -217,6 +217,16 @@
   font-size: 14px;
 }
 
+.academy-checkbox-message {
+  margin: 12px 0 0 0;
+  color: #333333;
+  font-size: 14px;
+}
+
+.academy-checkbox-message-error {
+  color: #721c24;
+}
+
 .academy-form-actions {
   display: flex;
   gap: 18px;

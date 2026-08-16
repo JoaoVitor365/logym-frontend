@@ -1,4 +1,4 @@
-// src/pages/AcademyRegisterPage.jsx
+﻿// src/pages/AcademyRegisterPage.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,6 +7,7 @@ import Button from '../../components/Button/Button';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import AcademiaService from '../../services/AcademiaService';
 import GerenteService from '../../services/GerenteService';
+import CategoriaService from '../../services/CategoriaService';
 import { isValidCNPJ } from '../../utils/documentValidators';
 import FotoAcademiaService from '../../services/FotoAcademiaService';
 
@@ -73,7 +74,7 @@ function AcademyRegisterPage() {
     celular: '',
     email: '',
     descricao: '',
-    categorias: [],
+    categoriaIds: [],
     facilidades: []
   });
 
@@ -85,18 +86,9 @@ function AcademyRegisterPage() {
   const [previewFotos, setPreviewFotos] = useState([]);
   const [salvando, setSalvando] = useState(false);
 
-  const categoryOptions = [
-    'Musculação',
-    'Crossfit',
-    'Pilates',
-    'Yoga',
-    'Funcional',
-    'Natação',
-    'Lutas',
-    'Dança',
-    'Spinning',
-    'Personal Trainer'
-  ];
+  const [categoryOptions, setCategoryOptions] = useState([]);
+  const [loadingCategorias, setLoadingCategorias] = useState(true);
+  const [categoriasMessage, setCategoriasMessage] = useState('');
 
   const facilityOptions = [
     'Estacionamento',
@@ -149,6 +141,36 @@ function AcademyRegisterPage() {
 
     verificarGerente();
   }, [navigate]);
+
+  useEffect(() => {
+    const carregarCategorias = async () => {
+      setLoadingCategorias(true);
+      setCategoriasMessage('');
+
+      try {
+        const response = await CategoriaService.findAtivas();
+        const dados = response.data;
+
+        if (Array.isArray(dados)) {
+          setCategoryOptions(dados);
+        } else if (Array.isArray(dados?.content)) {
+          setCategoryOptions(dados.content);
+        } else {
+          console.error('Resposta inesperada ao carregar categorias:', dados);
+          setCategoryOptions([]);
+          setCategoriasMessage('Não foi possível carregar as categorias agora.');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar categorias:', error);
+        setCategoryOptions([]);
+        setCategoriasMessage('Não foi possível carregar as categorias agora.');
+      } finally {
+        setLoadingCategorias(false);
+      }
+    };
+
+    carregarCategorias();
+  }, []);
 
   const scrollParaTopoFormulario = () => {
     setTimeout(() => {
@@ -347,6 +369,8 @@ function AcademyRegisterPage() {
     });
   };
 
+  const normalizarId = (idCategoria) => Number(idCategoria);
+
   const validateForm = () => {
     const newErrors = {};
     let isValid = true;
@@ -534,7 +558,7 @@ function AcademyRegisterPage() {
         celular: formData.celular,
         email: formData.email,
         descricao: formData.descricao,
-        categorias: formData.categorias.join(', '),
+        categoriaIds: formData.categoriaIds,
         facilidades: formData.facilidades.join(', '),
         gerente: {
           id: gerenteLogado.id
@@ -835,16 +859,26 @@ function AcademyRegisterPage() {
 
             <div className="checkbox-grid-improved">
               {categoryOptions.map((category) => (
-                <label key={category} className="checkbox-card">
+                <label key={category.id} className="checkbox-card">
                   <input
                     type="checkbox"
-                    checked={formData.categorias.includes(category)}
-                    onChange={() => handleCheckboxChange('categorias', category)}
+                    checked={formData.categoriaIds.includes(normalizarId(category.id))}
+                    onChange={() => handleCheckboxChange('categoriaIds', normalizarId(category.id))}
                   />
-                  <span>{category}</span>
+                  <span>{category.nome}</span>
                 </label>
               ))}
             </div>
+
+            {loadingCategorias && (
+              <p className="academy-checkbox-message">Carregando categorias...</p>
+            )}
+
+            {categoriasMessage && (
+              <p className="academy-checkbox-message academy-checkbox-message-error">
+                {categoriasMessage}
+              </p>
+            )}
           </div>
 
           <div className="checkbox-section">
@@ -959,3 +993,5 @@ function AcademyRegisterPage() {
 }
 
 export default AcademyRegisterPage;
+
+
