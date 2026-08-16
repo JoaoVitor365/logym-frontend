@@ -88,7 +88,7 @@ class ApiService {
   }
 
   // MOCK: Login de academia (Simulação para o Frontend)
-  async loginAcademia(email, senha) {
+  async loginAcademia(email) {
     console.warn("MOCK: Simulando login de Gerente/Academia sem o backend");
 
     // Simula um tempinho de carregamento de rede (500ms)

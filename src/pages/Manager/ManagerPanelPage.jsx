@@ -1,8 +1,10 @@
 // src/pages/Manager/ManagerPanelPage.jsx
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '../../components/Button/Button';
+import ConfirmModal from '../../components/Modal/ConfirmModal';
+import Toast from '../../components/Toast/Toast';
 import AcademiaService from '../../services/AcademiaService';
 import GerenteService from '../../services/GerenteService';
 
@@ -14,8 +16,15 @@ function ManagerPanelPage() {
   const [academias, setAcademias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [apiMessage, setApiMessage] = useState('');
+  const [toast, setToast] = useState({
+    open: false,
+    message: '',
+    variant: 'success'
+  });
+  const [acaoPendente, setAcaoPendente] = useState(null);
+  const [confirmLoading, setConfirmLoading] = useState(false);
 
-  const carregarDadosPainel = async () => {
+  const carregarDadosPainel = useCallback(async () => {
     setLoading(true);
     setApiMessage('');
 
@@ -71,11 +80,11 @@ function ManagerPanelPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate]);
 
   useEffect(() => {
     carregarDadosPainel();
-  }, []);
+  }, [carregarDadosPainel]);
 
   const academiasAtivas = useMemo(() => {
     return academias.filter((academia) => academia.statusAcademia === 'ATIVO');
@@ -144,6 +153,74 @@ function ManagerPanelPage() {
     return linha1 || linha2 || 'Endereço não informado';
   };
 
+  const categoriaVinculadaEstaAtiva = (vinculo) => {
+    if (vinculo?.statusCategoriaAcademia && vinculo.statusCategoriaAcademia !== 'ATIVO') {
+      return false;
+    }
+
+    const categoria = vinculo?.categoria || vinculo;
+
+    if (categoria?.statusCategoria && categoria.statusCategoria !== 'ATIVO') {
+      return false;
+    }
+
+    return true;
+  };
+
+  const getNomeCategoriaVinculada = (vinculo) => {
+    const categoria = vinculo?.categoria || vinculo;
+
+    return categoria?.nome || '';
+  };
+
+  const formatarCategoriasAcademia = (academia) => {
+    if (Array.isArray(academia?.categoriasVinculadas) && academia.categoriasVinculadas.length > 0) {
+      const categorias = academia.categoriasVinculadas
+        .filter(categoriaVinculadaEstaAtiva)
+        .map(getNomeCategoriaVinculada)
+        .map((nome) => String(nome).trim())
+        .filter(Boolean);
+
+      return categorias.length > 0 ? categorias.join(', ') : 'Não informado';
+    }
+
+    return academia.categorias || 'Não informado';
+  };
+
+  const facilidadeVinculadaEstaAtiva = (vinculo) => {
+    if (vinculo?.statusFacilidadeAcademia && vinculo.statusFacilidadeAcademia !== 'ATIVO') {
+      return false;
+    }
+
+    const facilidade = vinculo?.facilidade || vinculo;
+
+    if (facilidade?.statusFacilidade && facilidade.statusFacilidade !== 'ATIVO') {
+      return false;
+    }
+
+    return true;
+  };
+
+  const getNomeFacilidadeVinculada = (vinculo) => {
+    const facilidade = vinculo?.facilidade || vinculo;
+
+    return facilidade?.nome || '';
+  };
+
+  const formatarFacilidadesAcademia = (academia) => {
+    if (Array.isArray(academia?.facilidadesVinculadas) && academia.facilidadesVinculadas.length > 0) {
+      const facilidades = academia.facilidadesVinculadas
+        .filter(facilidadeVinculadaEstaAtiva)
+        .map(getNomeFacilidadeVinculada)
+        .map((nome) => String(nome).trim())
+        .filter(Boolean);
+
+      return facilidades.length > 0 ? facilidades.join(', ') : 'Não informado';
+    }
+
+    return academia.facilidades || 'Não informado';
+  };
+
   const getStatusClass = (status) => {
     if (status === 'ATIVO') return 'manager-status-badge manager-status-active';
     if (status === 'SUSPENSA') return 'manager-status-badge manager-status-suspended';
@@ -154,13 +231,7 @@ function ManagerPanelPage() {
     navigate(`/editar-academia/${id}`);
   };
 
-  const handleInativar = async (id) => {
-    const confirmar = window.confirm(
-      'Tem certeza que deseja inativar esta academia? Ela não aparecerá mais para usuários comuns.'
-    );
-
-    if (!confirmar) return;
-
+  const executarInativacao = async (id) => {
     try {
       await AcademiaService.inativar(id);
 
@@ -172,7 +243,11 @@ function ManagerPanelPage() {
         )
       );
 
-      alert('Academia inativada com sucesso!');
+      setToast({
+        open: true,
+        message: 'Academia inativada com sucesso!',
+        variant: 'success'
+      });
     } catch (error) {
       console.error('Erro ao inativar academia:', error);
 
@@ -182,17 +257,15 @@ function ManagerPanelPage() {
         error.response?.data ||
         'Erro ao inativar academia.';
 
-      alert(mensagemErro);
+      setToast({
+        open: true,
+        message: mensagemErro,
+        variant: 'error'
+      });
     }
   };
 
-  const handleReativar = async (id) => {
-    const confirmar = window.confirm(
-      'Tem certeza que deseja reativar esta academia? Ela voltará a aparecer para usuários comuns.'
-    );
-
-    if (!confirmar) return;
-
+  const executarReativacao = async (id) => {
     try {
       await AcademiaService.reativar(id);
 
@@ -204,7 +277,11 @@ function ManagerPanelPage() {
         )
       );
 
-      alert('Academia reativada com sucesso!');
+      setToast({
+        open: true,
+        message: 'Academia reativada com sucesso!',
+        variant: 'success'
+      });
     } catch (error) {
       console.error('Erro ao reativar academia:', error);
 
@@ -214,7 +291,49 @@ function ManagerPanelPage() {
         error.response?.data ||
         'Erro ao reativar academia.';
 
-      alert(mensagemErro);
+      setToast({
+        open: true,
+        message: mensagemErro,
+        variant: 'error'
+      });
+    }
+  };
+
+  const handleInativar = (academia) => {
+    setAcaoPendente({
+      tipo: 'inativar',
+      academia
+    });
+  };
+
+  const handleReativar = (academia) => {
+    setAcaoPendente({
+      tipo: 'reativar',
+      academia
+    });
+  };
+
+  const cancelarAcaoPendente = () => {
+    if (!confirmLoading) {
+      setAcaoPendente(null);
+    }
+  };
+
+  const confirmarAcaoPendente = async () => {
+    if (!acaoPendente?.academia?.id) return;
+
+    setConfirmLoading(true);
+
+    try {
+      if (acaoPendente.tipo === 'inativar') {
+        await executarInativacao(acaoPendente.academia.id);
+      } else {
+        await executarReativacao(acaoPendente.academia.id);
+      }
+
+      setAcaoPendente(null);
+    } finally {
+      setConfirmLoading(false);
     }
   };
 
@@ -266,11 +385,11 @@ function ManagerPanelPage() {
           </p>
 
           <p className="manager-info-line">
-            <strong>Categorias:</strong> {academia.categorias || 'Não informado'}
+            <strong>Categorias:</strong> {formatarCategoriasAcademia(academia)}
           </p>
 
           <p className="manager-info-line">
-            <strong>Facilidades:</strong> {academia.facilidades || 'Não informado'}
+            <strong>Facilidades:</strong> {formatarFacilidadesAcademia(academia)}
           </p>
 
           <p className="manager-info-line">
@@ -296,7 +415,7 @@ function ManagerPanelPage() {
 
           {estaAtiva ? (
             <Button
-              onClick={() => handleInativar(academia.id)}
+              onClick={() => handleInativar(academia)}
               className="manager-button manager-button-danger-outline"
             >
               Inativar
@@ -311,7 +430,7 @@ function ManagerPanelPage() {
             </Button>
           ) : (
             <Button
-              onClick={() => handleReativar(academia.id)}
+              onClick={() => handleReativar(academia)}
               className="manager-button manager-button-reactivate"
             >
               Reativar
@@ -436,6 +555,29 @@ function ManagerPanelPage() {
           </section>
         </>
       )}
+
+      <Toast
+        open={toast.open}
+        message={toast.message}
+        variant={toast.variant}
+        onClose={() => setToast((prev) => ({ ...prev, open: false }))}
+      />
+
+      <ConfirmModal
+        open={Boolean(acaoPendente)}
+        title={acaoPendente?.tipo === 'inativar' ? 'Inativar academia' : 'Reativar academia'}
+        message={
+          acaoPendente?.tipo === 'inativar'
+            ? 'Tem certeza que deseja inativar esta academia? Ela não aparecerá mais para usuários comuns.'
+            : 'Tem certeza que deseja reativar esta academia?'
+        }
+        confirmText={acaoPendente?.tipo === 'inativar' ? 'Inativar' : 'Reativar'}
+        cancelText="Cancelar"
+        variant={acaoPendente?.tipo === 'inativar' ? 'danger' : 'default'}
+        loading={confirmLoading}
+        onConfirm={confirmarAcaoPendente}
+        onCancel={cancelarAcaoPendente}
+      />
     </div>
   );
 }

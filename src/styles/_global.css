@@ -5,16 +5,20 @@ body {
     font-family: 'Poppins', sans-serif;
 
     /* Define a imagem de fundo */
-    background-image: url('../assets/planoFundo.png');
+    background-image: url('../assets/background-logym.png');
     
     /* Faz a imagem se repetir para preencher todo o fundo */
     background-repeat: repeat;
+
+    background-size: 760px 760px;
+
+    background-position: center top;
     
     /* Garante que o fundo não se mova quando a página é rolada */
     background-attachment: fixed;
     
     /* Remove a cor de fundo cinza */
-    background-color: transparent;
+    background-color: #faf8f5;
     
     /* Garante que o texto seja legível sobre o fundo */
     color: #333;
@@ -24,4 +28,12 @@ body {
     letter-spacing: 1px; /* Bebas fica melhor com um leve espaçamento */
 }
     
+}
+
+@media (max-width: 768px) {
+    body {
+        background-size: 560px 560px;
+        background-position: center top;
+        background-attachment: scroll;
+    }
 }

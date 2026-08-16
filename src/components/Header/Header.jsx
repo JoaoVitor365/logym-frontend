@@ -30,7 +30,7 @@ function Header({ isLoggedIn, currentUser, onLogout }) {
         const novaUrl = URL.createObjectURL(response.data);
         objectUrlAtual = novaUrl;
         setFotoUrl(novaUrl);
-      } catch (error) {
+      } catch {
         setFotoUrl(null);
       }
     };
@@ -77,8 +77,11 @@ function Header({ isLoggedIn, currentUser, onLogout }) {
         </div>
 
         <button
+          type="button"
           className={`menu-toggle ${isMenuOpen ? 'open' : ''}`}
           onClick={toggleMenu}
+          aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}
+          aria-expanded={isMenuOpen}
         >
           <span className="menu-icon"></span>
           <span className="menu-icon"></span>
@@ -86,18 +89,6 @@ function Header({ isLoggedIn, currentUser, onLogout }) {
         </button>
 
         <nav className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
-
-          {isLoggedIn && currentUser?.nivelAcesso === 'MANAGER' && (
-            <Link to="/painel-gerente" className="nav-link" onClick={toggleMenu}>
-              Painel Gerente
-            </Link>
-          )}
-
-          {isLoggedIn && currentUser?.nivelAcesso === 'ADMIN' && (
-            <Link to="/painel-admin" className="nav-link" onClick={toggleMenu}>
-              Painel Admin
-            </Link>
-          )}
 
           {isLoggedIn ? (
             <>
@@ -132,17 +123,29 @@ function Header({ isLoggedIn, currentUser, onLogout }) {
                 </span>
               </div>
 
-              {currentUser?.nivelAcesso === 'USER' && (
-                <Link to="/favoritos" className="nav-link" onClick={toggleMenu}>
-                  Favoritos
-                </Link>
-              )}
-
               <Link to="/profile" className="nav-link profile-link" onClick={toggleMenu}>
                 Meu Perfil
               </Link>
 
-              <Link to="/" className="nav-link profile-link" onClick={handleLogoutClick}>
+              {currentUser?.nivelAcesso === 'MANAGER' && (
+                <Link to="/painel-gerente" className="nav-link header-panel-link" onClick={toggleMenu}>
+                  Painel Gerente
+                </Link>
+              )}
+
+              {currentUser?.nivelAcesso === 'ADMIN' && (
+                <Link to="/painel-admin" className="nav-link header-panel-link" onClick={toggleMenu}>
+                  Painel Admin
+                </Link>
+              )}
+
+              {currentUser?.nivelAcesso === 'USER' && (
+                <Link to="/favoritos" className="nav-link header-favorites-link" onClick={toggleMenu}>
+                  Favoritos
+                </Link>
+              )}
+
+              <Link to="/" className="nav-link profile-link header-logout-link" onClick={handleLogoutClick}>
                 Sair
               </Link>
             </>

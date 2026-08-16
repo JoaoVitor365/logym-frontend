@@ -8,6 +8,7 @@ import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import AcademiaService from '../../services/AcademiaService';
 import GerenteService from '../../services/GerenteService';
 import CategoriaService from '../../services/CategoriaService';
+import FacilidadeService from '../../services/FacilidadeService';
 import { isValidCNPJ } from '../../utils/documentValidators';
 import FotoAcademiaService from '../../services/FotoAcademiaService';
 
@@ -75,7 +76,7 @@ function AcademyRegisterPage() {
     email: '',
     descricao: '',
     categoriaIds: [],
-    facilidades: []
+    facilidadeIds: []
   });
 
   const [errors, setErrors] = useState({});
@@ -89,19 +90,9 @@ function AcademyRegisterPage() {
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [loadingCategorias, setLoadingCategorias] = useState(true);
   const [categoriasMessage, setCategoriasMessage] = useState('');
-
-  const facilityOptions = [
-    'Estacionamento',
-    'Vestiário',
-    'Chuveiro',
-    'Ar Condicionado',
-    'Wi-Fi',
-    'Avaliação Física',
-    'Nutricionista',
-    'Loja de Suplementos',
-    'Acessibilidade',
-    'Armários'
-  ];
+  const [facilityOptions, setFacilityOptions] = useState([]);
+  const [loadingFacilidades, setLoadingFacilidades] = useState(true);
+  const [facilidadesMessage, setFacilidadesMessage] = useState('');
 
   useEffect(() => {
     const verificarGerente = async () => {
@@ -170,6 +161,36 @@ function AcademyRegisterPage() {
     };
 
     carregarCategorias();
+  }, []);
+
+  useEffect(() => {
+    const carregarFacilidades = async () => {
+      setLoadingFacilidades(true);
+      setFacilidadesMessage('');
+
+      try {
+        const response = await FacilidadeService.findAtivas();
+        const dados = response.data;
+
+        if (Array.isArray(dados)) {
+          setFacilityOptions(dados);
+        } else if (Array.isArray(dados?.content)) {
+          setFacilityOptions(dados.content);
+        } else {
+          console.error('Resposta inesperada ao carregar facilidades:', dados);
+          setFacilityOptions([]);
+          setFacilidadesMessage('Não foi possível carregar as facilidades agora.');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar facilidades:', error);
+        setFacilityOptions([]);
+        setFacilidadesMessage('Não foi possível carregar as facilidades agora.');
+      } finally {
+        setLoadingFacilidades(false);
+      }
+    };
+
+    carregarFacilidades();
   }, []);
 
   const scrollParaTopoFormulario = () => {
@@ -460,7 +481,10 @@ function AcademyRegisterPage() {
     );
 
     if (apenasImagens.length !== arquivos.length) {
-      alert('Selecione apenas arquivos de imagem.');
+      setApiMessage('Selecione apenas arquivos de imagem.');
+      scrollParaTopoFormulario();
+    } else if (apiMessage === 'Selecione apenas arquivos de imagem.') {
+      setApiMessage('');
     }
 
     setFotosAcademia(apenasImagens);
@@ -559,7 +583,7 @@ function AcademyRegisterPage() {
         email: formData.email,
         descricao: formData.descricao,
         categoriaIds: formData.categoriaIds,
-        facilidades: formData.facilidades.join(', '),
+        facilidadeIds: formData.facilidadeIds,
         gerente: {
           id: gerenteLogado.id
         }
@@ -650,7 +674,7 @@ function AcademyRegisterPage() {
         </div>
 
         {apiMessage && (
-          <p className={`academy-api-message ${apiMessage.startsWith('Erro') ? 'academy-api-message-error' : 'academy-api-message-success'}`}>
+          <p className={`academy-api-message ${apiMessage.startsWith('Erro') || apiMessage === 'Selecione apenas arquivos de imagem.' ? 'academy-api-message-error' : 'academy-api-message-success'}`}>
             {apiMessage}
           </p>
         )}
@@ -887,16 +911,26 @@ function AcademyRegisterPage() {
 
             <div className="checkbox-grid-improved">
               {facilityOptions.map((facility) => (
-                <label key={facility} className="checkbox-card">
+                <label key={facility.id} className="checkbox-card">
                   <input
                     type="checkbox"
-                    checked={formData.facilidades.includes(facility)}
-                    onChange={() => handleCheckboxChange('facilidades', facility)}
+                    checked={formData.facilidadeIds.includes(normalizarId(facility.id))}
+                    onChange={() => handleCheckboxChange('facilidadeIds', normalizarId(facility.id))}
                   />
-                  <span>{facility}</span>
+                  <span>{facility.nome}</span>
                 </label>
               ))}
             </div>
+
+            {loadingFacilidades && (
+              <p className="academy-checkbox-message">Carregando facilidades...</p>
+            )}
+
+            {facilidadesMessage && (
+              <p className="academy-checkbox-message academy-checkbox-message-error">
+                {facilidadesMessage}
+              </p>
+            )}
           </div>
 
           <div className="academy-photo-upload-section">

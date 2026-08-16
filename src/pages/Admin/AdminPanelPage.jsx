@@ -1,13 +1,15 @@
 ﻿// src/pages/Admin/AdminPanelPage.jsx
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '../../components/Button/Button';
+import ConfirmModal from '../../components/Modal/ConfirmModal';
 import UsuarioService from '../../services/UsuarioService';
 import AcademiaService from '../../services/AcademiaService';
 import GerenteService from '../../services/GerenteService';
 import AvaliacaoService from '../../services/AvaliacaoService';
 import CategoriaService from '../../services/CategoriaService';
+import FacilidadeService from '../../services/FacilidadeService';
 
 import AdminSidebar from './AdminSidebar';
 import AdminDashboard from './AdminDashboard';
@@ -16,6 +18,7 @@ import AdminManagersSection from './AdminManagersSection';
 import AdminAcademiesSection from './AdminAcademiesSection';
 import AdminReviewsSection from './AdminReviewsSection';
 import AdminCategoriesSection from './AdminCategoriesSection';
+import AdminFacilitiesSection from './AdminFacilitiesSection';
 
 function AdminPanelPage({ currentUser }) {
   const navigate = useNavigate();
@@ -27,9 +30,13 @@ function AdminPanelPage({ currentUser }) {
   const [gerentes, setGerentes] = useState([]);
   const [avaliacoes, setAvaliacoes] = useState([]);
   const [categorias, setCategorias] = useState([]);
+  const [facilidades, setFacilidades] = useState([]);
 
   const [loading, setLoading] = useState(true);
   const [apiMessage, setApiMessage] = useState('');
+  const [acoesEmAndamento, setAcoesEmAndamento] = useState({});
+  const [confirmacao, setConfirmacao] = useState(null);
+  const acoesEmAndamentoRef = useRef({});
 
   useEffect(() => {
     const usuarioLogado = currentUser || JSON.parse(localStorage.getItem('user'));
@@ -47,35 +54,116 @@ function AdminPanelPage({ currentUser }) {
     carregarDadosAdmin();
   }, [currentUser, navigate]);
 
+  const getAcaoKey = (tipo, id, acao) => `${tipo}-${id}-${acao}`;
+
+  const acaoEstaEmAndamento = (chave) => Boolean(acoesEmAndamento[chave]);
+
+  const abrirConfirmacao = (confirmacaoData) => {
+    setConfirmacao(confirmacaoData);
+  };
+
+  const fecharConfirmacao = () => {
+    setConfirmacao(null);
+  };
+
+  const acaoConfirmadaEstaEmAndamento = () => {
+    if (!confirmacao) return false;
+
+    return acaoEstaEmAndamento(getAcaoKey(confirmacao.tipo, confirmacao.id, confirmacao.acao));
+  };
+
+  const iniciarAcao = (chave) => {
+    if (acoesEmAndamentoRef.current[chave]) {
+      return false;
+    }
+
+    const proximasAcoes = {
+      ...acoesEmAndamentoRef.current,
+      [chave]: true
+    };
+
+    acoesEmAndamentoRef.current = proximasAcoes;
+    setAcoesEmAndamento(proximasAcoes);
+    return true;
+  };
+
+  const finalizarAcao = (chave) => {
+    const proximasAcoes = { ...acoesEmAndamentoRef.current };
+    delete proximasAcoes[chave];
+
+    acoesEmAndamentoRef.current = proximasAcoes;
+    setAcoesEmAndamento(proximasAcoes);
+  };
+
+  const atualizarStatusUsuarioLocal = (id, statusUsuario) => {
+    setUsuarios((prev) =>
+      prev.map((usuario) =>
+        usuario.id === id
+          ? { ...usuario, statusUsuario }
+          : usuario
+      )
+    );
+  };
+
+  const recarregarDadosRelacionadosManager = async () => {
+    const cargas = [
+      { nome: 'usuarios', carregar: UsuarioService.findAll, setDados: setUsuarios },
+      { nome: 'gerentes', carregar: GerenteService.findAll, setDados: setGerentes },
+      { nome: 'academias', carregar: AcademiaService.findAllAdmin, setDados: setAcademias }
+    ];
+
+    const resultados = await Promise.allSettled(cargas.map((carga) => carga.carregar()));
+    const falhas = [];
+
+    resultados.forEach((resultado, index) => {
+      const carga = cargas[index];
+
+      if (resultado.status === 'fulfilled') {
+        carga.setDados(Array.isArray(resultado.value.data) ? resultado.value.data : []);
+        return;
+      }
+
+      console.error(`Erro ao recarregar ${carga.nome}:`, resultado.reason);
+      falhas.push(carga.nome);
+    });
+
+    return falhas;
+  };
+
   const carregarDadosAdmin = async () => {
     setLoading(true);
     setApiMessage('');
 
-    try {
-      const [usuariosResponse, academiasResponse, gerentesResponse, avaliacoesResponse, categoriasResponse] = await Promise.all([
-        UsuarioService.findAll(),
-        AcademiaService.findAllAdmin(),
-        GerenteService.findAll(),
-        AvaliacaoService.findAllAdmin(),
-        CategoriaService.findAllAdmin()
-      ]);
+    const cargas = [
+      { nome: 'usuarios', carregar: UsuarioService.findAll, setDados: setUsuarios },
+      { nome: 'academias', carregar: AcademiaService.findAllAdmin, setDados: setAcademias },
+      { nome: 'gerentes', carregar: GerenteService.findAll, setDados: setGerentes },
+      { nome: 'avaliacoes', carregar: AvaliacaoService.findAllAdmin, setDados: setAvaliacoes },
+      { nome: 'categorias', carregar: CategoriaService.findAllAdmin, setDados: setCategorias },
+      { nome: 'facilidades', carregar: FacilidadeService.findAllAdmin, setDados: setFacilidades }
+    ];
 
-      setUsuarios(Array.isArray(usuariosResponse.data) ? usuariosResponse.data : []);
-      setAcademias(Array.isArray(academiasResponse.data) ? academiasResponse.data : []);
-      setGerentes(Array.isArray(gerentesResponse.data) ? gerentesResponse.data : []);
-      setAvaliacoes(Array.isArray(avaliacoesResponse.data) ? avaliacoesResponse.data : []);
-      setCategorias(Array.isArray(categoriasResponse.data) ? categoriasResponse.data : []);
-    } catch (error) {
-      console.error('Erro ao carregar painel admin:', error);
-      setApiMessage('Erro ao carregar dados do painel administrativo.');
-      setUsuarios([]);
-      setAcademias([]);
-      setGerentes([]);
-      setAvaliacoes([]);
-      setCategorias([]);
-    } finally {
-      setLoading(false);
+    const resultados = await Promise.allSettled(cargas.map((carga) => carga.carregar()));
+    const falhas = [];
+
+    resultados.forEach((resultado, index) => {
+      const carga = cargas[index];
+
+      if (resultado.status === 'fulfilled') {
+        carga.setDados(Array.isArray(resultado.value.data) ? resultado.value.data : []);
+        return;
+      }
+
+      console.error(`Erro ao carregar ${carga.nome}:`, resultado.reason);
+      carga.setDados([]);
+      falhas.push(carga.nome);
+    });
+
+    if (falhas.length > 0) {
+      setApiMessage(`Erro ao carregar alguns dados do painel: ${falhas.join(', ')}.`);
     }
+
+    setLoading(false);
   };
 
   const totais = useMemo(() => {
@@ -93,6 +181,8 @@ function AdminPanelPage({ currentUser }) {
 
     const categoriasAtivas = categorias.filter((categoria) => categoria.statusCategoria === 'ATIVO');
     const categoriasInativas = categorias.filter((categoria) => categoria.statusCategoria === 'INATIVO');
+    const facilidadesAtivas = facilidades.filter((facilidade) => facilidade.statusFacilidade === 'ATIVO');
+    const facilidadesInativas = facilidades.filter((facilidade) => facilidade.statusFacilidade === 'INATIVO');
 
     return {
       usuarios: usuarios.length,
@@ -118,30 +208,55 @@ function AdminPanelPage({ currentUser }) {
 
       categorias: categorias.length,
       categoriasAtivas: categoriasAtivas.length,
-      categoriasInativas: categoriasInativas.length
+      categoriasInativas: categoriasInativas.length,
+
+      facilidades: facilidades.length,
+      facilidadesAtivas: facilidadesAtivas.length,
+      facilidadesInativas: facilidadesInativas.length
     };
-  }, [usuarios, academias, gerentes, avaliacoes, categorias]);
+  }, [usuarios, academias, gerentes, avaliacoes, categorias, facilidades]);
 
   const handleAtivarUsuario = async (id) => {
-    const confirmar = window.confirm('Tem certeza que deseja reativar este usuário?');
+    abrirConfirmacao({
+      tipo: 'usuario',
+      acao: 'reativar',
+      id,
+      title: 'Reativar usuário',
+      message: 'Tem certeza que deseja reativar este usuário?',
+      confirmText: 'Reativar',
+      variant: 'default'
+    });
+  };
 
-    if (!confirmar) return;
+  const executarAtivarUsuario = async (id) => {
+    const chaveAcao = getAcaoKey('usuario', id, 'reativar');
+
+    if (!iniciarAcao(chaveAcao)) return;
+
+    const usuarioAlterado = usuarios.find((usuario) => usuario.id === id);
+    const ehManager = usuarioAlterado?.nivelAcesso === 'MANAGER';
 
     try {
       await UsuarioService.ativar(id);
 
-      setUsuarios((prev) =>
-        prev.map((usuario) =>
-          usuario.id === id
-            ? { ...usuario, statusUsuario: 'ATIVO' }
-            : usuario
-        )
-      );
+      atualizarStatusUsuarioLocal(id, 'ATIVO');
+
+      if (ehManager) {
+        const falhas = await recarregarDadosRelacionadosManager();
+
+        if (falhas.length > 0) {
+          setApiMessage(`Usuário reativado com sucesso. Erro ao atualizar dados relacionados: ${falhas.join(', ')}.`);
+          return;
+        }
+      }
 
       setApiMessage('Usuário reativado com sucesso.');
     } catch (error) {
       console.error('Erro ao reativar usuário:', error);
       setApiMessage('Erro ao reativar usuário.');
+    } finally {
+      finalizarAcao(chaveAcao);
+      fecharConfirmacao();
     }
   };
 
@@ -153,32 +268,65 @@ function AdminPanelPage({ currentUser }) {
       return;
     }
 
-    const confirmar = window.confirm('Tem certeza que deseja suspender este usuário?');
+    abrirConfirmacao({
+      tipo: 'usuario',
+      acao: 'suspender',
+      id,
+      title: 'Suspender usuário',
+      message: 'Tem certeza que deseja suspender este usuário?',
+      confirmText: 'Suspender',
+      variant: 'danger'
+    });
+  };
 
-    if (!confirmar) return;
+  const executarSuspenderUsuario = async (id) => {
+    const chaveAcao = getAcaoKey('usuario', id, 'suspender');
+
+    if (!iniciarAcao(chaveAcao)) return;
+
+    const usuarioAlterado = usuarios.find((usuario) => usuario.id === id);
+    const ehManager = usuarioAlterado?.nivelAcesso === 'MANAGER';
 
     try {
       await UsuarioService.suspender(id);
 
-      setUsuarios((prev) =>
-        prev.map((usuario) =>
-          usuario.id === id
-            ? { ...usuario, statusUsuario: 'SUSPENSO' }
-            : usuario
-        )
-      );
+      atualizarStatusUsuarioLocal(id, 'SUSPENSO');
+
+      if (ehManager) {
+        const falhas = await recarregarDadosRelacionadosManager();
+
+        if (falhas.length > 0) {
+          setApiMessage(`Usuário suspenso com sucesso. Erro ao atualizar dados relacionados: ${falhas.join(', ')}.`);
+          return;
+        }
+      }
 
       setApiMessage('Usuário suspenso com sucesso.');
     } catch (error) {
       console.error('Erro ao suspender usuário:', error);
       setApiMessage('Erro ao suspender usuário.');
+    } finally {
+      finalizarAcao(chaveAcao);
+      fecharConfirmacao();
     }
   };
 
   const handleReativarAcademia = async (id) => {
-    const confirmar = window.confirm('Tem certeza que deseja reativar esta academia?');
+    abrirConfirmacao({
+      tipo: 'academia',
+      acao: 'reativar',
+      id,
+      title: 'Reativar academia',
+      message: 'Tem certeza que deseja reativar esta academia?',
+      confirmText: 'Reativar',
+      variant: 'default'
+    });
+  };
 
-    if (!confirmar) return;
+  const executarReativarAcademia = async (id) => {
+    const chaveAcao = getAcaoKey('academia', id, 'reativar');
+
+    if (!iniciarAcao(chaveAcao)) return;
 
     try {
       await AcademiaService.reativarAdmin(id);
@@ -195,13 +343,28 @@ function AdminPanelPage({ currentUser }) {
     } catch (error) {
       console.error('Erro ao reativar academia:', error);
       setApiMessage('Erro ao reativar academia.');
+    } finally {
+      finalizarAcao(chaveAcao);
+      fecharConfirmacao();
     }
   };
 
   const handleSuspenderAcademia = async (id) => {
-    const confirmar = window.confirm('Tem certeza que deseja suspender esta academia? O gerente não poderá reativá-la pelo painel dele.');
+    abrirConfirmacao({
+      tipo: 'academia',
+      acao: 'suspender',
+      id,
+      title: 'Suspender academia',
+      message: 'Tem certeza que deseja suspender esta academia? O gerente não poderá reativá-la pelo painel dele.',
+      confirmText: 'Suspender',
+      variant: 'danger'
+    });
+  };
 
-    if (!confirmar) return;
+  const executarSuspenderAcademia = async (id) => {
+    const chaveAcao = getAcaoKey('academia', id, 'suspender');
+
+    if (!iniciarAcao(chaveAcao)) return;
 
     try {
       await AcademiaService.suspenderAdmin(id);
@@ -218,13 +381,28 @@ function AdminPanelPage({ currentUser }) {
     } catch (error) {
       console.error('Erro ao suspender academia:', error);
       setApiMessage('Erro ao suspender academia.');
+    } finally {
+      finalizarAcao(chaveAcao);
+      fecharConfirmacao();
     }
   };
 
   const handleSuspenderAvaliacao = async (id) => {
-    const confirmar = window.confirm('Tem certeza que deseja suspender esta avaliação? Ela não aparecerá para outros usuários e não contará na média da academia.');
+    abrirConfirmacao({
+      tipo: 'avaliacao',
+      acao: 'suspender',
+      id,
+      title: 'Suspender avaliação',
+      message: 'Tem certeza que deseja suspender esta avaliação? Ela não aparecerá para outros usuários e não contará na média da academia.',
+      confirmText: 'Suspender',
+      variant: 'danger'
+    });
+  };
 
-    if (!confirmar) return;
+  const executarSuspenderAvaliacao = async (id) => {
+    const chaveAcao = getAcaoKey('avaliacao', id, 'suspender');
+
+    if (!iniciarAcao(chaveAcao)) return;
 
     try {
       const response = await AvaliacaoService.suspenderAdmin(id);
@@ -243,13 +421,28 @@ function AdminPanelPage({ currentUser }) {
     } catch (error) {
       console.error('Erro ao suspender avaliação:', error);
       setApiMessage('Erro ao suspender avaliação.');
+    } finally {
+      finalizarAcao(chaveAcao);
+      fecharConfirmacao();
     }
   };
 
   const handleReativarAvaliacao = async (id) => {
-    const confirmar = window.confirm('Tem certeza que deseja reativar esta avaliação? Ela voltará a aparecer e contará na média da academia.');
+    abrirConfirmacao({
+      tipo: 'avaliacao',
+      acao: 'reativar',
+      id,
+      title: 'Reativar avaliação',
+      message: 'Tem certeza que deseja reativar esta avaliação? Ela voltará a aparecer e contará na média da academia.',
+      confirmText: 'Reativar',
+      variant: 'default'
+    });
+  };
 
-    if (!confirmar) return;
+  const executarReativarAvaliacao = async (id) => {
+    const chaveAcao = getAcaoKey('avaliacao', id, 'reativar');
+
+    if (!iniciarAcao(chaveAcao)) return;
 
     try {
       const response = await AvaliacaoService.reativarAdmin(id);
@@ -275,6 +468,9 @@ function AdminPanelPage({ currentUser }) {
         'Erro ao reativar avaliação.';
 
       setApiMessage(`Erro: ${mensagemErro}`);
+    } finally {
+      finalizarAcao(chaveAcao);
+      fecharConfirmacao();
     }
   };
 
@@ -294,6 +490,10 @@ function AdminPanelPage({ currentUser }) {
   };
 
   const handleCadastrarCategoria = async (categoriaData) => {
+    const chaveAcao = getAcaoKey('categoria', 'nova', 'cadastrar');
+
+    if (!iniciarAcao(chaveAcao)) return false;
+
     try {
       await CategoriaService.create(categoriaData);
       await recarregarCategoriasAdmin();
@@ -303,10 +503,16 @@ function AdminPanelPage({ currentUser }) {
       console.error('Erro ao cadastrar categoria:', error);
       setApiMessage(`Erro: ${getMensagemErroCategoria(error, 'Erro ao cadastrar categoria.')}`);
       return false;
+    } finally {
+      finalizarAcao(chaveAcao);
     }
   };
 
   const handleEditarCategoria = async (id, categoriaData) => {
+    const chaveAcao = getAcaoKey('categoria', id, 'editar');
+
+    if (!iniciarAcao(chaveAcao)) return false;
+
     try {
       await CategoriaService.update(id, categoriaData);
       await recarregarCategoriasAdmin();
@@ -316,13 +522,27 @@ function AdminPanelPage({ currentUser }) {
       console.error('Erro ao editar categoria:', error);
       setApiMessage(`Erro: ${getMensagemErroCategoria(error, 'Erro ao editar categoria.')}`);
       return false;
+    } finally {
+      finalizarAcao(chaveAcao);
     }
   };
 
   const handleInativarCategoria = async (id) => {
-    const confirmar = window.confirm('Tem certeza que deseja inativar esta categoria?');
+    abrirConfirmacao({
+      tipo: 'categoria',
+      acao: 'inativar',
+      id,
+      title: 'Inativar categoria',
+      message: 'Tem certeza que deseja inativar esta categoria?',
+      confirmText: 'Inativar',
+      variant: 'danger'
+    });
+  };
 
-    if (!confirmar) return;
+  const executarInativarCategoria = async (id) => {
+    const chaveAcao = getAcaoKey('categoria', id, 'inativar');
+
+    if (!iniciarAcao(chaveAcao)) return;
 
     try {
       await CategoriaService.inativar(id);
@@ -331,13 +551,28 @@ function AdminPanelPage({ currentUser }) {
     } catch (error) {
       console.error('Erro ao inativar categoria:', error);
       setApiMessage(`Erro: ${getMensagemErroCategoria(error, 'Erro ao inativar categoria.')}`);
+    } finally {
+      finalizarAcao(chaveAcao);
+      fecharConfirmacao();
     }
   };
 
   const handleReativarCategoria = async (id) => {
-    const confirmar = window.confirm('Tem certeza que deseja reativar esta categoria?');
+    abrirConfirmacao({
+      tipo: 'categoria',
+      acao: 'reativar',
+      id,
+      title: 'Reativar categoria',
+      message: 'Tem certeza que deseja reativar esta categoria?',
+      confirmText: 'Reativar',
+      variant: 'default'
+    });
+  };
 
-    if (!confirmar) return;
+  const executarReativarCategoria = async (id) => {
+    const chaveAcao = getAcaoKey('categoria', id, 'reativar');
+
+    if (!iniciarAcao(chaveAcao)) return;
 
     try {
       await CategoriaService.reativar(id);
@@ -346,12 +581,183 @@ function AdminPanelPage({ currentUser }) {
     } catch (error) {
       console.error('Erro ao reativar categoria:', error);
       setApiMessage(`Erro: ${getMensagemErroCategoria(error, 'Erro ao reativar categoria.')}`);
+    } finally {
+      finalizarAcao(chaveAcao);
+      fecharConfirmacao();
+    }
+  };
+
+  const getMensagemErroFacilidade = (error, fallback) => {
+    const mensagemErro =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.response?.data ||
+      fallback;
+
+    return String(mensagemErro);
+  };
+
+  const recarregarFacilidadesAdmin = async () => {
+    const response = await FacilidadeService.findAllAdmin();
+    setFacilidades(Array.isArray(response.data) ? response.data : []);
+  };
+
+  const handleCadastrarFacilidade = async (facilidadeData) => {
+    const chaveAcao = getAcaoKey('facilidade', 'nova', 'cadastrar');
+
+    if (!iniciarAcao(chaveAcao)) return false;
+
+    try {
+      await FacilidadeService.create(facilidadeData);
+      await recarregarFacilidadesAdmin();
+      setApiMessage('Facilidade cadastrada com sucesso.');
+      return true;
+    } catch (error) {
+      console.error('Erro ao cadastrar facilidade:', error);
+      setApiMessage(`Erro: ${getMensagemErroFacilidade(error, 'Erro ao cadastrar facilidade.')}`);
+      return false;
+    } finally {
+      finalizarAcao(chaveAcao);
+    }
+  };
+
+  const handleEditarFacilidade = async (id, facilidadeData) => {
+    const chaveAcao = getAcaoKey('facilidade', id, 'editar');
+
+    if (!iniciarAcao(chaveAcao)) return false;
+
+    try {
+      await FacilidadeService.update(id, facilidadeData);
+      await recarregarFacilidadesAdmin();
+      setApiMessage('Facilidade atualizada com sucesso.');
+      return true;
+    } catch (error) {
+      console.error('Erro ao editar facilidade:', error);
+      setApiMessage(`Erro: ${getMensagemErroFacilidade(error, 'Erro ao editar facilidade.')}`);
+      return false;
+    } finally {
+      finalizarAcao(chaveAcao);
+    }
+  };
+
+  const handleInativarFacilidade = async (id) => {
+    abrirConfirmacao({
+      tipo: 'facilidade',
+      acao: 'inativar',
+      id,
+      title: 'Inativar facilidade',
+      message: 'Tem certeza que deseja inativar esta facilidade?',
+      confirmText: 'Inativar',
+      variant: 'danger'
+    });
+  };
+
+  const executarInativarFacilidade = async (id) => {
+    const chaveAcao = getAcaoKey('facilidade', id, 'inativar');
+
+    if (!iniciarAcao(chaveAcao)) return;
+
+    try {
+      await FacilidadeService.inativar(id);
+      await recarregarFacilidadesAdmin();
+      setApiMessage('Facilidade inativada com sucesso.');
+    } catch (error) {
+      console.error('Erro ao inativar facilidade:', error);
+      setApiMessage(`Erro: ${getMensagemErroFacilidade(error, 'Erro ao inativar facilidade.')}`);
+    } finally {
+      finalizarAcao(chaveAcao);
+      fecharConfirmacao();
+    }
+  };
+
+  const handleReativarFacilidade = async (id) => {
+    abrirConfirmacao({
+      tipo: 'facilidade',
+      acao: 'reativar',
+      id,
+      title: 'Reativar facilidade',
+      message: 'Tem certeza que deseja reativar esta facilidade?',
+      confirmText: 'Reativar',
+      variant: 'default'
+    });
+  };
+
+  const executarReativarFacilidade = async (id) => {
+    const chaveAcao = getAcaoKey('facilidade', id, 'reativar');
+
+    if (!iniciarAcao(chaveAcao)) return;
+
+    try {
+      await FacilidadeService.reativar(id);
+      await recarregarFacilidadesAdmin();
+      setApiMessage('Facilidade reativada com sucesso.');
+    } catch (error) {
+      console.error('Erro ao reativar facilidade:', error);
+      setApiMessage(`Erro: ${getMensagemErroFacilidade(error, 'Erro ao reativar facilidade.')}`);
+    } finally {
+      finalizarAcao(chaveAcao);
+      fecharConfirmacao();
     }
   };
 
   const recarregarAcademiasAdmin = async () => {
     const response = await AcademiaService.findAllAdmin();
     setAcademias(Array.isArray(response.data) ? response.data : []);
+  };
+
+  const handleConfirmarAcao = async () => {
+    if (!confirmacao) return;
+
+    const { tipo, acao, id } = confirmacao;
+
+    if (tipo === 'usuario' && acao === 'reativar') {
+      await executarAtivarUsuario(id);
+      return;
+    }
+
+    if (tipo === 'usuario' && acao === 'suspender') {
+      await executarSuspenderUsuario(id);
+      return;
+    }
+
+    if (tipo === 'academia' && acao === 'reativar') {
+      await executarReativarAcademia(id);
+      return;
+    }
+
+    if (tipo === 'academia' && acao === 'suspender') {
+      await executarSuspenderAcademia(id);
+      return;
+    }
+
+    if (tipo === 'avaliacao' && acao === 'suspender') {
+      await executarSuspenderAvaliacao(id);
+      return;
+    }
+
+    if (tipo === 'avaliacao' && acao === 'reativar') {
+      await executarReativarAvaliacao(id);
+      return;
+    }
+
+    if (tipo === 'categoria' && acao === 'inativar') {
+      await executarInativarCategoria(id);
+      return;
+    }
+
+    if (tipo === 'categoria' && acao === 'reativar') {
+      await executarReativarCategoria(id);
+      return;
+    }
+
+    if (tipo === 'facilidade' && acao === 'inativar') {
+      await executarInativarFacilidade(id);
+      return;
+    }
+
+    if (tipo === 'facilidade' && acao === 'reativar') {
+      await executarReativarFacilidade(id);
+    }
   };
 
   const mudarSecao = (secao) => {
@@ -365,7 +771,8 @@ function AdminPanelPage({ currentUser }) {
     { id: 'gerentes', label: 'Gerentes', description: `${totais.gerentes} completo(s)` },
     { id: 'academias', label: 'Academias', description: `${totais.academias} cadastro(s)` },
     { id: 'avaliacoes', label: 'Avaliações', description: `${totais.avaliacoes} registro(s)` },
-    { id: 'categorias', label: 'Categorias', description: `${totais.categorias} cadastro(s)` }
+    { id: 'categorias', label: 'Categorias', description: `${totais.categorias} cadastro(s)` },
+    { id: 'facilidades', label: 'Facilidades', description: `${totais.facilidades} cadastro(s)` }
   ];
 
   const getTituloSecao = () => {
@@ -380,6 +787,7 @@ function AdminPanelPage({ currentUser }) {
     if (activeSection === 'academias') return 'Gerencie academias ativas, inativas e suspensas.';
     if (activeSection === 'avaliacoes') return 'Gerencie avaliações ativas, inativas e suspensas.';
     if (activeSection === 'categorias') return 'Gerencie categorias ativas e inativas.';
+    if (activeSection === 'facilidades') return 'Gerencie facilidades ativas e inativas.';
     return '';
   };
 
@@ -391,6 +799,8 @@ function AdminPanelPage({ currentUser }) {
           currentUser={currentUser}
           onSuspenderUsuario={handleSuspenderUsuario}
           onAtivarUsuario={handleAtivarUsuario}
+          acaoEstaEmAndamento={acaoEstaEmAndamento}
+          getAcaoKey={getAcaoKey}
         />
       );
     }
@@ -403,6 +813,8 @@ function AdminPanelPage({ currentUser }) {
           academias={academias}
           onSuspenderAcademia={handleSuspenderAcademia}
           onReativarAcademia={handleReativarAcademia}
+          acaoEstaEmAndamento={acaoEstaEmAndamento}
+          getAcaoKey={getAcaoKey}
         />
       );
     }
@@ -413,6 +825,8 @@ function AdminPanelPage({ currentUser }) {
           avaliacoes={avaliacoes}
           onSuspenderAvaliacao={handleSuspenderAvaliacao}
           onReativarAvaliacao={handleReativarAvaliacao}
+          acaoEstaEmAndamento={acaoEstaEmAndamento}
+          getAcaoKey={getAcaoKey}
         />
       );
     }
@@ -425,6 +839,22 @@ function AdminPanelPage({ currentUser }) {
           onEditarCategoria={handleEditarCategoria}
           onInativarCategoria={handleInativarCategoria}
           onReativarCategoria={handleReativarCategoria}
+          acaoEstaEmAndamento={acaoEstaEmAndamento}
+          getAcaoKey={getAcaoKey}
+        />
+      );
+    }
+
+    if (activeSection === 'facilidades') {
+      return (
+        <AdminFacilitiesSection
+          facilidades={facilidades}
+          onCadastrarFacilidade={handleCadastrarFacilidade}
+          onEditarFacilidade={handleEditarFacilidade}
+          onInativarFacilidade={handleInativarFacilidade}
+          onReativarFacilidade={handleReativarFacilidade}
+          acaoEstaEmAndamento={acaoEstaEmAndamento}
+          getAcaoKey={getAcaoKey}
         />
       );
     }
@@ -442,35 +872,48 @@ function AdminPanelPage({ currentUser }) {
   }
 
   return (
-    <div className="admin-page">
-      <AdminSidebar
-        activeSection={activeSection}
-        menuItems={menuItems}
-        currentUser={currentUser}
-        onMudarSecao={mudarSecao}
-      />
+    <>
+      <div className="admin-page">
+        <AdminSidebar
+          activeSection={activeSection}
+          menuItems={menuItems}
+          currentUser={currentUser}
+          onMudarSecao={mudarSecao}
+        />
 
-      <div className="admin-content">
-        <header className="admin-header">
-          <div>
-            <h1 className="admin-header__title">{getTituloSecao()}</h1>
-            <p className="admin-header__description">{getDescricaoSecao()}</p>
-          </div>
+        <div className="admin-content">
+          <header className="admin-header">
+            <div>
+              <h1 className="admin-header__title">{getTituloSecao()}</h1>
+              <p className="admin-header__description">{getDescricaoSecao()}</p>
+            </div>
 
-          <Button type="button" className="button-primary" onClick={carregarDadosAdmin}>
-            Atualizar dados
-          </Button>
-        </header>
+            <Button type="button" className="button-primary" onClick={carregarDadosAdmin}>
+              Atualizar dados
+            </Button>
+          </header>
 
-        {apiMessage && (
-          <div className={`admin-message ${apiMessage.startsWith('Erro') ? 'admin-message--error' : 'admin-message--success'}`}>
-            {apiMessage}
-          </div>
-        )}
+          {apiMessage && (
+            <div className={`admin-message ${apiMessage.startsWith('Erro') ? 'admin-message--error' : 'admin-message--success'}`}>
+              {apiMessage}
+            </div>
+          )}
 
-        {renderConteudo()}
+          {renderConteudo()}
+        </div>
       </div>
-    </div>
+
+      <ConfirmModal
+        open={Boolean(confirmacao)}
+        title={confirmacao?.title}
+        message={confirmacao?.message}
+        confirmText={confirmacao?.confirmText}
+        variant={confirmacao?.variant}
+        loading={acaoConfirmadaEstaEmAndamento()}
+        onConfirm={handleConfirmarAcao}
+        onCancel={fecharConfirmacao}
+      />
+    </>
   );
 }
 

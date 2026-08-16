@@ -33,7 +33,6 @@ function ForgotPasswordPage() {
     }
 
     // Simula o envio de uma solicitação de redefinição de senha
-    console.log('Solicitação de redefinição de senha para:', email);
     setMessage('Se o e-mail estiver cadastrado, você receberá um link para redefinir sua senha.');
     setEmail(''); // Limpa o campo de e-mail após o envio
   };

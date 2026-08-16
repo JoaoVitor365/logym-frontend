@@ -21,7 +21,6 @@ function AdminSidebar({ activeSection, menuItems, currentUser, onMudarSecao }) {
               type="button"
               onClick={() => onMudarSecao(item.id)}
               onMouseDown={(event) => event.preventDefault()}
-              onFocus={(event) => event.target.blur()}
               className={`admin-sidebar__button ${ativo ? 'admin-sidebar__button--active' : ''}`}
             >
               <span className="admin-sidebar__button-label">{item.label}</span>

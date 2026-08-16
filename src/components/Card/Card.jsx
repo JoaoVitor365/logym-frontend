@@ -2,11 +2,17 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../Button/Button';
+import Toast from '../Toast/Toast';
 import FavoritoService from '../../services/FavoritoService';
 
 function Card({ academy, onFavoriteChange, categoriasAtivas }) {
   const [favoritado, setFavoritado] = useState(false);
   const [loadingFavorito, setLoadingFavorito] = useState(false);
+  const [toast, setToast] = useState({
+    open: false,
+    message: '',
+    variant: 'success'
+  });
 
   const usuarioLogado = JSON.parse(localStorage.getItem('user'));
   const podeFavoritar = usuarioLogado?.nivelAcesso === 'USER';
@@ -77,12 +83,20 @@ function Card({ academy, onFavoriteChange, categoriasAtivas }) {
 
   const handleToggleFavorito = async () => {
     if (!usuarioLogado) {
-      alert('Faça login para favoritar academias.');
+      setToast({
+        open: true,
+        message: 'Faça login para favoritar academias.',
+        variant: 'warning'
+      });
       return;
     }
 
     if (usuarioLogado.nivelAcesso !== 'USER') {
-      alert('Apenas usuários comuns podem favoritar academias.');
+      setToast({
+        open: true,
+        message: 'Apenas usuários comuns podem favoritar academias.',
+        variant: 'warning'
+      });
       return;
     }
 
@@ -99,7 +113,11 @@ function Card({ academy, onFavoriteChange, categoriasAtivas }) {
       }
     } catch (error) {
       console.error('Erro ao favoritar academia:', error);
-      alert('Erro ao atualizar favorito.');
+      setToast({
+        open: true,
+        message: 'Erro ao atualizar favorito.',
+        variant: 'error'
+      });
     } finally {
       setLoadingFavorito(false);
     }
@@ -152,6 +170,13 @@ function Card({ academy, onFavoriteChange, categoriasAtivas }) {
           </Button>
         </Link>
       </div>
+
+      <Toast
+        open={toast.open}
+        message={toast.message}
+        variant={toast.variant}
+        onClose={() => setToast((prev) => ({ ...prev, open: false }))}
+      />
     </div>
   );
 }

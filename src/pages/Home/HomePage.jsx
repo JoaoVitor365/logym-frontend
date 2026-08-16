@@ -8,6 +8,7 @@ import Card from '../../components/Card/Card';
 import GerenteService from '../../services/GerenteService';
 import AcademiaService from '../../services/AcademiaService';
 import CategoriaService from '../../services/CategoriaService';
+import FacilidadeService from '../../services/FacilidadeService';
 
 function HomePage({ currentUser }) {
   const navigate = useNavigate();
@@ -27,14 +28,9 @@ function HomePage({ currentUser }) {
   const [categoriasAtivas, setCategoriasAtivas] = useState([]);
   const [loadingCategorias, setLoadingCategorias] = useState(true);
   const [mensagemCategorias, setMensagemCategorias] = useState('');
-
-  const filtrosFacilidades = [
-    'Wi-Fi',
-    'Estacionamento',
-    'Acessibilidade',
-    'Ar Condicionado',
-    'Vestiario'
-  ];
+  const [facilidadesAtivas, setFacilidadesAtivas] = useState([]);
+  const [loadingFacilidades, setLoadingFacilidades] = useState(true);
+  const [mensagemFacilidades, setMensagemFacilidades] = useState('');
 
   useEffect(() => {
     const verificarCadastroGerente = async () => {
@@ -131,6 +127,36 @@ function HomePage({ currentUser }) {
     carregarCategorias();
   }, []);
 
+  useEffect(() => {
+    const carregarFacilidades = async () => {
+      setLoadingFacilidades(true);
+      setMensagemFacilidades('');
+
+      try {
+        const response = await FacilidadeService.findAtivas();
+        const dados = response.data;
+
+        if (Array.isArray(dados)) {
+          setFacilidadesAtivas(dados);
+        } else if (Array.isArray(dados?.content)) {
+          setFacilidadesAtivas(dados.content);
+        } else {
+          console.error('Resposta inesperada ao carregar facilidades:', dados);
+          setFacilidadesAtivas([]);
+          setMensagemFacilidades('Não foi possível carregar as facilidades.');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar facilidades:', error);
+        setFacilidadesAtivas([]);
+        setMensagemFacilidades('Não foi possível carregar as facilidades.');
+      } finally {
+        setLoadingFacilidades(false);
+      }
+    };
+
+    carregarFacilidades();
+  }, []);
+
   const normalizarTexto = useCallback((texto) => {
     return String(texto || '')
       .toLowerCase()
@@ -161,7 +187,31 @@ function HomePage({ currentUser }) {
       .join(' ');
   }, [categoriasAtivas, getCategoriaIdsAcademia, normalizarId]);
 
+  const getFacilidadeIdsAcademia = useCallback((academia) => {
+    if (!Array.isArray(academia?.facilidadeIds)) {
+      return [];
+    }
+
+    return academia.facilidadeIds.map(normalizarId).filter(Number.isFinite);
+  }, [normalizarId]);
+
+  const getNomesFacilidadesAcademia = useCallback((academia) => {
+    const facilidadeIdsAcademia = getFacilidadeIdsAcademia(academia);
+
+    if (facilidadeIdsAcademia.length === 0) {
+      return '';
+    }
+
+    return facilidadesAtivas
+      .filter((facilidade) => facilidadeIdsAcademia.includes(normalizarId(facilidade.id)))
+      .map((facilidade) => facilidade.nome)
+      .join(' ');
+  }, [facilidadesAtivas, getFacilidadeIdsAcademia, normalizarId]);
+
   const academiaContemTermo = useCallback((academia, termo) => {
+    const facilidadeIdsAcademia = getFacilidadeIdsAcademia(academia);
+    const facilidadesLegadas = facilidadeIdsAcademia.length === 0 ? academia.facilidades : '';
+
     const textoPesquisavel = normalizarTexto(`
       ${academia.nome}
       ${academia.descricao}
@@ -177,11 +227,12 @@ function HomePage({ currentUser }) {
       ${academia.email}
       ${academia.categorias}
       ${getNomesCategoriasAcademia(academia)}
-      ${academia.facilidades}
+      ${facilidadesLegadas}
+      ${getNomesFacilidadesAcademia(academia)}
     `);
 
     return textoPesquisavel.includes(termo);
-  }, [getNomesCategoriasAcademia, normalizarTexto]);
+  }, [getFacilidadeIdsAcademia, getNomesCategoriasAcademia, getNomesFacilidadesAcademia, normalizarTexto]);
 
   const academiaPossuiCategoria = useCallback((academia, categoria) => {
     const categoriaId = normalizarId(categoria.id);
@@ -193,6 +244,17 @@ function HomePage({ currentUser }) {
 
     return academiaContemTermo(academia, normalizarTexto(categoria.nome));
   }, [academiaContemTermo, getCategoriaIdsAcademia, normalizarId, normalizarTexto]);
+
+  const academiaPossuiFacilidade = useCallback((academia, facilidade) => {
+    const facilidadeId = normalizarId(facilidade.id);
+    const facilidadeIdsAcademia = getFacilidadeIdsAcademia(academia);
+
+    if (facilidadeIdsAcademia.length > 0 && Number.isFinite(facilidadeId)) {
+      return facilidadeIdsAcademia.includes(facilidadeId);
+    }
+
+    return academiaContemTermo(academia, normalizarTexto(facilidade.nome));
+  }, [academiaContemTermo, getFacilidadeIdsAcademia, normalizarId, normalizarTexto]);
 
   const academiasFiltradas = useMemo(() => {
     const termoBusca = normalizarTexto(termoPesquisado.trim());
@@ -215,9 +277,13 @@ function HomePage({ currentUser }) {
         : true;
 
       const passaNasFacilidades = facilidadesSelecionadas.length > 0
-        ? facilidadesSelecionadas.every((facilidade) =>
-          academiaContemTermo(academia, normalizarTexto(facilidade))
-        )
+        ? facilidadesSelecionadas.every((facilidadeId) => {
+          const facilidade = facilidadesAtivas.find(
+            (item) => normalizarId(item.id) === normalizarId(facilidadeId)
+          );
+
+          return facilidade ? academiaPossuiFacilidade(academia, facilidade) : false;
+        })
         : true;
 
       return passaNaBusca && passaNasCategorias && passaNasFacilidades;
@@ -235,8 +301,10 @@ function HomePage({ currentUser }) {
     categoriasSelecionadas,
     facilidadesSelecionadas,
     categoriasAtivas,
+    facilidadesAtivas,
     academiaContemTermo,
     academiaPossuiCategoria,
+    academiaPossuiFacilidade,
     normalizarTexto,
     normalizarId
   ]);
@@ -258,13 +326,15 @@ function HomePage({ currentUser }) {
     });
   };
 
-  const alternarFacilidade = (facilidade) => {
+  const alternarFacilidade = (facilidadeId) => {
+    const idNormalizado = normalizarId(facilidadeId);
+
     setFacilidadesSelecionadas((facilidadesAtuais) => {
-      if (facilidadesAtuais.includes(facilidade)) {
-        return facilidadesAtuais.filter((item) => item !== facilidade);
+      if (facilidadesAtuais.includes(idNormalizado)) {
+        return facilidadesAtuais.filter((item) => item !== idNormalizado);
       }
 
-      return [...facilidadesAtuais, facilidade];
+      return [...facilidadesAtuais, idNormalizado];
     });
   };
 
@@ -283,6 +353,12 @@ function HomePage({ currentUser }) {
   const categoriasSelecionadasNomes = categoriasSelecionadas
     .map((categoriaId) => categoriasAtivas.find(
       (categoria) => normalizarId(categoria.id) === normalizarId(categoriaId)
+    )?.nome)
+    .filter(Boolean);
+
+  const facilidadesSelecionadasNomes = facilidadesSelecionadas
+    .map((facilidadeId) => facilidadesAtivas.find(
+      (facilidade) => normalizarId(facilidade.id) === normalizarId(facilidadeId)
     )?.nome)
     .filter(Boolean);
 
@@ -367,7 +443,7 @@ function HomePage({ currentUser }) {
           type="text"
           id="search"
           name="search"
-          placeholder="Ex: categoria, bairro, Wi-Fi, Paulista"
+          placeholder="Ex: categoria, facilidade, bairro, Paulista"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="search-input"
@@ -407,16 +483,20 @@ function HomePage({ currentUser }) {
             );
           })}
 
-          {filtrosFacilidades.map((filtro) => (
-            <button
-              key={filtro}
-              type="button"
-              className={`home-filter-button ${facilidadesSelecionadas.includes(filtro) ? 'active' : ''}`}
-              onClick={() => alternarFacilidade(filtro)}
-            >
-              {filtro}
-            </button>
-          ))}
+          {facilidadesAtivas.map((facilidade) => {
+            const facilidadeId = normalizarId(facilidade.id);
+
+            return (
+              <button
+                key={facilidade.id}
+                type="button"
+                className={`home-filter-button ${facilidadesSelecionadas.includes(facilidadeId) ? 'active' : ''}`}
+                onClick={() => alternarFacilidade(facilidade.id)}
+              >
+                {facilidade.nome}
+              </button>
+            );
+          })}
         </div>
 
         {loadingCategorias && (
@@ -426,6 +506,16 @@ function HomePage({ currentUser }) {
         {mensagemCategorias && (
           <p className="home-filter-message home-filter-message-error">
             {mensagemCategorias}
+          </p>
+        )}
+
+        {loadingFacilidades && (
+          <p className="home-filter-message">Carregando facilidades...</p>
+        )}
+
+        {mensagemFacilidades && (
+          <p className="home-filter-message home-filter-message-error">
+            {mensagemFacilidades}
           </p>
         )}
 
@@ -454,9 +544,9 @@ function HomePage({ currentUser }) {
             </span>
           )}
 
-          {facilidadesSelecionadas.length > 0 && (
+          {facilidadesSelecionadasNomes.length > 0 && (
             <span>
-              Facilidades: <strong>{facilidadesSelecionadas.join(' + ')}</strong>
+              Facilidades: <strong>{facilidadesSelecionadasNomes.join(' + ')}</strong>
             </span>
           )}
 

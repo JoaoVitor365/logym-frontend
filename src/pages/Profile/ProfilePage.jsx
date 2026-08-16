@@ -1,5 +1,5 @@
 // src/pages/ProfilePage.jsx
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import UsuarioService from '../../services/UsuarioService';
 import '../../styles/pages/_profile.css';
@@ -38,16 +38,16 @@ function ProfilePage() {
   const [cepError, setCepError] = useState('');
   const [showInactivateConfirm, setShowInactivateConfirm] = useState(false);
 
-  const limparEnderecoCep = () => {
+  const limparEnderecoCep = useCallback(() => {
     setEnderecoCep({
       logradouro: '',
       bairro: '',
       cidade: '',
       estado: ''
     });
-  };
+  }, []);
 
-  const buscarEnderecoPorCep = async (cepFormatado) => {
+  const buscarEnderecoPorCep = useCallback(async (cepFormatado) => {
     const cepLimpo = String(cepFormatado || '').replace(/\D/g, '');
 
     if (cepLimpo.length !== 8) {
@@ -82,7 +82,7 @@ function ProfilePage() {
     } finally {
       setBuscandoCep(false);
     }
-  };
+  }, [limparEnderecoCep]);
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
@@ -118,7 +118,7 @@ function ProfilePage() {
           setFotoUrl(null);
         });
     }
-  }, []);
+  }, [buscarEnderecoPorCep]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -314,7 +314,7 @@ function ProfilePage() {
         window.location.href = '/';
       }, 2000);
 
-    } catch (error) {
+    } catch {
       setApiMessage('Erro ao inativar conta.');
     } finally {
       setLoading(false);

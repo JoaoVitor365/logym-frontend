@@ -5,9 +5,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
+import ConfirmModal from '../../components/Modal/ConfirmModal';
 import AcademiaService from '../../services/AcademiaService';
 import FotoAcademiaService from '../../services/FotoAcademiaService';
 import CategoriaService from '../../services/CategoriaService';
+import FacilidadeService from '../../services/FacilidadeService';
 import { isValidCNPJ } from '../../utils/documentValidators';
 
 import '../../styles/pages/_academyRegister.css';
@@ -81,6 +83,26 @@ const getCategoriaIdsSelecionadas = (academia, categoriasAtivas) => {
     .filter(Number.isFinite);
 };
 
+const getFacilidadeIdsSelecionadas = (academia, facilidadesAtivas) => {
+  if (Array.isArray(academia.facilidadeIds) && academia.facilidadeIds.length > 0) {
+    return academia.facilidadeIds.map(normalizarId).filter(Number.isFinite);
+  }
+
+  if (!academia.facilidades) {
+    return [];
+  }
+
+  const nomesAntigos = academia.facilidades
+    .split(',')
+    .map((item) => normalizarTexto(item.trim()))
+    .filter(Boolean);
+
+  return facilidadesAtivas
+    .filter((facilidade) => nomesAntigos.includes(normalizarTexto(facilidade.nome)))
+    .map((facilidade) => normalizarId(facilidade.id))
+    .filter(Number.isFinite);
+};
+
 function AcademyEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -100,7 +122,7 @@ function AcademyEditPage() {
     email: '',
     descricao: '',
     categoriaIds: [],
-    facilidades: []
+    facilidadeIds: []
   });
 
   const [errors, setErrors] = useState({});
@@ -113,51 +135,58 @@ function AcademyEditPage() {
   const [novasFotos, setNovasFotos] = useState([]);
   const [previewNovasFotos, setPreviewNovasFotos] = useState([]);
   const [salvandoFotos, setSalvandoFotos] = useState(false);
+  const [fotoPendenteRemocao, setFotoPendenteRemocao] = useState(null);
+  const [removendoFoto, setRemovendoFoto] = useState(false);
 
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [categoriasMessage, setCategoriasMessage] = useState('');
-
-  const facilityOptions = [
-    'Estacionamento',
-    'Vestiário',
-    'Chuveiro',
-    'Ar Condicionado',
-    'Wi-Fi',
-    'Avaliação Física',
-    'Nutricionista',
-    'Loja de Suplementos',
-    'Acessibilidade',
-    'Armários'
-  ];
+  const [facilityOptions, setFacilityOptions] = useState([]);
+  const [facilidadesMessage, setFacilidadesMessage] = useState('');
 
   useEffect(() => {
     const fetchAcademia = async () => {
       try {
         setLoading(true);
 
-        const [academiaResponse, fotosResponse, categoriasResponse] = await Promise.all([
+        const [academiaResponse, fotosResponse, categoriasResponse, facilidadesResponse] = await Promise.all([
           AcademiaService.findById(id),
           FotoAcademiaService.listarPorAcademia(id),
           CategoriaService.findAtivas().catch((error) => {
             console.error('Erro ao carregar categorias:', error);
             setCategoriasMessage('Não foi possível carregar as categorias agora.');
             return { data: [] };
+          }),
+          FacilidadeService.findAtivas().catch((error) => {
+            console.error('Erro ao carregar facilidades:', error);
+            setFacilidadesMessage('Não foi possível carregar as facilidades agora.');
+            return { data: [] };
           })
         ]);
 
         const academia = academiaResponse.data;
         const dadosCategorias = categoriasResponse.data;
+        const dadosFacilidades = facilidadesResponse.data;
         const categoriasAtivas = Array.isArray(dadosCategorias)
           ? dadosCategorias
           : Array.isArray(dadosCategorias?.content)
             ? dadosCategorias.content
+            : [];
+        const facilidadesAtivas = Array.isArray(dadosFacilidades)
+          ? dadosFacilidades
+          : Array.isArray(dadosFacilidades?.content)
+            ? dadosFacilidades.content
             : [];
 
         if (!Array.isArray(dadosCategorias) && !Array.isArray(dadosCategorias?.content)) {
           setCategoriasMessage('Não foi possível carregar as categorias agora.');
         }
 
+        if (!Array.isArray(dadosFacilidades) && !Array.isArray(dadosFacilidades?.content)) {
+          setFacilidadesMessage('Não foi possível carregar as facilidades agora.');
+        }
+
         setCategoryOptions(categoriasAtivas);
+        setFacilityOptions(facilidadesAtivas);
 
         setFormData({
           nome: academia.nome || '',
@@ -174,9 +203,7 @@ function AcademyEditPage() {
           email: academia.email || '',
           descricao: academia.descricao || '',
           categoriaIds: getCategoriaIdsSelecionadas(academia, categoriasAtivas),
-          facilidades: academia.facilidades
-            ? academia.facilidades.split(',').map((item) => item.trim()).filter(Boolean)
-            : []
+          facilidadeIds: getFacilidadeIdsSelecionadas(academia, facilidadesAtivas)
         });
 
         setFotosAtuais(Array.isArray(fotosResponse.data) ? fotosResponse.data : []);
@@ -314,6 +341,19 @@ function AcademyEditPage() {
     });
   };
 
+  const scrollParaTopoFormulario = () => {
+    setTimeout(() => {
+      const topoFormulario = document.querySelector('.academy-register-form-container');
+
+      if (topoFormulario) {
+        topoFormulario.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }, 0);
+  };
+
   const handleNovasFotosChange = (e) => {
     const arquivos = Array.from(e.target.files || []);
 
@@ -328,7 +368,10 @@ function AcademyEditPage() {
     );
 
     if (apenasImagens.length !== arquivos.length) {
-      alert('Selecione apenas arquivos de imagem.');
+      setApiMessage('Selecione apenas arquivos de imagem.');
+      scrollParaTopoFormulario();
+    } else if (apiMessage === 'Selecione apenas arquivos de imagem.') {
+      setApiMessage('');
     }
 
     setNovasFotos(apenasImagens);
@@ -381,21 +424,26 @@ function AcademyEditPage() {
     }
   };
 
-  const handleRemoverFoto = async (fotoId) => {
-    const confirmar = window.confirm(
-      'Tem certeza que deseja remover esta foto? Ela não aparecerá mais nos detalhes da academia.'
-    );
+  const handleRemoverFoto = (fotoId) => {
+    setFotoPendenteRemocao(fotoId);
+  };
 
-    if (!confirmar) {
+  const cancelarRemocaoFoto = () => {
+    setFotoPendenteRemocao(null);
+  };
+
+  const confirmarRemocaoFoto = async () => {
+    if (!fotoPendenteRemocao || removendoFoto) {
       return;
     }
 
     setApiMessage('');
+    setRemovendoFoto(true);
 
     try {
-      await FotoAcademiaService.inativar(fotoId);
+      await FotoAcademiaService.inativar(fotoPendenteRemocao);
 
-      setFotosAtuais((prev) => prev.filter((foto) => foto.id !== fotoId));
+      setFotosAtuais((prev) => prev.filter((foto) => foto.id !== fotoPendenteRemocao));
 
       setApiMessage('Foto removida com sucesso!');
     } catch (error) {
@@ -408,6 +456,9 @@ function AcademyEditPage() {
         'Erro ao remover foto.';
 
       setApiMessage(`Erro ao remover foto: ${mensagemErro}`);
+    } finally {
+      setRemovendoFoto(false);
+      setFotoPendenteRemocao(null);
     }
   };
 
@@ -512,7 +563,7 @@ function AcademyEditPage() {
         email: formData.email,
         descricao: formData.descricao,
         categoriaIds: formData.categoriaIds,
-        facilidades: formData.facilidades.join(', ')
+        facilidadeIds: formData.facilidadeIds
       };
 
       await AcademiaService.update(id, updateData);
@@ -544,15 +595,16 @@ function AcademyEditPage() {
   }
 
   return (
-    <div className="academy-register-page">
-      <div className="academy-register-form-container">
+    <>
+      <div className="academy-register-page">
+        <div className="academy-register-form-container">
         <div className="academy-register-header">
           <img src={logo} alt="Logo da LOGYM" className="academy-register-logo" />
           <h1>Editar Academia</h1>
         </div>
 
         {apiMessage && (
-          <p className={`academy-api-message ${apiMessage.startsWith('Erro') ? 'academy-api-message-error' : 'academy-api-message-success'}`}>
+          <p className={`academy-api-message ${apiMessage.startsWith('Erro') || apiMessage === 'Selecione apenas arquivos de imagem.' ? 'academy-api-message-error' : 'academy-api-message-success'}`}>
             {apiMessage}
           </p>
         )}
@@ -785,16 +837,22 @@ function AcademyEditPage() {
 
             <div className="checkbox-grid-improved">
               {facilityOptions.map((facility) => (
-                <label key={facility} className="checkbox-card">
+                <label key={facility.id} className="checkbox-card">
                   <input
                     type="checkbox"
-                    checked={formData.facilidades.includes(facility)}
-                    onChange={() => handleCheckboxChange('facilidades', facility)}
+                    checked={formData.facilidadeIds.includes(normalizarId(facility.id))}
+                    onChange={() => handleCheckboxChange('facilidadeIds', normalizarId(facility.id))}
                   />
-                  <span>{facility}</span>
+                  <span>{facility.nome}</span>
                 </label>
               ))}
             </div>
+
+            {facilidadesMessage && (
+              <p className="academy-checkbox-message academy-checkbox-message-error">
+                {facilidadesMessage}
+              </p>
+            )}
           </div>
 
           <div className="academy-photo-upload-section">
@@ -957,8 +1015,21 @@ function AcademyEditPage() {
             </Button>
           </div>
         </form>
+        </div>
       </div>
-    </div>
+
+      <ConfirmModal
+        open={Boolean(fotoPendenteRemocao)}
+        title="Remover foto"
+        message="Tem certeza que deseja remover esta foto? Ela não aparecerá mais nos detalhes da academia."
+        confirmText="Remover"
+        cancelText="Cancelar"
+        variant="danger"
+        loading={removendoFoto}
+        onConfirm={confirmarRemocaoFoto}
+        onCancel={cancelarRemocaoFoto}
+      />
+    </>
   );
 }
 

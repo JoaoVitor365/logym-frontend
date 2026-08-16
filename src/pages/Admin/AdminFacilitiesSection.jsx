@@ -1,38 +1,38 @@
-﻿// src/pages/Admin/AdminCategoriesSection.jsx
+﻿// src/pages/Admin/AdminFacilitiesSection.jsx
 import React, { useState } from 'react';
 
 import Button from '../../components/Button/Button';
 import { StatusBadge } from './AdminSharedComponents';
 
-function AdminCategoriesSection({
-  categorias,
-  onCadastrarCategoria,
-  onEditarCategoria,
-  onInativarCategoria,
-  onReativarCategoria,
+function AdminFacilitiesSection({
+  facilidades,
+  onCadastrarFacilidade,
+  onEditarFacilidade,
+  onInativarFacilidade,
+  onReativarFacilidade,
   acaoEstaEmAndamento,
   getAcaoKey
 }) {
   const [nome, setNome] = useState('');
   const [descricao, setDescricao] = useState('');
-  const [categoriaEmEdicao, setCategoriaEmEdicao] = useState(null);
+  const [facilidadeEmEdicao, setFacilidadeEmEdicao] = useState(null);
   const [erroFormulario, setErroFormulario] = useState('');
-  const chaveFormulario = categoriaEmEdicao
-    ? getAcaoKey('categoria', categoriaEmEdicao.id, 'editar')
-    : getAcaoKey('categoria', 'nova', 'cadastrar');
+  const chaveFormulario = facilidadeEmEdicao
+    ? getAcaoKey('facilidade', facilidadeEmEdicao.id, 'editar')
+    : getAcaoKey('facilidade', 'nova', 'cadastrar');
   const salvandoFormulario = acaoEstaEmAndamento(chaveFormulario);
 
   const limparFormulario = () => {
     setNome('');
     setDescricao('');
-    setCategoriaEmEdicao(null);
+    setFacilidadeEmEdicao(null);
     setErroFormulario('');
   };
 
-  const iniciarEdicao = (categoria) => {
-    setCategoriaEmEdicao(categoria);
-    setNome(categoria.nome || '');
-    setDescricao(categoria.descricao || '');
+  const iniciarEdicao = (facilidade) => {
+    setFacilidadeEmEdicao(facilidade);
+    setNome(facilidade.nome || '');
+    setDescricao(facilidade.descricao || '');
     setErroFormulario('');
   };
 
@@ -46,13 +46,13 @@ function AdminCategoriesSection({
     const nomeTratado = nome.trim();
 
     if (!nomeTratado) {
-      setErroFormulario('O nome da categoria é obrigatório.');
+      setErroFormulario('O nome da facilidade é obrigatório.');
       return;
     }
 
-    const sucesso = categoriaEmEdicao
-      ? await onEditarCategoria(categoriaEmEdicao.id, { nome: nomeTratado, descricao })
-      : await onCadastrarCategoria({ nome: nomeTratado, descricao });
+    const sucesso = facilidadeEmEdicao
+      ? await onEditarFacilidade(facilidadeEmEdicao.id, { nome: nomeTratado, descricao })
+      : await onCadastrarFacilidade({ nome: nomeTratado, descricao });
 
     if (sucesso) {
       limparFormulario();
@@ -61,16 +61,16 @@ function AdminCategoriesSection({
 
   return (
     <section className="admin-section">
-      <h2 className="admin-section__title">Categorias cadastradas</h2>
+      <h2 className="admin-section__title">Facilidades cadastradas</h2>
 
       <form onSubmit={handleSubmit}>
         <div className="input-group">
-          <label htmlFor="nomeCategoria" className="input-label">
+          <label htmlFor="nomeFacilidade" className="input-label">
             Nome
           </label>
           <input
-            id="nomeCategoria"
-            name="nomeCategoria"
+            id="nomeFacilidade"
+            name="nomeFacilidade"
             type="text"
             className="input-field"
             value={nome}
@@ -78,17 +78,17 @@ function AdminCategoriesSection({
               setNome(event.target.value);
               setErroFormulario('');
             }}
-            placeholder="Nome da categoria"
+            placeholder="Nome da facilidade"
           />
         </div>
 
         <div className="input-group">
-          <label htmlFor="descricaoCategoria" className="input-label">
+          <label htmlFor="descricaoFacilidade" className="input-label">
             Descrição
           </label>
           <textarea
-            id="descricaoCategoria"
-            name="descricaoCategoria"
+            id="descricaoFacilidade"
+            name="descricaoFacilidade"
             className="textarea-field"
             rows="3"
             value={descricao}
@@ -96,7 +96,7 @@ function AdminCategoriesSection({
               setDescricao(event.target.value);
               setErroFormulario('');
             }}
-            placeholder="Descrição da categoria"
+            placeholder="Descrição da facilidade"
           />
         </div>
 
@@ -108,10 +108,10 @@ function AdminCategoriesSection({
 
         <div className="admin-actions-row">
           <Button type="submit" className="button-primary" disabled={salvandoFormulario}>
-            {salvandoFormulario ? 'Salvando...' : categoriaEmEdicao ? 'Salvar categoria' : 'Cadastrar categoria'}
+            {salvandoFormulario ? 'Salvando...' : facilidadeEmEdicao ? 'Salvar facilidade' : 'Cadastrar facilidade'}
           </Button>
 
-          {categoriaEmEdicao && (
+          {facilidadeEmEdicao && (
             <Button type="button" className="button-cancel" onClick={limparFormulario}>
               Cancelar edição
             </Button>
@@ -123,7 +123,7 @@ function AdminCategoriesSection({
         <table className="admin-table">
           <thead>
             <tr>
-              <th>Categoria</th>
+              <th>Facilidade</th>
               <th>Descrição</th>
               <th>Status</th>
               <th>Ações</th>
@@ -131,33 +131,33 @@ function AdminCategoriesSection({
           </thead>
 
           <tbody>
-            {categorias.length === 0 ? (
+            {facilidades.length === 0 ? (
               <tr>
-                <td colSpan="4">Nenhuma categoria encontrada.</td>
+                <td colSpan="4">Nenhuma facilidade encontrada.</td>
               </tr>
             ) : (
-              categorias.map((categoria) => {
-                const estaAtiva = categoria.statusCategoria === 'ATIVO';
-                const inativando = acaoEstaEmAndamento(getAcaoKey('categoria', categoria.id, 'inativar'));
-                const reativando = acaoEstaEmAndamento(getAcaoKey('categoria', categoria.id, 'reativar'));
+              facilidades.map((facilidade) => {
+                const estaAtiva = facilidade.statusFacilidade === 'ATIVO';
+                const inativando = acaoEstaEmAndamento(getAcaoKey('facilidade', facilidade.id, 'inativar'));
+                const reativando = acaoEstaEmAndamento(getAcaoKey('facilidade', facilidade.id, 'reativar'));
 
                 return (
-                  <tr key={categoria.id}>
-                    <td>{categoria.nome}</td>
-                    <td>{categoria.descricao || '-'}</td>
-                    <td><StatusBadge status={categoria.statusCategoria} /></td>
+                  <tr key={facilidade.id}>
+                    <td>{facilidade.nome}</td>
+                    <td>{facilidade.descricao || '-'}</td>
+                    <td><StatusBadge status={facilidade.statusFacilidade} /></td>
                     <td>
                       <div className="admin-actions-row">
-                        <Button type="button" className="button-primary" onClick={() => iniciarEdicao(categoria)}>
+                        <Button type="button" className="button-primary" onClick={() => iniciarEdicao(facilidade)}>
                           Editar
                         </Button>
 
                         {estaAtiva ? (
-                          <Button type="button" className="button-cancel" onClick={() => onInativarCategoria(categoria.id)} disabled={inativando}>
+                          <Button type="button" className="button-cancel" onClick={() => onInativarFacilidade(facilidade.id)} disabled={inativando}>
                             {inativando ? 'Inativando...' : 'Inativar'}
                           </Button>
                         ) : (
-                          <Button type="button" className="button-primary" onClick={() => onReativarCategoria(categoria.id)} disabled={reativando}>
+                          <Button type="button" className="button-primary" onClick={() => onReativarFacilidade(facilidade.id)} disabled={reativando}>
                             {reativando ? 'Reativando...' : 'Reativar'}
                           </Button>
                         )}
@@ -174,5 +174,5 @@ function AdminCategoriesSection({
   );
 }
 
-export default AdminCategoriesSection;
+export default AdminFacilitiesSection;
 

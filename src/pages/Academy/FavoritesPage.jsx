@@ -10,12 +10,11 @@ function FavoritesPage() {
   const [loading, setLoading] = useState(true);
   const [apiMessage, setApiMessage] = useState('');
 
-  const usuarioLogado = JSON.parse(localStorage.getItem('user'));
-
   useEffect(() => {
     const carregarFavoritos = async () => {
       setLoading(true);
       setApiMessage('');
+      const usuarioLogado = JSON.parse(localStorage.getItem('user'));
 
       if (!usuarioLogado) {
         setApiMessage('Faça login para ver suas academias favoritas.');

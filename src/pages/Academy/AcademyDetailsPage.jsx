@@ -1,5 +1,5 @@
 // src/pages/AcademyDetailsPage.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
 import AcademyReviews from '../../components/Academy/AcademyReviews';
@@ -27,11 +27,7 @@ function AcademyDetailsPage() {
   const podeAvaliar = usuarioLogado?.nivelAcesso === 'USER';
   const isAdmin = usuarioLogado?.nivelAcesso === 'ADMIN';
 
-  useEffect(() => {
-    carregarDados();
-  }, [id]);
-
-  const montarNotasVazias = (itens) => {
+  const montarNotasVazias = useCallback((itens) => {
     const notas = {};
 
     itens.forEach((item) => {
@@ -39,9 +35,9 @@ function AcademyDetailsPage() {
     });
 
     return notas;
-  };
+  }, []);
 
-  const carregarDados = async () => {
+  const carregarDados = useCallback(async () => {
     setLoading(true);
     setApiMessage('');
 
@@ -69,7 +65,11 @@ function AcademyDetailsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, montarNotasVazias]);
+
+  useEffect(() => {
+    carregarDados();
+  }, [carregarDados]);
 
   const formatarCEP = (cep) => {
     if (!cep) return 'Não informado';
@@ -135,6 +135,70 @@ function AcademyDetailsPage() {
       .split(',')
       .map((item) => item.trim())
       .filter(Boolean);
+  };
+
+  const categoriaVinculadaEstaAtiva = (vinculo) => {
+    if (vinculo?.statusCategoriaAcademia && vinculo.statusCategoriaAcademia !== 'ATIVO') {
+      return false;
+    }
+
+    const categoria = vinculo?.categoria || vinculo;
+
+    if (categoria?.statusCategoria && categoria.statusCategoria !== 'ATIVO') {
+      return false;
+    }
+
+    return true;
+  };
+
+  const getNomeCategoriaVinculada = (vinculo) => {
+    const categoria = vinculo?.categoria || vinculo;
+
+    return categoria?.nome || '';
+  };
+
+  const getCategoriasParaExibicao = (academia) => {
+    if (Array.isArray(academia?.categoriasVinculadas) && academia.categoriasVinculadas.length > 0) {
+      return academia.categoriasVinculadas
+        .filter(categoriaVinculadaEstaAtiva)
+        .map(getNomeCategoriaVinculada)
+        .map((nome) => String(nome).trim())
+        .filter(Boolean);
+    }
+
+    return transformarTextoEmLista(academia?.categorias);
+  };
+
+  const facilidadeVinculadaEstaAtiva = (vinculo) => {
+    if (vinculo?.statusFacilidadeAcademia && vinculo.statusFacilidadeAcademia !== 'ATIVO') {
+      return false;
+    }
+
+    const facilidade = vinculo?.facilidade || vinculo;
+
+    if (facilidade?.statusFacilidade && facilidade.statusFacilidade !== 'ATIVO') {
+      return false;
+    }
+
+    return true;
+  };
+
+  const getNomeFacilidadeVinculada = (vinculo) => {
+    const facilidade = vinculo?.facilidade || vinculo;
+
+    return facilidade?.nome || '';
+  };
+
+  const getFacilidadesParaExibicao = (academia) => {
+    if (Array.isArray(academia?.facilidadesVinculadas) && academia.facilidadesVinculadas.length > 0) {
+      return academia.facilidadesVinculadas
+        .filter(facilidadeVinculadaEstaAtiva)
+        .map(getNomeFacilidadeVinculada)
+        .map((nome) => String(nome).trim())
+        .filter(Boolean);
+    }
+
+    return transformarTextoEmLista(academia?.facilidades);
   };
 
   const handleAlterarNotaItem = (itemId, nota) => {
@@ -372,8 +436,8 @@ function AcademyDetailsPage() {
     );
   }
 
-  const categorias = transformarTextoEmLista(academy.categorias);
-  const facilidades = transformarTextoEmLista(academy.facilidades);
+  const categorias = getCategoriasParaExibicao(academy);
+  const facilidades = getFacilidadesParaExibicao(academy);
   const avaliacaoDoUsuarioLogado = reviews.find(
     (review) => Number(review.usuarioId) === Number(usuarioLogado?.id)
   );
