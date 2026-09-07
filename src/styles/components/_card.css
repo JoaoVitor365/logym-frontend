@@ -53,3 +53,11 @@
 .card-details-link .button {
   width: auto; /* Botão não ocupa 100% da largura, mas sim o necessário */
 }
+
+.card-principal-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+  border-bottom: 1px solid var(--border-color);
+}

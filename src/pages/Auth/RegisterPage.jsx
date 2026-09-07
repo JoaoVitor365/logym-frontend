@@ -1,5 +1,5 @@
 // src/pages/RegisterPage.jsx
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import { Link, useNavigate } from 'react-router-dom';
@@ -20,6 +20,8 @@ function RegisterPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [cep, setCep] = useState('');
+  const [numero, setNumero] = useState('');
+  const [complemento, setComplemento] = useState('');
   const [enderecoCep, setEnderecoCep] = useState({
     logradouro: '',
     bairro: '',
@@ -35,6 +37,7 @@ function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [buscandoCep, setBuscandoCep] = useState(false);
   const [apiMessage, setApiMessage] = useState('');
+  const cepAtualRef = useRef('');
 
   const scrollParaTopoFormulario = () => {
     setTimeout(() => {
@@ -86,6 +89,10 @@ function RegisterPage() {
       const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
       const data = await response.json();
 
+      if (cepAtualRef.current !== cepLimpo) {
+        return;
+      }
+
       if (data.erro) {
         limparEnderecoCep();
 
@@ -111,6 +118,10 @@ function RegisterPage() {
     } catch (error) {
       console.error('Erro ao buscar CEP:', error);
 
+      if (cepAtualRef.current !== cepLimpo) {
+        return;
+      }
+
       limparEnderecoCep();
 
       setErrors((prev) => ({
@@ -118,7 +129,9 @@ function RegisterPage() {
         cep: 'Não foi possível buscar o CEP agora.'
       }));
     } finally {
-      setBuscandoCep(false);
+      if (cepAtualRef.current === cepLimpo) {
+        setBuscandoCep(false);
+      }
     }
   };
 
@@ -127,9 +140,12 @@ function RegisterPage() {
     const cepLimpo = cepFormatado.replace(/\D/g, '');
 
     setCep(cepFormatado);
+    cepAtualRef.current = cepLimpo;
     setApiMessage('');
+    limparEnderecoCep();
 
     if (cepLimpo.length < 8) {
+      setBuscandoCep(false);
       limparEnderecoCep();
 
       setErrors((prev) => ({
@@ -167,9 +183,19 @@ function RegisterPage() {
       } else if (cep.replace(/\D/g, '').length !== 8) {
         newErrors.cep = 'O CEP deve conter 8 dígitos.';
         isValid = false;
-      } else if (!enderecoCep.cidade || !enderecoCep.estado) {
+      } else if (!enderecoCep.logradouro || !enderecoCep.cidade || !enderecoCep.estado) {
         newErrors.cep = 'Informe um CEP válido.';
         isValid = false;
+      }
+
+      if (enderecoCep.logradouro && enderecoCep.cidade && enderecoCep.estado) {
+        if (!numero.trim()) {
+          newErrors.numero = 'O número é obrigatório para o endereço.';
+          isValid = false;
+        } else if (!/^\d+$/.test(numero.trim())) {
+          newErrors.numero = 'O número deve conter apenas dígitos não negativos.';
+          isValid = false;
+        }
       }
     }
 
@@ -251,12 +277,22 @@ function RegisterPage() {
     const emailNormalizado = email.trim().toLowerCase();
 
     try {
+      const dadosEndereco = isManager ? {} : {
+        cep: cep.replace(/\D/g, ''),
+        numero: numero.trim(),
+        complemento: complemento.trim() || undefined,
+        endereco: enderecoCep.logradouro,
+        bairro: enderecoCep.bairro || undefined,
+        cidade: enderecoCep.cidade,
+        estado: enderecoCep.estado
+      };
+
       const response = await UsuarioService.create(
         name.trim(),
         emailNormalizado,
         password,
         nivelAcesso,
-        isManager ? null : cep.replace(/\D/g, '')
+        dadosEndereco
       );
 
       const novoUsuario = response.data;
@@ -271,6 +307,9 @@ function RegisterPage() {
       setName('');
       setEmail('');
       setCep('');
+      setNumero('');
+      setComplemento('');
+      cepAtualRef.current = '';
       limparEnderecoCep();
       setPassword('');
       setConfirmPassword('');
@@ -399,6 +438,36 @@ function RegisterPage() {
                     placeholder="Estado"
                     disabled
                   />
+
+                  <div className={getFieldErrorClass('numero')}>
+                    <Input
+                      label="Número"
+                      type="text"
+                      id="numero"
+                      name="numero"
+                      value={numero}
+                      placeholder="Digite o número"
+                      inputMode="numeric"
+                      onChange={(e) => {
+                        setNumero(e.target.value.replace(/\D/g, ''));
+                        limparErroCampo('numero');
+                      }}
+                    />
+                    <ErrorMessage message={errors.numero} />
+                  </div>
+
+                  <Input
+                    label="Complemento"
+                    type="text"
+                    id="complemento"
+                    name="complemento"
+                    value={complemento}
+                    placeholder="Opcional"
+                    onChange={(e) => {
+                      setComplemento(e.target.value);
+                      setApiMessage('');
+                    }}
+                  />
                 </div>
               )}
             </>
@@ -449,8 +518,11 @@ function RegisterPage() {
 
                   if (checked) {
                     setCep('');
+                    setNumero('');
+                    setComplemento('');
+                    cepAtualRef.current = '';
                     limparEnderecoCep();
-                    setErrors((prev) => ({ ...prev, cep: '' }));
+                    setErrors((prev) => ({ ...prev, cep: '', numero: '' }));
                   }
                 }}
                 className="register-manager-checkbox-input"

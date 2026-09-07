@@ -19,6 +19,7 @@
 @import url('./components/_messages.css');
 @import url('./components/_modal.css');
 @import url('./components/_toast.css');
+@import url('./components/_comparison.css');
 
 /* 5. Páginas */
 @import url('./pages/_home.css');
@@ -27,6 +28,7 @@
 @import url('./pages/_forgotPassword.css');
 @import url('./pages/_profile.css');
 @import url('./pages/_academyDetails.css');
+@import url('./pages/_academyComparison.css');
 @import url('./pages/_academyRegister.css');
 @import url('./pages/_favorites.css');
 @import url('./pages/_academyReviews.css');

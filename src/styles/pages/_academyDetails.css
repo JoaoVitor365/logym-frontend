@@ -57,6 +57,50 @@
   font-family: var(--font-body); /* Garante que os parágrafos usem a fonte de corpo */
 }
 
+.academy-map-container {
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--border-radius-sm);
+}
+
+.academy-details-main-image {
+  width: 100%;
+  max-width: 260px;
+  height: 180px;
+  margin: 0 auto 25px;
+  border-radius: 10px;
+  object-fit: cover;
+  display: block;
+}
+
+.academy-comparison-button {
+  padding: var(--spacing-xs) var(--spacing-md);
+  border: 1px solid var(--primary-color);
+  border-radius: var(--border-radius-sm);
+  background-color: #ffffff;
+  color: var(--primary-color);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.academy-comparison-button:hover,
+.academy-comparison-button-selected {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+  color: #000000;
+}
+
+.academy-map-canvas {
+  width: 100%;
+  height: 320px;
+}
+
+.academy-map-fallback {
+  margin: 0;
+  color: var(--text-color-light);
+}
+
 .academy-details-gallery {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));

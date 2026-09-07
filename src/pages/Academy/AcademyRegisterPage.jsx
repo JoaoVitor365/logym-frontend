@@ -10,7 +10,6 @@ import GerenteService from '../../services/GerenteService';
 import CategoriaService from '../../services/CategoriaService';
 import FacilidadeService from '../../services/FacilidadeService';
 import { isValidCNPJ } from '../../utils/documentValidators';
-import FotoAcademiaService from '../../services/FotoAcademiaService';
 
 import '../../styles/pages/_academyRegister.css';
 import logo from '../../assets/logoFundo.png';
@@ -85,6 +84,7 @@ function AcademyRegisterPage() {
   const [apiMessage, setApiMessage] = useState('');
   const [fotosAcademia, setFotosAcademia] = useState([]);
   const [previewFotos, setPreviewFotos] = useState([]);
+  const [fotoPrincipalIndex, setFotoPrincipalIndex] = useState(null);
   const [salvando, setSalvando] = useState(false);
 
   const [categoryOptions, setCategoryOptions] = useState([]);
@@ -162,6 +162,10 @@ function AcademyRegisterPage() {
 
     carregarCategorias();
   }, []);
+
+  useEffect(() => () => {
+    previewFotos.forEach((preview) => URL.revokeObjectURL(preview));
+  }, [previewFotos]);
 
   useEffect(() => {
     const carregarFacilidades = async () => {
@@ -473,6 +477,7 @@ function AcademyRegisterPage() {
     if (arquivos.length === 0) {
       setFotosAcademia([]);
       setPreviewFotos([]);
+      setFotoPrincipalIndex(null);
       return;
     }
 
@@ -488,6 +493,7 @@ function AcademyRegisterPage() {
     }
 
     setFotosAcademia(apenasImagens);
+    setFotoPrincipalIndex(null);
 
     const previews = apenasImagens.map((arquivo) => URL.createObjectURL(arquivo));
     setPreviewFotos(previews);
@@ -589,14 +595,10 @@ function AcademyRegisterPage() {
         }
       };
 
-      const response = await AcademiaService.create(academiaData);
+      const response = fotosAcademia.length > 0
+        ? await AcademiaService.createWithPhotos(academiaData, fotosAcademia, fotoPrincipalIndex)
+        : await AcademiaService.create(academiaData);
       const academiaCriada = response.data;
-
-      if (fotosAcademia.length > 0) {
-        for (const foto of fotosAcademia) {
-          await FotoAcademiaService.salvar(academiaCriada.id, foto);
-        }
-      }
 
       setApiMessage(`🎉 Academia ${academiaCriada.nome} cadastrada com sucesso! Redirecionando para o painel...`);
       scrollParaTopoFormulario();
@@ -993,8 +995,16 @@ function AcademyRegisterPage() {
                         className="academy-photo-preview"
                       />
 
-                      <div className="academy-photo-preview-badge">
-                        Foto {index + 1}
+                      <div className="academy-photo-controls">
+                        <label className="academy-photo-principal-option">
+                          <input
+                            type="radio"
+                            name="fotoPrincipalCadastro"
+                            checked={fotoPrincipalIndex === index}
+                            onChange={() => setFotoPrincipalIndex(index)}
+                          />
+                          <span>Foto principal</span>
+                        </label>
                       </div>
                     </div>
                   ))}

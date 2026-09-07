@@ -14,8 +14,11 @@ import ManagerPanelPage from './pages/Manager/ManagerPanelPage';
 import AcademyEditPage from './pages/Academy/AcademyEditPage';
 import FavoritesPage from './pages/Academy/FavoritesPage';
 import AdminPanelPage from './pages/Admin/AdminPanelPage';
+import AcademyComparisonPage from './pages/Academy/AcademyComparisonPage';
 
 import Header from './components/Header/Header';
+import ComparisonBar from './components/Comparison/ComparisonBar';
+import { ComparisonProvider } from './contexts/ComparisonContext';
 import UsuarioService from './services/UsuarioService';
 
 function App() {
@@ -115,7 +118,8 @@ function App() {
   }
 
   return (
-    <div className="App">
+    <ComparisonProvider currentUser={currentUser}>
+      <div className="App">
       <Header
         isLoggedIn={isLoggedIn}
         currentUser={currentUser}
@@ -155,11 +159,17 @@ function App() {
 
           <Route path="/editar-academia/:id" element={<AcademyEditPage />} />
           <Route path="/favoritos" element={<FavoritesPage />} />
+          <Route
+            path="/comparar-academias"
+            element={<AcademyComparisonPage currentUser={currentUser} />}
+          />
         </Routes>
+        <ComparisonBar />
       </main>
 
       <Footer />
-    </div>
+      </div>
+    </ComparisonProvider>
   );
 }
 

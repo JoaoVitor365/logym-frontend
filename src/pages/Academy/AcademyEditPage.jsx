@@ -134,6 +134,8 @@ function AcademyEditPage() {
   const [fotosAtuais, setFotosAtuais] = useState([]);
   const [novasFotos, setNovasFotos] = useState([]);
   const [previewNovasFotos, setPreviewNovasFotos] = useState([]);
+  const [fotoPrincipalSelecionada, setFotoPrincipalSelecionada] = useState(null);
+  const [fotoPrincipalAtualId, setFotoPrincipalAtualId] = useState(null);
   const [salvandoFotos, setSalvandoFotos] = useState(false);
   const [fotoPendenteRemocao, setFotoPendenteRemocao] = useState(null);
   const [removendoFoto, setRemovendoFoto] = useState(false);
@@ -206,7 +208,12 @@ function AcademyEditPage() {
           facilidadeIds: getFacilidadeIdsSelecionadas(academia, facilidadesAtivas)
         });
 
-        setFotosAtuais(Array.isArray(fotosResponse.data) ? fotosResponse.data : []);
+        const fotos = Array.isArray(fotosResponse.data) ? fotosResponse.data : [];
+        const fotoPrincipal = fotos.find((foto) => foto.principal);
+
+        setFotosAtuais(fotos);
+        setFotoPrincipalAtualId(fotoPrincipal?.id ?? null);
+        setFotoPrincipalSelecionada(fotoPrincipal ? { tipo: 'existente', id: fotoPrincipal.id } : null);
       } catch (error) {
         console.error('Erro ao carregar academia:', error);
         setApiMessage('Erro ao carregar dados da academia.');
@@ -218,10 +225,25 @@ function AcademyEditPage() {
     fetchAcademia();
   }, [id]);
 
-  const carregarFotos = async () => {
+  useEffect(() => () => {
+    previewNovasFotos.forEach((preview) => URL.revokeObjectURL(preview));
+  }, [previewNovasFotos]);
+
+  const carregarFotos = async (sincronizarPrincipal = false) => {
     try {
       const response = await FotoAcademiaService.listarPorAcademia(id);
-      setFotosAtuais(Array.isArray(response.data) ? response.data : []);
+      const fotos = Array.isArray(response.data) ? response.data : [];
+
+      setFotosAtuais(fotos);
+
+      if (sincronizarPrincipal) {
+        const fotoPrincipal = fotos.find((foto) => foto.principal);
+
+        setFotoPrincipalAtualId(fotoPrincipal?.id ?? null);
+        setFotoPrincipalSelecionada(fotoPrincipal ? { tipo: 'existente', id: fotoPrincipal.id } : null);
+      }
+
+      return fotos;
     } catch (error) {
       console.error('Erro ao carregar fotos:', error);
       setApiMessage('Erro ao carregar fotos da academia.');
@@ -360,6 +382,9 @@ function AcademyEditPage() {
     if (arquivos.length === 0) {
       setNovasFotos([]);
       setPreviewNovasFotos([]);
+      setFotoPrincipalSelecionada(
+        fotoPrincipalAtualId === null ? null : { tipo: 'existente', id: fotoPrincipalAtualId }
+      );
       return;
     }
 
@@ -375,6 +400,9 @@ function AcademyEditPage() {
     }
 
     setNovasFotos(apenasImagens);
+    setFotoPrincipalSelecionada(
+      fotoPrincipalAtualId === null ? null : { tipo: 'existente', id: fotoPrincipalAtualId }
+    );
 
     const previews = apenasImagens.map((arquivo) => URL.createObjectURL(arquivo));
     setPreviewNovasFotos(previews);
@@ -383,6 +411,11 @@ function AcademyEditPage() {
   const limparNovasFotosSelecionadas = () => {
     setNovasFotos([]);
     setPreviewNovasFotos([]);
+    setFotoPrincipalSelecionada((selecionada) => (
+      selecionada?.tipo === 'nova'
+        ? fotoPrincipalAtualId === null ? null : { tipo: 'existente', id: fotoPrincipalAtualId }
+        : selecionada
+    ));
 
     const inputFotos = document.getElementById('novasFotosAcademia');
     if (inputFotos) {
@@ -391,7 +424,18 @@ function AcademyEditPage() {
   };
 
   const handleAdicionarFotos = async () => {
-    if (novasFotos.length === 0) {
+    if (novasFotos.length === 0 || salvandoFotos) {
+      if (novasFotos.length === 0) {
+        setApiMessage('Selecione pelo menos uma foto para adicionar.');
+      }
+      return;
+    }
+
+    const fotoPrincipalIndex = fotoPrincipalSelecionada?.tipo === 'nova'
+      ? fotoPrincipalSelecionada.index
+      : null;
+
+    if (fotoPrincipalIndex !== null && !novasFotos[fotoPrincipalIndex]) {
       setApiMessage('Selecione pelo menos uma foto para adicionar.');
       return;
     }
@@ -400,15 +444,17 @@ function AcademyEditPage() {
     setApiMessage('');
 
     try {
-      for (const foto of novasFotos) {
-        await FotoAcademiaService.salvar(id, foto);
-      }
+      await FotoAcademiaService.salvarLote(id, novasFotos, fotoPrincipalIndex);
 
       limparNovasFotosSelecionadas();
 
-      await carregarFotos();
+      await carregarFotos(fotoPrincipalIndex !== null);
 
-      setApiMessage('Fotos adicionadas com sucesso!');
+      setApiMessage(
+        fotoPrincipalIndex !== null
+          ? 'Fotos adicionadas e foto principal atualizada.'
+          : 'Fotos adicionadas com sucesso!'
+      );
     } catch (error) {
       console.error('Erro ao adicionar fotos:', error);
 
@@ -424,8 +470,8 @@ function AcademyEditPage() {
     }
   };
 
-  const handleRemoverFoto = (fotoId) => {
-    setFotoPendenteRemocao(fotoId);
+  const handleRemoverFoto = (foto) => {
+    setFotoPendenteRemocao(foto);
   };
 
   const cancelarRemocaoFoto = () => {
@@ -441,9 +487,8 @@ function AcademyEditPage() {
     setRemovendoFoto(true);
 
     try {
-      await FotoAcademiaService.inativar(fotoPendenteRemocao);
-
-      setFotosAtuais((prev) => prev.filter((foto) => foto.id !== fotoPendenteRemocao));
+      await FotoAcademiaService.inativar(fotoPendenteRemocao.id);
+      await carregarFotos(true);
 
       setApiMessage('Foto removida com sucesso!');
     } catch (error) {
@@ -567,6 +612,14 @@ function AcademyEditPage() {
       };
 
       await AcademiaService.update(id, updateData);
+
+      if (
+        fotoPrincipalSelecionada?.tipo === 'existente'
+        && String(fotoPrincipalSelecionada.id) !== String(fotoPrincipalAtualId)
+      ) {
+        await FotoAcademiaService.definirPrincipal(id, fotoPrincipalSelecionada.id);
+        await carregarFotos(true);
+      }
 
       setApiMessage('🎉 Alterações salvas com sucesso!');
 
@@ -895,24 +948,41 @@ function AcademyEditPage() {
 
                 <div className="academy-photo-preview-grid">
                   {fotosAtuais.map((foto, index) => (
-                    <div key={foto.id} className="academy-photo-preview-card">
+                    <div
+                      key={foto.id}
+                      className={`academy-photo-preview-card ${fotoPrincipalSelecionada?.tipo === 'existente' && String(fotoPrincipalSelecionada.id) === String(foto.id) ? 'academy-photo-preview-card-selected' : ''}`}
+                    >
                       <img
                         src={FotoAcademiaService.getImagemUrl(foto.id)}
                         alt={`Foto atual ${index + 1}`}
                         className="academy-photo-preview"
                       />
 
-                      <div className="academy-photo-preview-badge">
-                        Foto {index + 1}
-                      </div>
+                      <div className="academy-photo-controls">
+                        <label className="academy-photo-principal-option">
+                          <input
+                            type="radio"
+                            name="fotoPrincipalEdicao"
+                            checked={fotoPrincipalSelecionada?.tipo === 'existente' && String(fotoPrincipalSelecionada.id) === String(foto.id)}
+                            onChange={() => setFotoPrincipalSelecionada({ tipo: 'existente', id: foto.id })}
+                            disabled={salvandoFotos || removendoFoto}
+                          />
+                          <span>
+                            {fotoPrincipalSelecionada?.tipo === 'existente' && String(fotoPrincipalSelecionada.id) === String(foto.id)
+                              ? 'Foto principal'
+                              : 'Definir como principal'}
+                          </span>
+                        </label>
 
-                      <button
-                        type="button"
-                        className="academy-photo-remove-button"
-                        onClick={() => handleRemoverFoto(foto.id)}
-                      >
-                        Remover
-                      </button>
+                        <button
+                          type="button"
+                          className="academy-photo-remove-button"
+                          onClick={() => handleRemoverFoto(foto)}
+                          disabled={removendoFoto}
+                        >
+                          Remover
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -964,15 +1034,27 @@ function AcademyEditPage() {
 
                 <div className="academy-photo-preview-grid">
                   {previewNovasFotos.map((preview, index) => (
-                    <div key={index} className="academy-photo-preview-card">
+                    <div
+                      key={preview}
+                      className={`academy-photo-preview-card ${fotoPrincipalSelecionada?.tipo === 'nova' && fotoPrincipalSelecionada.index === index ? 'academy-photo-preview-card-selected' : ''}`}
+                    >
                       <img
                         src={preview}
                         alt={`Prévia ${index + 1}`}
                         className="academy-photo-preview"
                       />
 
-                      <div className="academy-photo-preview-badge">
-                        Nova {index + 1}
+                      <div className="academy-photo-controls">
+                        <label className="academy-photo-principal-option">
+                          <input
+                            type="radio"
+                            name="fotoPrincipalEdicao"
+                            checked={fotoPrincipalSelecionada?.tipo === 'nova' && fotoPrincipalSelecionada.index === index}
+                            onChange={() => setFotoPrincipalSelecionada({ tipo: 'nova', index })}
+                            disabled={salvandoFotos}
+                          />
+                          <span>Foto principal</span>
+                        </label>
                       </div>
                     </div>
                   ))}
@@ -1020,8 +1102,10 @@ function AcademyEditPage() {
 
       <ConfirmModal
         open={Boolean(fotoPendenteRemocao)}
-        title="Remover foto"
-        message="Tem certeza que deseja remover esta foto? Ela não aparecerá mais nos detalhes da academia."
+        title={fotoPendenteRemocao?.principal ? 'Remover foto principal' : 'Remover foto'}
+        message={fotoPendenteRemocao?.principal
+          ? 'Esta é a foto principal da academia. Se você excluí-la, a academia ficará sem foto principal e será exibido o fallback padrão até que outra foto seja definida como principal. Deseja continuar?'
+          : 'Tem certeza que deseja remover esta foto? Ela não aparecerá mais nos detalhes da academia.'}
         confirmText="Remover"
         cancelText="Cancelar"
         variant="danger"

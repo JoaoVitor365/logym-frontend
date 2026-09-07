@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
+import NearbyAcademiesMap from '../../components/Academy/NearbyAcademiesMap';
 import GerenteService from '../../services/GerenteService';
 import AcademiaService from '../../services/AcademiaService';
 import CategoriaService from '../../services/CategoriaService';
@@ -24,6 +25,9 @@ function HomePage({ currentUser }) {
   const [academias, setAcademias] = useState([]);
   const [loadingAcademias, setLoadingAcademias] = useState(true);
   const [mensagemAcademias, setMensagemAcademias] = useState('');
+  const [academiasProximas, setAcademiasProximas] = useState([]);
+  const [loadingAcademiasProximas, setLoadingAcademiasProximas] = useState(false);
+  const [mensagemAcademiasProximas, setMensagemAcademiasProximas] = useState('');
 
   const [categoriasAtivas, setCategoriasAtivas] = useState([]);
   const [loadingCategorias, setLoadingCategorias] = useState(true);
@@ -96,6 +100,45 @@ function HomePage({ currentUser }) {
 
     carregarAcademias();
   }, []);
+
+  useEffect(() => {
+    const carregarAcademiasProximas = async () => {
+      if (currentUser?.nivelAcesso !== 'USER') {
+        setAcademiasProximas([]);
+        setMensagemAcademiasProximas('');
+        setLoadingAcademiasProximas(false);
+        return;
+      }
+
+      setLoadingAcademiasProximas(true);
+      setMensagemAcademiasProximas('');
+
+      try {
+        const response = await AcademiaService.getAcademiasProximas();
+
+        if (Array.isArray(response.data)) {
+          setAcademiasProximas(response.data);
+        } else {
+          console.error('Resposta inesperada ao carregar academias próximas:', response.data);
+          setAcademiasProximas([]);
+          setMensagemAcademiasProximas('Não foi possível carregar as academias próximas.');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar academias próximas:', error);
+        setAcademiasProximas([]);
+
+        if (error.response?.status === 400) {
+          setMensagemAcademiasProximas('Atualize seu endereço no perfil para encontrar academias próximas.');
+        } else {
+          setMensagemAcademiasProximas('Não foi possível carregar as academias próximas agora.');
+        }
+      } finally {
+        setLoadingAcademiasProximas(false);
+      }
+    };
+
+    carregarAcademiasProximas();
+  }, [currentUser?.id, currentUser?.nivelAcesso]);
 
   useEffect(() => {
     const carregarCategorias = async () => {
@@ -308,6 +351,36 @@ function HomePage({ currentUser }) {
     normalizarTexto,
     normalizarId
   ]);
+
+  const academiasUnificadas = useMemo(() => {
+    const academiasFiltradasPorId = new Map(
+      academiasFiltradas.map((academia) => [String(academia.id), academia])
+    );
+    const idsAcademiasProximas = new Set();
+    const proximas = [];
+
+    academiasProximas.forEach(({ academia, distanciaKm }) => {
+      if (academia?.id === null || academia?.id === undefined) {
+        return;
+      }
+
+      const idAcademia = String(academia?.id);
+      const academiaFiltrada = academiasFiltradasPorId.get(idAcademia);
+
+      if (!academiaFiltrada || idsAcademiasProximas.has(idAcademia)) {
+        return;
+      }
+
+      idsAcademiasProximas.add(idAcademia);
+      proximas.push({ academy: academiaFiltrada, distanciaKm });
+    });
+
+    const restantes = academiasFiltradas
+      .filter((academia) => !idsAcademiasProximas.has(String(academia.id)))
+      .map((academy) => ({ academy }));
+
+    return [...proximas, ...restantes];
+  }, [academiasFiltradas, academiasProximas]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -551,8 +624,26 @@ function HomePage({ currentUser }) {
           )}
 
           <span>
-            Resultado: <strong>{academiasFiltradas.length}</strong> academia(s)
+            Resultado: <strong>{academiasUnificadas.length}</strong> academia(s)
           </span>
+        </div>
+      )}
+
+      {currentUser?.nivelAcesso === 'USER' && (
+        <div className="home-nearby-map-section">
+          {loadingAcademiasProximas ? (
+            <p className="home-location-info">Carregando academias próximas...</p>
+          ) : mensagemAcademiasProximas ? (
+            <p className="home-location-info">{mensagemAcademiasProximas}</p>
+          ) : academiasProximas.length === 0 ? (
+            <p className="home-location-info">Nenhuma academia encontrada em até 5 km da sua localização.</p>
+          ) : (
+            <NearbyAcademiesMap
+              userLatitude={currentUser.latitude}
+              userLongitude={currentUser.longitude}
+              academiasProximas={academiasProximas}
+            />
+          )}
         </div>
       )}
 
@@ -596,7 +687,7 @@ function HomePage({ currentUser }) {
           <h2>Nenhuma academia cadastrada ainda.</h2>
           <p>Quando um gerente cadastrar uma academia, ela aparecerá aqui.</p>
         </div>
-      ) : academiasFiltradas.length === 0 ? (
+      ) : academiasUnificadas.length === 0 ? (
         <div
           style={{
             textAlign: 'center',
@@ -620,10 +711,11 @@ function HomePage({ currentUser }) {
         </div>
       ) : (
         <div className="academies-grid">
-          {academiasFiltradas.map((academia) => (
+          {academiasUnificadas.map(({ academy, distanciaKm }) => (
             <Card
-              key={academia.id}
-              academy={academia}
+              key={academy.id}
+              academy={academy}
+              distanciaKm={distanciaKm}
               categoriasAtivas={categoriasAtivas}
             />
           ))}

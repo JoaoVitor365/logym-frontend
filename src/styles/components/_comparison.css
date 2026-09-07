@@ -1,0 +1,167 @@
+.card-comparison-button {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid var(--primary-color);
+  border-radius: var(--border-radius-sm);
+  background-color: #ffffff;
+  color: var(--primary-color);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.card-comparison-button:hover,
+.card-comparison-button-selected {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+  color: #000000;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-top: auto;
+  padding-top: var(--spacing-md);
+}
+
+.card-actions .card-details-link {
+  align-self: auto;
+  margin-top: 0;
+}
+
+.comparison-bar {
+  position: fixed;
+  right: var(--spacing-lg);
+  bottom: var(--spacing-lg);
+  left: var(--spacing-lg);
+  z-index: 1000;
+}
+
+.comparison-bar-spacer {
+  height: 88px;
+}
+
+.comparison-bar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid #222222;
+  border-radius: var(--border-radius-md);
+  background-color: #111111;
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+}
+
+.comparison-bar-selection,
+.comparison-bar-items,
+.comparison-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.comparison-bar-items {
+  flex-wrap: wrap;
+}
+
+.comparison-bar-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  max-width: 210px;
+  padding: 4px 8px;
+  border-radius: var(--border-radius-sm);
+  background-color: #2b2b2b;
+  font-size: var(--font-size-sm);
+}
+
+.comparison-bar-item button,
+.comparison-bar-clear {
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+}
+
+.comparison-bar-item button {
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.comparison-bar-clear:hover,
+.comparison-bar-item button:hover {
+  color: var(--secondary-color);
+}
+
+.comparison-bar-submit {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid var(--secondary-color);
+  border-radius: var(--border-radius-sm);
+  background-color: var(--secondary-color);
+  color: #000000;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.comparison-bar-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.comparison-bar button:focus-visible,
+.card-comparison-button:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .comparison-bar {
+    right: var(--spacing-sm);
+    bottom: var(--spacing-sm);
+    left: var(--spacing-sm);
+  }
+
+  .comparison-bar-spacer {
+    height: 160px;
+  }
+
+  .comparison-bar-content,
+  .comparison-bar-selection {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .comparison-bar-content {
+    gap: var(--spacing-sm);
+  }
+
+  .comparison-bar-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .card-actions {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .card-actions .card-comparison-button,
+  .card-actions .card-details-link,
+  .card-actions .card-details-link .button {
+    width: 100%;
+  }
+}

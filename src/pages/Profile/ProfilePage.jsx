@@ -18,7 +18,9 @@ function ProfilePage() {
     username: '',
     password: '',
     nivelAcesso: '',
-    cep: ''
+    cep: '',
+    numero: '',
+    complemento: ''
   });
 
   const [enderecoCep, setEnderecoCep] = useState({
@@ -36,7 +38,10 @@ function ProfilePage() {
   const [buscandoCep, setBuscandoCep] = useState(false);
   const [apiMessage, setApiMessage] = useState('');
   const [cepError, setCepError] = useState('');
+  const [numeroError, setNumeroError] = useState('');
   const [showInactivateConfirm, setShowInactivateConfirm] = useState(false);
+  const cepAtualRef = useRef('');
+  const enderecoInicialRef = useRef({ cep: '', numero: '' });
 
   const limparEnderecoCep = useCallback(() => {
     setEnderecoCep({
@@ -61,6 +66,10 @@ function ProfilePage() {
       const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
       const data = await response.json();
 
+      if (cepAtualRef.current !== cepLimpo) {
+        return;
+      }
+
       if (data.erro) {
         limparEnderecoCep();
         setCepError('CEP não encontrado.');
@@ -77,10 +86,17 @@ function ProfilePage() {
       setCepError('');
     } catch (error) {
       console.error('Erro ao buscar CEP:', error);
+
+      if (cepAtualRef.current !== cepLimpo) {
+        return;
+      }
+
       limparEnderecoCep();
       setCepError('Não foi possível buscar o CEP agora.');
     } finally {
-      setBuscandoCep(false);
+      if (cepAtualRef.current === cepLimpo) {
+        setBuscandoCep(false);
+      }
     }
   }, [limparEnderecoCep]);
 
@@ -90,6 +106,7 @@ function ProfilePage() {
     if (userData) {
       const parsedUser = JSON.parse(userData);
       const cepFormatado = formatCEP(parsedUser.cep || '');
+      const numeroAtual = parsedUser.numero ?? '';
 
       setUser({
         id: parsedUser.id,
@@ -97,8 +114,16 @@ function ProfilePage() {
         username: parsedUser.username,
         nivelAcesso: parsedUser.nivelAcesso,
         cep: cepFormatado,
+        numero: String(numeroAtual),
+        complemento: parsedUser.complemento ?? '',
         password: ''
       });
+
+      cepAtualRef.current = cepFormatado.replace(/\D/g, '');
+      enderecoInicialRef.current = {
+        cep: cepFormatado.replace(/\D/g, ''),
+        numero: String(numeroAtual)
+      };
 
       if (parsedUser.nivelAcesso === 'USER' && cepFormatado.replace(/\D/g, '').length === 8) {
         buscarEnderecoPorCep(cepFormatado);
@@ -129,14 +154,17 @@ function ProfilePage() {
       const cepFormatado = formatCEP(value);
       const cepLimpo = cepFormatado.replace(/\D/g, '');
 
+      cepAtualRef.current = cepLimpo;
+      limparEnderecoCep();
+      setCepError('');
+
       setUser(prev => ({
         ...prev,
         cep: cepFormatado
       }));
 
       if (cepLimpo.length < 8) {
-        limparEnderecoCep();
-        setCepError('');
+        setBuscandoCep(false);
         return;
       }
 
@@ -144,10 +172,51 @@ function ProfilePage() {
       return;
     }
 
+    if (name === 'numero') {
+      setUser(prev => ({
+        ...prev,
+        numero: value.replace(/\D/g, '')
+      }));
+      return;
+    }
+
     setUser(prev => ({
       ...prev,
       [name]: value
     }));
+  };
+
+  const montarDadosAtualizados = (incluirEnderecoCompleto = false) => {
+    const dadosAtualizados = {
+      nome: user.nome
+    };
+
+    if (user.nivelAcesso === 'USER') {
+      const cepLimpo = user.cep.replace(/\D/g, '');
+      const numeroNormalizado = String(user.numero || '').trim();
+      const complementoNormalizado = String(user.complemento || '').trim();
+
+      if (cepLimpo) {
+        dadosAtualizados.cep = cepLimpo;
+      }
+
+      if (numeroNormalizado) {
+        dadosAtualizados.numero = numeroNormalizado;
+      }
+
+      if (complementoNormalizado) {
+        dadosAtualizados.complemento = complementoNormalizado;
+      }
+
+      if (incluirEnderecoCompleto) {
+        dadosAtualizados.endereco = enderecoCep.logradouro;
+        dadosAtualizados.bairro = enderecoCep.bairro || undefined;
+        dadosAtualizados.cidade = enderecoCep.cidade;
+        dadosAtualizados.estado = enderecoCep.estado;
+      }
+    }
+
+    return dadosAtualizados;
   };
 
   const abrirSeletorFoto = () => {
@@ -175,13 +244,7 @@ function ProfilePage() {
       const previewUrl = URL.createObjectURL(selectedFile);
       setPreview(previewUrl);
 
-      const dadosAtualizados = {
-        nome: user.nome
-      };
-
-      if (user.nivelAcesso === 'USER') {
-        dadosAtualizados.cep = user.cep.replace(/\D/g, '');
-      }
+      const dadosAtualizados = montarDadosAtualizados();
 
       const response = await UsuarioService.editar(
         user.id,
@@ -193,7 +256,9 @@ function ProfilePage() {
 
       const usuarioParaSalvar = {
         ...updatedUser,
-        cep: updatedUser.cep || dadosAtualizados.cep || ''
+        cep: updatedUser.cep ?? dadosAtualizados.cep ?? '',
+        numero: updatedUser.numero ?? dadosAtualizados.numero ?? user.numero ?? '',
+        complemento: updatedUser.complemento ?? dadosAtualizados.complemento ?? user.complemento ?? ''
       };
 
       localStorage.setItem('user', JSON.stringify(usuarioParaSalvar));
@@ -203,7 +268,9 @@ function ProfilePage() {
         nome: usuarioParaSalvar.nome,
         username: usuarioParaSalvar.username,
         nivelAcesso: usuarioParaSalvar.nivelAcesso,
-        cep: formatCEP(usuarioParaSalvar.cep || '')
+        cep: formatCEP(usuarioParaSalvar.cep || ''),
+        numero: String(usuarioParaSalvar.numero ?? ''),
+        complemento: usuarioParaSalvar.complemento ?? ''
       }));
 
       setFotoUrl(previewUrl);
@@ -232,6 +299,7 @@ function ProfilePage() {
 
     if (user.nivelAcesso === 'USER') {
       const cepLimpo = user.cep.replace(/\D/g, '');
+      const numeroNormalizado = String(user.numero || '').trim();
 
       if (cepLimpo.length !== 8) {
         setCepError('O CEP deve conter 8 dígitos.');
@@ -239,23 +307,28 @@ function ProfilePage() {
         return;
       }
 
-      if (!enderecoCep.cidade || !enderecoCep.estado) {
+      if (!enderecoCep.logradouro || !enderecoCep.cidade || !enderecoCep.estado) {
         setCepError('Informe um CEP válido.');
         setApiMessage('Erro: verifique o CEP antes de continuar.');
         return;
       }
+
+      if (!/^\d+$/.test(numeroNormalizado)) {
+        setNumeroError('O número deve conter apenas dígitos não negativos.');
+        setApiMessage('Erro: verifique o número antes de continuar.');
+        return;
+      }
+
+      setNumeroError('');
     }
 
     setLoading(true);
 
     try {
-      const dadosAtualizados = {
-        nome: user.nome
-      };
-
-      if (user.nivelAcesso === 'USER') {
-        dadosAtualizados.cep = user.cep.replace(/\D/g, '');
-      }
+      const cepNumeroAlterados =
+        user.cep.replace(/\D/g, '') !== enderecoInicialRef.current.cep ||
+        String(user.numero || '').trim() !== enderecoInicialRef.current.numero;
+      const dadosAtualizados = montarDadosAtualizados(cepNumeroAlterados);
 
       const response = await UsuarioService.editar(
         user.id,
@@ -271,7 +344,9 @@ function ProfilePage() {
 
       const usuarioParaSalvar = {
         ...updatedUser,
-        cep: updatedUser.cep || dadosAtualizados.cep || ''
+        cep: updatedUser.cep ?? dadosAtualizados.cep ?? '',
+        numero: updatedUser.numero ?? dadosAtualizados.numero ?? user.numero ?? '',
+        complemento: updatedUser.complemento ?? dadosAtualizados.complemento ?? user.complemento ?? ''
       };
 
       localStorage.setItem('user', JSON.stringify(usuarioParaSalvar));
@@ -282,8 +357,16 @@ function ProfilePage() {
         username: usuarioParaSalvar.username,
         nivelAcesso: usuarioParaSalvar.nivelAcesso,
         cep: formatCEP(usuarioParaSalvar.cep || ''),
+        numero: String(usuarioParaSalvar.numero ?? ''),
+        complemento: usuarioParaSalvar.complemento ?? '',
         password: ''
       }));
+
+      enderecoInicialRef.current = {
+        cep: String(usuarioParaSalvar.cep || '').replace(/\D/g, ''),
+        numero: String(usuarioParaSalvar.numero ?? '')
+      };
+      cepAtualRef.current = enderecoInicialRef.current.cep;
 
       if (usuarioParaSalvar.nivelAcesso === 'USER') {
         buscarEnderecoPorCep(formatCEP(usuarioParaSalvar.cep || ''));
@@ -449,6 +532,39 @@ function ProfilePage() {
                 {cepError}
               </p>
             )}
+
+            <label htmlFor="numero" className={numeroError ? 'profile-label-error' : ''}>Número</label>
+            <input
+              type="text"
+              id="numero"
+              name="numero"
+              value={user.numero || ''}
+              onChange={(event) => {
+                handleChange(event);
+                setNumeroError('');
+              }}
+              disabled={!isEditing}
+              inputMode="numeric"
+              placeholder="Digite o número"
+              className={numeroError ? 'profile-input-error' : ''}
+            />
+
+            {numeroError && (
+              <p className="error-message profile-cep-error-message">
+                {numeroError}
+              </p>
+            )}
+
+            <label htmlFor="complemento">Complemento</label>
+            <input
+              type="text"
+              id="complemento"
+              name="complemento"
+              value={user.complemento || ''}
+              onChange={handleChange}
+              disabled={!isEditing}
+              placeholder="Opcional"
+            />
 
             {(enderecoCep.logradouro || enderecoCep.bairro || enderecoCep.cidade || enderecoCep.estado) && (
               <div className="profile-viacep-box">

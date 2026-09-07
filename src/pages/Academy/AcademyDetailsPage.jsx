@@ -2,10 +2,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
+import AcademyMap from '../../components/Academy/AcademyMap';
 import AcademyReviews from '../../components/Academy/AcademyReviews';
 import AcademiaService from '../../services/AcademiaService';
 import AvaliacaoService from '../../services/AvaliacaoService';
 import FotoAcademiaService from '../../services/FotoAcademiaService';
+import { useComparison } from '../../contexts/useComparison';
+import { getFotoPrincipalUrl } from '../../utils/academyPhoto';
 
 function AcademyDetailsPage() {
   const { id } = useParams();
@@ -26,6 +29,22 @@ function AcademyDetailsPage() {
   const usuarioLogado = JSON.parse(localStorage.getItem('user'));
   const podeAvaliar = usuarioLogado?.nivelAcesso === 'USER';
   const isAdmin = usuarioLogado?.nivelAcesso === 'ADMIN';
+  const {
+    adicionarAcademia,
+    removerAcademia,
+    isAcademiaSelecionada,
+    podeComparar
+  } = useComparison();
+  const comparacaoSelecionada = isAcademiaSelecionada(academy?.id);
+
+  const handleToggleComparacao = () => {
+    if (comparacaoSelecionada) {
+      removerAcademia(academy.id);
+      return;
+    }
+
+    adicionarAcademia(academy);
+  };
 
   const montarNotasVazias = useCallback((itens) => {
     const notas = {};
@@ -442,6 +461,7 @@ function AcademyDetailsPage() {
     (review) => Number(review.usuarioId) === Number(usuarioLogado?.id)
   );
   const avaliacaoDoUsuarioSuspensa = avaliacaoDoUsuarioLogado?.statusAvaliacao === 'SUSPENSA';
+  const fotoPrincipalUrl = getFotoPrincipalUrl(academy.fotoPrincipal);
 
   return (
     <div className="academy-details-page">
@@ -454,9 +474,17 @@ function AcademyDetailsPage() {
       )}
 
       <div className="academy-details-header">
-        <div className="card-image-placeholder academy-details-placeholder">
-          <span>{academy.nome?.charAt(0)?.toUpperCase() || 'A'}</span>
-        </div>
+        {fotoPrincipalUrl ? (
+          <img
+            src={fotoPrincipalUrl}
+            alt={`Foto da academia ${academy.nome}`}
+            className="academy-details-main-image"
+          />
+        ) : (
+          <div className="card-image-placeholder academy-details-placeholder">
+            <span>{academy.nome?.charAt(0)?.toUpperCase() || 'A'}</span>
+          </div>
+        )}
 
         <h1>{academy.nome}</h1>
 
@@ -469,6 +497,16 @@ function AcademyDetailsPage() {
             <>Sem avaliações</>
           )}
         </p>
+
+        {podeComparar && (
+          <button
+            type="button"
+            className={`academy-comparison-button ${comparacaoSelecionada ? 'academy-comparison-button-selected' : ''}`}
+            onClick={handleToggleComparacao}
+          >
+            {comparacaoSelecionada ? 'Remover da comparação' : 'Adicionar à comparação'}
+          </button>
+        )}
       </div>
 
       <div className="academy-details-section">
@@ -484,6 +522,16 @@ function AcademyDetailsPage() {
           <li><strong>CEP:</strong> {formatarCEP(academy.cep)}</li>
           <li><strong>Endereço:</strong> {montarEnderecoCompleto()}</li>
         </ul>
+      </div>
+
+      <div className="academy-details-section">
+        <h2>Localização</h2>
+        <AcademyMap
+          latitude={academy.latitude}
+          longitude={academy.longitude}
+          nome={academy.nome}
+          endereco={montarEnderecoCompleto()}
+        />
       </div>
 
       <div className="academy-details-section academy-details-info">

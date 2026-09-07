@@ -4,8 +4,10 @@ import { Link } from 'react-router-dom';
 import Button from '../Button/Button';
 import Toast from '../Toast/Toast';
 import FavoritoService from '../../services/FavoritoService';
+import { useComparison } from '../../contexts/useComparison';
+import { getFotoPrincipalUrl } from '../../utils/academyPhoto';
 
-function Card({ academy, onFavoriteChange, categoriasAtivas }) {
+function Card({ academy, onFavoriteChange, categoriasAtivas, distanciaKm }) {
   const [favoritado, setFavoritado] = useState(false);
   const [loadingFavorito, setLoadingFavorito] = useState(false);
   const [toast, setToast] = useState({
@@ -16,6 +18,14 @@ function Card({ academy, onFavoriteChange, categoriasAtivas }) {
 
   const usuarioLogado = JSON.parse(localStorage.getItem('user'));
   const podeFavoritar = usuarioLogado?.nivelAcesso === 'USER';
+  const {
+    adicionarAcademia,
+    removerAcademia,
+    isAcademiaSelecionada,
+    podeComparar
+  } = useComparison();
+  const comparacaoSelecionada = isAcademiaSelecionada(academy?.id);
+  const fotoPrincipalUrl = getFotoPrincipalUrl(academy?.fotoPrincipal);
 
   useEffect(() => {
     const verificarFavorito = async () => {
@@ -61,6 +71,20 @@ function Card({ academy, onFavoriteChange, categoriasAtivas }) {
     }
 
     return Number(academy.nota).toFixed(1);
+  };
+
+  const getDistancia = () => {
+    if (distanciaKm === null || distanciaKm === undefined) {
+      return null;
+    }
+
+    const distancia = Number(distanciaKm);
+
+    if (!Number.isFinite(distancia) || distancia < 0) {
+      return null;
+    }
+
+    return `${new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 }).format(distancia)} km de você`;
   };
 
   const getCategoriasExibidas = () => {
@@ -123,11 +147,28 @@ function Card({ academy, onFavoriteChange, categoriasAtivas }) {
     }
   };
 
+  const handleToggleComparacao = () => {
+    if (comparacaoSelecionada) {
+      removerAcademia(academy.id);
+      return;
+    }
+
+    adicionarAcademia(academy);
+  };
+
   return (
     <div className="card">
-      <div className="card-image-placeholder">
-        <span>{academy.nome?.charAt(0)?.toUpperCase() || 'A'}</span>
-      </div>
+      {fotoPrincipalUrl ? (
+        <img
+          src={fotoPrincipalUrl}
+          alt={`Foto da academia ${academy.nome}`}
+          className="card-principal-image"
+        />
+      ) : (
+        <div className="card-image-placeholder">
+          <span>{academy.nome?.charAt(0)?.toUpperCase() || 'A'}</span>
+        </div>
+      )}
 
       <div className="card-content">
         <div className="card-title-row">
@@ -150,6 +191,12 @@ function Card({ academy, onFavoriteChange, categoriasAtivas }) {
           {montarEndereco()}
         </p>
 
+        {getDistancia() && (
+          <p className="card-distance">
+            {getDistancia()}
+          </p>
+        )}
+
         <p className="card-rating">
           {getNota() ? (
             <>Avaliação: {getNota()} ⭐</>
@@ -164,11 +211,23 @@ function Card({ academy, onFavoriteChange, categoriasAtivas }) {
           </p>
         )}
 
-        <Link to={`/academia/${academy.id}`} className="card-details-link">
-          <Button className="button-primary button-small">
-            Ver Detalhes
-          </Button>
-        </Link>
+        <div className="card-actions">
+          <Link to={`/academia/${academy.id}`} className="card-details-link">
+            <Button className="button-primary button-small">
+              Ver Detalhes
+            </Button>
+          </Link>
+
+          {podeComparar && (
+            <button
+              type="button"
+              className={`card-comparison-button ${comparacaoSelecionada ? 'card-comparison-button-selected' : ''}`}
+              onClick={handleToggleComparacao}
+            >
+              {comparacaoSelecionada ? 'Remover da comparação' : 'Comparar'}
+            </button>
+          )}
+        </div>
       </div>
 
       <Toast

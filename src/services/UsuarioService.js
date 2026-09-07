@@ -2,6 +2,17 @@ import http from "../common/http-common";
 
 const API_URL = "/usuarios/";
 
+const removerCamposNaoInformados = (dados) => {
+  return Object.fromEntries(
+    Object.entries(dados).filter(([, valor]) => (
+      valor !== undefined &&
+      valor !== null &&
+      valor !== "undefined" &&
+      valor !== "null"
+    ))
+  );
+};
+
 const findAll = () => {
   return http.mainInstance.get(API_URL + "all");
 };
@@ -12,10 +23,11 @@ const findById = (id) => {
 
 const editar = (id, usuario, file = null) => {
   const formData = new FormData();
+  const usuarioLimpo = removerCamposNaoInformados(usuario);
 
   formData.append(
     "usuario",
-    new Blob([JSON.stringify(usuario)], { type: "application/json" })
+    new Blob([JSON.stringify(usuarioLimpo)], { type: "application/json" })
   );
 
   if (file) {
@@ -25,13 +37,13 @@ const editar = (id, usuario, file = null) => {
   return http.multipartInstance.put(API_URL + `${id}`, formData);
 };
 
-const create = (nome, username, password, nivelAcesso, cep = null) => {
+const create = (nome, username, password, nivelAcesso, dadosEndereco = {}) => {
   return http.mainInstance.post(API_URL + "create", {
     nome,
     username,
     password,
     nivelAcesso,
-    cep
+    ...removerCamposNaoInformados(dadosEndereco)
   });
 };
 

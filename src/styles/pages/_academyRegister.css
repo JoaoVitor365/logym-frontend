@@ -478,6 +478,8 @@
 
 .academy-photo-preview-card {
   position: relative;
+  display: flex;
+  flex-direction: column;
   border: 1px solid #dddddd;
   border-radius: 12px;
   overflow: hidden;
@@ -485,11 +487,25 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
+.academy-photo-preview-card-selected {
+  border-color: #f97316;
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.35), 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
 .academy-photo-preview {
   width: 100%;
   height: 140px;
   object-fit: cover;
   display: block;
+}
+
+.academy-photo-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border-top: 1px solid #eeeeee;
+  background-color: #ffffff;
 }
 
 .academy-photo-preview-badge {
@@ -502,6 +518,64 @@
   border-radius: 999px;
   font-size: 12px;
   font-weight: 700;
+}
+
+.academy-photo-principal-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background-color: #f97316;
+  color: #000000;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.academy-photo-principal-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+  padding: 0;
+  box-sizing: border-box;
+  border: 0;
+  background-color: transparent;
+  color: #000000;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.academy-photo-principal-option input[type="radio"] {
+  appearance: auto;
+  -webkit-appearance: radio;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  border: initial !important;
+  background: transparent;
+  box-shadow: none !important;
+  accent-color: #f97316;
+  flex: 0 0 auto;
+}
+
+.academy-photo-principal-option input[type="radio"]:checked + span {
+  color: #c2410c;
+}
+
+.academy-photo-principal-option:has(input[type="radio"]:checked) {
+  background-color: transparent;
+}
+
+.academy-photo-principal-option input[type="radio"]:focus-visible {
+  outline: 2px solid #f97316 !important;
+  outline-offset: 2px;
+}
+
+.academy-photo-principal-option input[type="radio"]:disabled {
+  cursor: not-allowed;
 }
 
 @media (max-width: 768px) {
@@ -557,12 +631,11 @@
 }
 
 .academy-photo-remove-button {
-  position: absolute;
-  right: 8px;
-  bottom: 8px;
+  position: static;
+  width: 100%;
   border: none;
-  border-radius: 999px;
-  padding: 6px 12px;
+  border-radius: var(--border-radius-sm);
+  padding: 8px 12px;
   background-color: #dc3545;
   color: #ffffff;
   font-weight: 700;

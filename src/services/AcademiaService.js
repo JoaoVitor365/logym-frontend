@@ -7,8 +7,33 @@ const create = (academia) => {
   return http.mainInstance.post(API_URL, academia);
 };
 
+const createWithPhotos = (academia, fotos, fotoPrincipalIndex) => {
+  const formData = new FormData();
+  formData.append('academia', new Blob([JSON.stringify(academia)], { type: 'application/json' }));
+
+  fotos.forEach((foto) => {
+    formData.append('foto', foto);
+  });
+
+  if (Number.isInteger(fotoPrincipalIndex)) {
+    formData.append('fotoPrincipalIndex', String(fotoPrincipalIndex));
+  }
+
+  return http.multipartInstance.post(API_URL, formData);
+};
+
 const findAll = () => {
   return http.mainInstance.get(API_URL);
+};
+
+const getAcademiasProximas = () => {
+  return http.mainInstance.get(`${API_URL}/proximas`);
+};
+
+const getAcademiasComparacao = (ids) => {
+  return http.mainInstance.get(`${API_URL}/comparar`, {
+    params: { ids: ids.join(',') }
+  });
 };
 
 const findAllAdmin = () => {
@@ -49,7 +74,10 @@ const reativarAdmin = (id) => {
 
 const AcademiaService = {
   create,
+  createWithPhotos,
   findAll,
+  getAcademiasProximas,
+  getAcademiasComparacao,
   findAllAdmin,
   findById,
   findByGerenteId,
