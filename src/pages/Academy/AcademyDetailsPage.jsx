@@ -7,6 +7,8 @@ import AcademyReviews from '../../components/Academy/AcademyReviews';
 import AcademiaService from '../../services/AcademiaService';
 import AvaliacaoService from '../../services/AvaliacaoService';
 import FotoAcademiaService from '../../services/FotoAcademiaService';
+import FavoritoService from '../../services/FavoritoService';
+import Toast from '../../components/Toast/Toast';
 import { useComparison } from '../../contexts/useComparison';
 import { getFotoPrincipalUrl } from '../../utils/academyPhoto';
 
@@ -22,12 +24,21 @@ function AcademyDetailsPage() {
 
   const [loading, setLoading] = useState(true);
   const [avaliando, setAvaliando] = useState(false);
+  const [favoritado, setFavoritado] = useState(false);
+  const [loadingFavorito, setLoadingFavorito] = useState(false);
   const [apiMessage, setApiMessage] = useState('');
   const [reviewMessage, setReviewMessage] = useState('');
   const [modoEdicaoAvaliacao, setModoEdicaoAvaliacao] = useState(false);
+  const [toast, setToast] = useState({
+    open: false,
+    message: '',
+    variant: 'success'
+  });
 
   const usuarioLogado = JSON.parse(localStorage.getItem('user'));
   const podeAvaliar = usuarioLogado?.nivelAcesso === 'USER';
+  const podeFavoritar = usuarioLogado?.nivelAcesso === 'USER'
+    && usuarioLogado?.statusUsuario === 'ATIVO';
   const isAdmin = usuarioLogado?.nivelAcesso === 'ADMIN';
   const {
     adicionarAcademia,
@@ -89,6 +100,68 @@ function AcademyDetailsPage() {
   useEffect(() => {
     carregarDados();
   }, [carregarDados]);
+
+  useEffect(() => {
+    let paginaAtiva = true;
+
+    const verificarFavorito = async () => {
+      if (!podeFavoritar || !usuarioLogado?.id || !id) {
+        setFavoritado(false);
+        return;
+      }
+
+      try {
+        const response = await FavoritoService.isFavorito(usuarioLogado.id, id);
+
+        if (paginaAtiva) {
+          setFavoritado(Boolean(response.data?.favoritado));
+        }
+      } catch (error) {
+        console.error('Erro ao verificar favorito:', error);
+
+        if (paginaAtiva) {
+          setFavoritado(false);
+        }
+      }
+    };
+
+    verificarFavorito();
+
+    return () => {
+      paginaAtiva = false;
+    };
+  }, [id, podeFavoritar, usuarioLogado?.id]);
+
+  const handleToggleFavorito = async () => {
+    if (!podeFavoritar || !academy?.id || loadingFavorito) {
+      return;
+    }
+
+    setLoadingFavorito(true);
+
+    try {
+      const response = await FavoritoService.toggle(usuarioLogado.id, academy.id);
+      const novoStatus = Boolean(response.data?.favoritado);
+
+      setFavoritado(novoStatus);
+      setToast({
+        open: true,
+        message: novoStatus
+          ? 'Academia adicionada aos favoritos.'
+          : 'Academia removida dos favoritos.',
+        variant: 'success'
+      });
+    } catch (error) {
+      console.error('Erro ao atualizar favorito:', error);
+      setToast({
+        open: true,
+        message: 'Erro ao atualizar favorito.',
+        variant: 'error'
+      });
+    } finally {
+      setLoadingFavorito(false);
+    }
+  };
 
   const formatarCEP = (cep) => {
     if (!cep) return 'Não informado';
@@ -498,6 +571,22 @@ function AcademyDetailsPage() {
           )}
         </p>
 
+        {(podeFavoritar || podeComparar) && (
+          <div className="academy-details-actions">
+        {podeFavoritar && (
+          <button
+            type="button"
+            className={`favorite-button academy-details-favorite-button ${favoritado ? 'active' : ''}`}
+            onClick={handleToggleFavorito}
+            disabled={loadingFavorito}
+            title={favoritado ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+            aria-label={favoritado ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+          >
+            <span>{favoritado ? 'Favorita' : 'Adicionar aos favoritos'}</span>
+            {favoritado ? '★' : '☆'}
+          </button>
+        )}
+
         {podeComparar && (
           <button
             type="button"
@@ -506,6 +595,8 @@ function AcademyDetailsPage() {
           >
             {comparacaoSelecionada ? 'Remover da comparação' : 'Adicionar à comparação'}
           </button>
+        )}
+          </div>
         )}
       </div>
 
@@ -685,6 +776,13 @@ function AcademyDetailsPage() {
           <p>Faça login como usuário comum para avaliar esta academia.</p>
         </div>
       )}
+
+      <Toast
+        open={toast.open}
+        message={toast.message}
+        variant={toast.variant}
+        onClose={() => setToast((prev) => ({ ...prev, open: false }))}
+      />
 
       <AcademyReviews
         reviews={reviews}

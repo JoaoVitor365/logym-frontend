@@ -138,7 +138,12 @@ function HomePage({ currentUser }) {
     };
 
     carregarAcademiasProximas();
-  }, [currentUser?.id, currentUser?.nivelAcesso]);
+  }, [
+    currentUser?.id,
+    currentUser?.nivelAcesso,
+    currentUser?.latitude,
+    currentUser?.longitude
+  ]);
 
   useEffect(() => {
     const carregarCategorias = async () => {

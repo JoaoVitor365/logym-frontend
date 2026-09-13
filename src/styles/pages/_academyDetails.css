@@ -91,6 +91,53 @@
   color: #000000;
 }
 
+.academy-details-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+.academy-details-actions .academy-details-favorite-button {
+  box-sizing: border-box;
+  display: inline-flex;
+  width: auto;
+  min-width: 0;
+  height: auto;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: var(--spacing-xs) var(--spacing-md);
+  border: 1px solid var(--primary-color);
+  border-radius: var(--border-radius-sm);
+  background-color: #ffffff;
+  color: var(--primary-color);
+  font: inherit;
+  font-size: inherit;
+  font-weight: 700;
+}
+
+.academy-details-actions .academy-details-favorite-button:hover,
+.academy-details-actions .academy-details-favorite-button.active {
+  border-color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: #000000;
+  transform: none;
+}
+
+@media (max-width: 480px) {
+  .academy-details-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .academy-details-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 .academy-map-canvas {
   width: 100%;
   height: 320px;

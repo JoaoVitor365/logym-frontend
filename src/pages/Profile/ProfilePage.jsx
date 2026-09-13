@@ -9,7 +9,7 @@ const formatCEP = (value) => {
   return rawValue.replace(/^(\d{5})(\d)/, '$1-$2');
 };
 
-function ProfilePage() {
+function ProfilePage({ onUserUpdated }) {
   const fileInputRef = useRef(null);
 
   const [user, setUser] = useState({
@@ -262,6 +262,7 @@ function ProfilePage() {
       };
 
       localStorage.setItem('user', JSON.stringify(usuarioParaSalvar));
+      onUserUpdated(usuarioParaSalvar);
 
       setUser(prev => ({
         ...prev,
@@ -350,6 +351,7 @@ function ProfilePage() {
       };
 
       localStorage.setItem('user', JSON.stringify(usuarioParaSalvar));
+      onUserUpdated(usuarioParaSalvar);
 
       setUser(prev => ({
         ...prev,

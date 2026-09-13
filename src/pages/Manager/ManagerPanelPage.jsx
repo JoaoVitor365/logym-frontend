@@ -7,6 +7,8 @@ import ConfirmModal from '../../components/Modal/ConfirmModal';
 import Toast from '../../components/Toast/Toast';
 import AcademiaService from '../../services/AcademiaService';
 import GerenteService from '../../services/GerenteService';
+import ManagerDashboard from './ManagerDashboard';
+import ManagerSidebar from './ManagerSidebar';
 
 function ManagerPanelPage() {
   const navigate = useNavigate();
@@ -14,6 +16,12 @@ function ManagerPanelPage() {
   const [managerName, setManagerName] = useState('Gerente');
   const [gerente, setGerente] = useState(null);
   const [academias, setAcademias] = useState([]);
+  const [activeSection, setActiveSection] = useState('dashboard');
+  const [academiasCarregadas, setAcademiasCarregadas] = useState(false);
+  const [termoBuscaAcademias, setTermoBuscaAcademias] = useState('');
+  const [statusAcademiasSelecionado, setStatusAcademiasSelecionado] = useState('TODOS');
+  const [academiasPorPagina, setAcademiasPorPagina] = useState(10);
+  const [paginaAcademiasAtual, setPaginaAcademiasAtual] = useState(1);
   const [loading, setLoading] = useState(true);
   const [apiMessage, setApiMessage] = useState('');
   const [toast, setToast] = useState({
@@ -24,9 +32,18 @@ function ManagerPanelPage() {
   const [acaoPendente, setAcaoPendente] = useState(null);
   const [confirmLoading, setConfirmLoading] = useState(false);
 
+  useEffect(() => {
+    document.body.classList.add('manager-panel-active');
+
+    return () => {
+      document.body.classList.remove('manager-panel-active');
+    };
+  }, []);
+
   const carregarDadosPainel = useCallback(async () => {
     setLoading(true);
     setApiMessage('');
+    setAcademiasCarregadas(false);
 
     try {
       const usuarioLogado = JSON.parse(localStorage.getItem('user'));
@@ -73,6 +90,7 @@ function ManagerPanelPage() {
 
       const response = await AcademiaService.findByGerenteId(gerenteEncontrado.id);
       setAcademias(Array.isArray(response.data) ? response.data : []);
+      setAcademiasCarregadas(true);
     } catch (error) {
       console.error('Erro ao carregar painel do gerente:', error);
       setApiMessage('Erro ao carregar dados do painel.');
@@ -227,8 +245,80 @@ function ManagerPanelPage() {
     return 'manager-status-badge manager-status-inactive';
   };
 
+  const academiasFiltradas = useMemo(() => {
+    const normalizarTexto = (valor) => String(valor || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
+    const termoNormalizado = normalizarTexto(termoBuscaAcademias);
+
+    return academias.filter((academia) => {
+      const correspondeBusca = !termoNormalizado || [
+        academia.nome,
+        academia.cnpj,
+        academia.cidade,
+        academia.estado,
+        academia.endereco,
+        academia.bairro
+      ].some((valor) => normalizarTexto(valor).includes(termoNormalizado));
+      const correspondeStatus = statusAcademiasSelecionado === 'TODOS'
+        || academia.statusAcademia === statusAcademiasSelecionado;
+
+      return correspondeBusca && correspondeStatus;
+    });
+  }, [academias, statusAcademiasSelecionado, termoBuscaAcademias]);
+
+  const totalPaginasAcademias = Math.max(1, Math.ceil(academiasFiltradas.length / academiasPorPagina));
+  const paginaAcademiasEfetiva = Math.min(paginaAcademiasAtual, totalPaginasAcademias);
+  const indiceInicialAcademias = (paginaAcademiasEfetiva - 1) * academiasPorPagina;
+  const academiasDaPagina = academiasFiltradas.slice(
+    indiceInicialAcademias,
+    indiceInicialAcademias + academiasPorPagina
+  );
+  const primeiroRegistroAcademias = academiasFiltradas.length === 0 ? 0 : indiceInicialAcademias + 1;
+  const ultimoRegistroAcademias = Math.min(
+    indiceInicialAcademias + academiasDaPagina.length,
+    academiasFiltradas.length
+  );
+
+  const paginasVisiveis = useMemo(() => {
+    const paginas = new Set([1, totalPaginasAcademias, paginaAcademiasEfetiva]);
+
+    [paginaAcademiasEfetiva - 1, paginaAcademiasEfetiva + 1].forEach((pagina) => {
+      if (pagina > 1 && pagina < totalPaginasAcademias) {
+        paginas.add(pagina);
+      }
+    });
+
+    return [...paginas]
+      .sort((paginaA, paginaB) => paginaA - paginaB)
+      .reduce((itens, pagina, indice, todasPaginas) => {
+        if (indice > 0 && pagina - todasPaginas[indice - 1] > 1) {
+          itens.push(`ellipsis-${pagina}`);
+        }
+
+        itens.push(pagina);
+        return itens;
+      }, []);
+  }, [paginaAcademiasEfetiva, totalPaginasAcademias]);
+
+  useEffect(() => {
+    setPaginaAcademiasAtual(1);
+  }, [academiasPorPagina, statusAcademiasSelecionado, termoBuscaAcademias]);
+
+  useEffect(() => {
+    if (paginaAcademiasAtual > totalPaginasAcademias) {
+      setPaginaAcademiasAtual(totalPaginasAcademias);
+    }
+  }, [paginaAcademiasAtual, totalPaginasAcademias]);
+
   const handleEdit = (id) => {
     navigate(`/editar-academia/${id}`);
+  };
+
+  const handleDetails = (id) => {
+    navigate(`/academia/${id}`);
   };
 
   const executarInativacao = async (id) => {
@@ -340,13 +430,29 @@ function ManagerPanelPage() {
   const renderAcademiaCard = (academia) => {
     const estaAtiva = academia.statusAcademia === 'ATIVO';
     const estaSuspensa = academia.statusAcademia === 'SUSPENSA';
+    const cidadeEstado = [academia.cidade, academia.estado].filter(Boolean).join(' - ') || 'Não informado';
+    const contato = [
+      academia.telefone && `Telefone: ${academia.telefone}`,
+      academia.celular && `Celular: ${academia.celular}`,
+      academia.email && `E-mail: ${academia.email}`
+    ].filter(Boolean).join('\n') || 'Não informado';
+    const endereco = `${montarEndereco(academia)}\nCEP: ${formatarCEP(academia.cep)}`;
 
     return (
-      <div key={academia.id} className="manager-academy-card">
-        <div className="manager-academy-content">
-          <h3 className="manager-academy-title">
-            {academia.nome}
-          </h3>
+      <article key={academia.id} className="manager-academy-list-item">
+        <div className="manager-academy-list-item__content">
+          <div className="manager-academy-list-item__heading">
+            <div>
+              <h3 className="manager-academy-title">
+                {academia.nome}
+              </h3>
+              <span className="manager-academy-id">ID: {academia.id}</span>
+            </div>
+
+            <span className={getStatusClass(academia.statusAcademia)}>
+              {academia.statusAcademia}
+            </span>
+          </div>
 
           {estaSuspensa && (
             <div className="manager-warning-box">
@@ -354,58 +460,35 @@ function ManagerPanelPage() {
             </div>
           )}
 
-          <div className="manager-academy-grid">
-            <p className="manager-info-text">
-              <strong>CNPJ:</strong> {formatarCNPJ(academia.cnpj)}
-            </p>
-
-            <p className="manager-info-text">
-              <strong>CEP:</strong> {formatarCEP(academia.cep)}
-            </p>
-
-            <p className="manager-info-text">
-              <strong>Telefone:</strong> {academia.telefone || 'Não informado'}
-            </p>
-
-            <p className="manager-info-text">
-              <strong>Celular:</strong> {academia.celular || 'Não informado'}
-            </p>
-
-            <p className="manager-info-text">
-              <strong>E-mail:</strong> {academia.email || 'Não informado'}
-            </p>
-
-            <p className="manager-info-text">
-              <strong>Nota:</strong> {formatarNota(academia.nota)}
-            </p>
+          <div className="manager-academy-summary-grid">
+            <InfoAcademia label="Nota" value={formatarNota(academia.nota)} />
+            <InfoAcademia label="Cidade" value={cidadeEstado} />
+            <InfoAcademia label="CNPJ" value={formatarCNPJ(academia.cnpj)} />
           </div>
 
-          <p className="manager-info-line">
-            <strong>Endereço:</strong> {montarEndereco(academia)}
-          </p>
+          <div className="manager-academy-location-grid">
+            <InfoAcademia label="Endereço" value={endereco} />
+            <InfoAcademia label="Contato" value={contato} />
+          </div>
 
-          <p className="manager-info-line">
-            <strong>Categorias:</strong> {formatarCategoriasAcademia(academia)}
-          </p>
+          <div className="manager-academy-structure-grid">
+            <InfoAcademia label="Categorias" value={formatarCategoriasAcademia(academia)} />
+            <InfoAcademia label="Facilidades" value={formatarFacilidadesAcademia(academia)} />
+          </div>
 
-          <p className="manager-info-line">
-            <strong>Facilidades:</strong> {formatarFacilidadesAcademia(academia)}
-          </p>
-
-          <p className="manager-info-line">
-            <strong>Descrição:</strong> {academia.descricao}
-          </p>
-
-          <p className="manager-status-line">
-            <strong>Status:</strong>
-
-            <span className={getStatusClass(academia.statusAcademia)}>
-              {academia.statusAcademia}
-            </span>
-          </p>
+          {academia.descricao && (
+            <InfoAcademia label="Descrição" value={academia.descricao} className="manager-academy-description" />
+          )}
         </div>
 
-        <div className="manager-actions">
+        <div className="manager-actions manager-academy-list-item__actions">
+          <Button
+            onClick={() => handleDetails(academia.id)}
+            className="manager-button manager-button-details"
+          >
+            Ver detalhes
+          </Button>
+
           <Button
             onClick={() => handleEdit(academia.id)}
             className="manager-button manager-button-secondary"
@@ -437,7 +520,7 @@ function ManagerPanelPage() {
             </Button>
           )}
         </div>
-      </div>
+      </article>
     );
   };
 
@@ -477,10 +560,33 @@ function ManagerPanelPage() {
   }
 
   return (
-    <div className="manager-page">
+    <div className="manager-panel-layout">
+      <ManagerSidebar
+        activeSection={activeSection}
+        managerName={managerName}
+        onSectionChange={setActiveSection}
+      />
+
+      <main className="manager-panel-content">
+        {apiMessage && (
+          <div className="manager-api-message manager-api-message-error">
+            {apiMessage}
+          </div>
+        )}
+
+        {activeSection === 'dashboard' ? (
+          <ManagerDashboard
+            academias={academias}
+            academiasCarregadas={academiasCarregadas}
+            onCadastrarAcademia={() => navigate('/cadastrar-academia')}
+            onVerAcademias={() => setActiveSection('academias')}
+            onGerenciarAcademia={handleEdit}
+          />
+        ) : (
+          <section className="manager-academies-section manager-section-shell">
       <div className="manager-header">
         <div>
-          <h1>Painel de Controle</h1>
+          <h1>Minhas Academias</h1>
 
           <p>
             Bem-vindo(a), <strong>{managerName}</strong>. Você possui{' '}
@@ -498,12 +604,61 @@ function ManagerPanelPage() {
         </Button>
       </div>
 
-      {apiMessage && (
-        <div className="manager-api-message manager-api-message-error">
-          {apiMessage}
-        </div>
-      )}
+      <section className="manager-academies-box">
+        <div className="manager-academies-box__header">
+          <h2 className="manager-academies-box__title">Academias cadastradas</h2>
 
+          <div className="manager-academies-controls">
+            <label className="manager-academies-control manager-academies-control--search" htmlFor="buscaAcademiasGerente">
+              <span>Buscar</span>
+              <input
+                id="buscaAcademiasGerente"
+                type="search"
+                value={termoBuscaAcademias}
+                onChange={(event) => {
+                  setTermoBuscaAcademias(event.target.value);
+                  setPaginaAcademiasAtual(1);
+                }}
+                placeholder="Nome, CNPJ, cidade ou endereço"
+              />
+            </label>
+
+            <label className="manager-academies-control" htmlFor="statusAcademiasGerente">
+              <span>Status</span>
+              <select
+                id="statusAcademiasGerente"
+                value={statusAcademiasSelecionado}
+                onChange={(event) => {
+                  setStatusAcademiasSelecionado(event.target.value);
+                  setPaginaAcademiasAtual(1);
+                }}
+              >
+                <option value="TODOS">Todos</option>
+                <option value="ATIVO">Ativas</option>
+                <option value="INATIVO">Inativas</option>
+                <option value="SUSPENSA">Suspensas</option>
+              </select>
+            </label>
+
+            <label className="manager-academies-control" htmlFor="academiasPorPaginaGerente">
+              <span>Por página</span>
+              <select
+                id="academiasPorPaginaGerente"
+                value={academiasPorPagina}
+                onChange={(event) => {
+                  setAcademiasPorPagina(Number(event.target.value));
+                  setPaginaAcademiasAtual(1);
+                }}
+              >
+                {[5, 10, 15, 20].map((quantidade) => (
+                  <option key={quantidade} value={quantidade}>{quantidade}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div className="manager-academies-box__body">
       {academias.length === 0 ? (
         <div className="manager-empty-state">
           <h2>Nenhuma academia cadastrada</h2>
@@ -516,45 +671,60 @@ function ManagerPanelPage() {
             Cadastrar minha primeira academia
           </Button>
         </div>
+      ) : academiasFiltradas.length === 0 ? (
+        <div className="manager-academies-empty">
+          Nenhuma academia encontrada para os filtros selecionados.
+        </div>
       ) : (
-        <>
-          <section className="manager-section">
-            <h2 className="manager-section-title">Academias Ativas</h2>
-
-            {academiasAtivas.length === 0 ? (
-              <EmptySection>Nenhuma academia ativa no momento.</EmptySection>
-            ) : (
-              <div className="manager-panel-list">
-                {academiasAtivas.map((academia) => renderAcademiaCard(academia, 'ativa'))}
-              </div>
-            )}
-          </section>
-
-          <section className="manager-section">
-            <h2 className="manager-section-title">Academias Inativas</h2>
-
-            {academiasInativas.length === 0 ? (
-              <EmptySection>Nenhuma academia inativa no momento.</EmptySection>
-            ) : (
-              <div className="manager-panel-list">
-                {academiasInativas.map((academia) => renderAcademiaCard(academia, 'inativa'))}
-              </div>
-            )}
-          </section>
-
-          <section className="manager-section manager-section-last">
-            <h2 className="manager-section-title">Academias Suspensas</h2>
-
-            {academiasSuspensas.length === 0 ? (
-              <EmptySection>Nenhuma academia suspensa no momento.</EmptySection>
-            ) : (
-              <div className="manager-panel-list">
-                {academiasSuspensas.map((academia) => renderAcademiaCard(academia, 'suspensa'))}
-              </div>
-            )}
-          </section>
-        </>
+        <div className="manager-academies-list">
+          {academiasDaPagina.map(renderAcademiaCard)}
+        </div>
       )}
+
+        </div>
+
+        <footer className="manager-academies-box__footer">
+          <span className="manager-academies-results">
+            Mostrando {primeiroRegistroAcademias}–{ultimoRegistroAcademias} de {academiasFiltradas.length} academias
+          </span>
+
+          <nav className="manager-academies-pagination" aria-label="Paginação das academias">
+            <button
+              type="button"
+              onClick={() => setPaginaAcademiasAtual(paginaAcademiasEfetiva - 1)}
+              disabled={paginaAcademiasEfetiva === 1 || academiasFiltradas.length === 0}
+            >
+              Anterior
+            </button>
+
+            {paginasVisiveis.map((item) => (
+              typeof item === 'number' ? (
+                <button
+                  key={item}
+                  type="button"
+                  className={item === paginaAcademiasEfetiva ? 'manager-academies-page-button--active' : ''}
+                  onClick={() => setPaginaAcademiasAtual(item)}
+                  aria-current={item === paginaAcademiasEfetiva ? 'page' : undefined}
+                >
+                  {item}
+                </button>
+              ) : (
+                <span key={item} className="manager-academies-pagination-ellipsis">…</span>
+              )
+            ))}
+
+            <button
+              type="button"
+              onClick={() => setPaginaAcademiasAtual(paginaAcademiasEfetiva + 1)}
+              disabled={paginaAcademiasEfetiva === totalPaginasAcademias || academiasFiltradas.length === 0}
+            >
+              Próxima
+            </button>
+          </nav>
+        </footer>
+      </section>
+          </section>
+        )}
 
       <Toast
         open={toast.open}
@@ -578,6 +748,16 @@ function ManagerPanelPage() {
         onConfirm={confirmarAcaoPendente}
         onCancel={cancelarAcaoPendente}
       />
+      </main>
+    </div>
+  );
+}
+
+function InfoAcademia({ label, value, className = '' }) {
+  return (
+    <div className={`manager-academy-info ${className}`}>
+      <strong className="manager-academy-info__label">{label}</strong>
+      <span className="manager-academy-info__value">{value || 'Não informado'}</span>
     </div>
   );
 }

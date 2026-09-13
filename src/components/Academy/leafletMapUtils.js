@@ -13,6 +13,14 @@ export const academyMarkerIcon = L.icon({
   shadowSize: [41, 41]
 });
 
+export const userMarkerIcon = L.divIcon({
+  className: 'user-location-marker',
+  html: '<svg width="30" height="42" viewBox="0 0 30 42" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M15 0C6.716 0 0 6.716 0 15c0 11.25 15 27 15 27s15-15.75 15-27C30 6.716 23.284 0 15 0Z" fill="#f97316"/><circle cx="15" cy="15" r="5" fill="#ffffff"/></svg>',
+  iconSize: [30, 42],
+  iconAnchor: [15, 42],
+  popupAnchor: [0, -40]
+});
+
 export const getCoordenadasValidas = (latitude, longitude) => {
   if (
     latitude === null ||

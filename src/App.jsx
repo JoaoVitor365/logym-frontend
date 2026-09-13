@@ -88,6 +88,10 @@ function App() {
     setIsLoggedIn(true);
   };
 
+  const handleUserUpdated = (updatedUser) => {
+    setCurrentUser(updatedUser);
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('gerente');
@@ -142,7 +146,7 @@ function App() {
 
           <Route
             path="/profile"
-            element={<ProfilePage currentUser={currentUser} />}
+            element={<ProfilePage onUserUpdated={handleUserUpdated} />}
           />
 
           <Route

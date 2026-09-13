@@ -1,8 +1,9 @@
 import { useEffect, useMemo } from 'react';
 import L from 'leaflet';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
+import { Link } from 'react-router-dom';
 
-import { academyMarkerIcon, getCoordenadasValidas } from './leafletMapUtils';
+import { academyMarkerIcon, getCoordenadasValidas, userMarkerIcon } from './leafletMapUtils';
 
 const formatarDistancia = (distanciaKm) => {
   const distancia = Number(distanciaKm);
@@ -82,7 +83,7 @@ function NearbyAcademiesMap({ userLatitude, userLongitude, academiasProximas }) 
 
         <AjustarEnquadramento pontos={pontosDoMapa} />
 
-        <Marker position={coordenadasUsuario} icon={academyMarkerIcon}>
+        <Marker position={coordenadasUsuario} icon={userMarkerIcon}>
           <Popup>Sua localização</Popup>
         </Marker>
 
@@ -96,6 +97,9 @@ function NearbyAcademiesMap({ userLatitude, userLongitude, academiasProximas }) 
                 <strong>{academia.nome || 'Academia'}</strong>
                 {distanciaFormatada && <p>{distanciaFormatada}</p>}
                 {endereco && <p>{endereco}</p>}
+                <Link to={`/academia/${academia.id}`} className="academy-map-details-button">
+                  Ver detalhes
+                </Link>
               </Popup>
             </Marker>
           );
