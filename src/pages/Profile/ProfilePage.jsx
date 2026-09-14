@@ -9,6 +9,8 @@ const formatCEP = (value) => {
   return rawValue.replace(/^(\d{5})(\d)/, '$1-$2');
 };
 
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,64}$/;
+
 function ProfilePage({ onUserUpdated }) {
   const fileInputRef = useRef(null);
 
@@ -32,13 +34,15 @@ function ProfilePage({ onUserUpdated }) {
 
   const [preview, setPreview] = useState(null);
   const [fotoUrl, setFotoUrl] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [buscandoCep, setBuscandoCep] = useState(false);
   const [apiMessage, setApiMessage] = useState('');
   const [cepError, setCepError] = useState('');
   const [numeroError, setNumeroError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [isPasswordEditing, setIsPasswordEditing] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [showInactivateConfirm, setShowInactivateConfirm] = useState(false);
   const cepAtualRef = useRef('');
   const enderecoInicialRef = useRef({ cep: '', numero: '' });
@@ -149,6 +153,10 @@ function ProfilePage({ onUserUpdated }) {
     const { name, value } = e.target;
 
     setApiMessage('');
+
+    if (name === 'password') {
+      setPasswordError('');
+    }
 
     if (name === 'cep') {
       const cepFormatado = formatCEP(value);
@@ -298,6 +306,12 @@ function ProfilePage({ onUserUpdated }) {
 
     setApiMessage('');
 
+    const scrollToFeedback = () => {
+      window.requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    };
+
     if (user.nivelAcesso === 'USER') {
       const cepLimpo = user.cep.replace(/\D/g, '');
       const numeroNormalizado = String(user.numero || '').trim();
@@ -305,22 +319,32 @@ function ProfilePage({ onUserUpdated }) {
       if (cepLimpo.length !== 8) {
         setCepError('O CEP deve conter 8 dígitos.');
         setApiMessage('Erro: verifique o CEP antes de continuar.');
+        scrollToFeedback();
         return;
       }
 
       if (!enderecoCep.logradouro || !enderecoCep.cidade || !enderecoCep.estado) {
         setCepError('Informe um CEP válido.');
         setApiMessage('Erro: verifique o CEP antes de continuar.');
+        scrollToFeedback();
         return;
       }
 
       if (!/^\d+$/.test(numeroNormalizado)) {
         setNumeroError('O número deve conter apenas dígitos não negativos.');
         setApiMessage('Erro: verifique o número antes de continuar.');
+        scrollToFeedback();
         return;
       }
 
       setNumeroError('');
+    }
+
+    if (user.password && !PASSWORD_REGEX.test(user.password)) {
+      setPasswordError('A nova senha deve ter entre 8 e 64 caracteres, incluindo letra maiúscula, letra minúscula, número e caractere especial.');
+      setApiMessage('Erro: verifique os requisitos da nova senha antes de continuar.');
+      scrollToFeedback();
+      return;
     }
 
     setLoading(true);
@@ -363,6 +387,9 @@ function ProfilePage({ onUserUpdated }) {
         complemento: usuarioParaSalvar.complemento ?? '',
         password: ''
       }));
+      setIsPasswordEditing(false);
+      setPasswordError('');
+      setShowPassword(false);
 
       enderecoInicialRef.current = {
         cep: String(usuarioParaSalvar.cep || '').replace(/\D/g, ''),
@@ -375,11 +402,12 @@ function ProfilePage({ onUserUpdated }) {
       }
 
       setApiMessage('Informações atualizadas com sucesso!');
-      setIsEditing(false);
+      scrollToFeedback();
 
     } catch (error) {
       console.error('Erro ao atualizar perfil:', error);
       setApiMessage('Erro ao atualizar informações.');
+      scrollToFeedback();
     } finally {
       setLoading(false);
     }
@@ -411,8 +439,10 @@ function ProfilePage({ onUserUpdated }) {
     <div className="profile-page-container">
       <Link to="/" className="back-button">← Voltar para Home</Link>
 
-      <h1>Meu Perfil</h1>
-      <p className="subtitle">Altere suas informações pessoais.</p>
+      <header className="profile-page-header">
+        <h1>Meu Perfil</h1>
+        <p className="subtitle">Altere suas informações pessoais.</p>
+      </header>
 
       {apiMessage && (
         <p className={apiMessage.startsWith('Erro') ? 'profile-api-message profile-api-error' : 'profile-api-message profile-api-success'}>
@@ -490,7 +520,10 @@ function ProfilePage({ onUserUpdated }) {
       </div>
 
       <form onSubmit={handleSubmit} className="profile-form">
-
+        <section className="profile-section" aria-labelledby="personal-data-title">
+          <h2 id="personal-data-title">Dados pessoais</h2>
+          <div className="profile-fields-grid profile-personal-grid">
+            <div className="profile-field">
         <label htmlFor="nome">Nome</label>
         <input
           type="text"
@@ -498,10 +531,10 @@ function ProfilePage({ onUserUpdated }) {
           name="nome"
           value={user.nome || ''}
           onChange={handleChange}
-          disabled={!isEditing}
           required
         />
-
+            </div>
+            <div className="profile-field">
         <label htmlFor="username">E-mail</label>
         <input
           type="email"
@@ -510,9 +543,15 @@ function ProfilePage({ onUserUpdated }) {
           value={user.username || ''}
           disabled
         />
+            </div>
+          </div>
+        </section>
 
         {user.nivelAcesso === 'USER' && (
-          <>
+          <section className="profile-section" aria-labelledby="address-title">
+            <h2 id="address-title">Endereço</h2>
+            <div className="profile-fields-grid profile-address-inputs">
+              <div className="profile-field">
             <label htmlFor="cep" className={cepError ? 'profile-label-error' : ''}>
               {buscandoCep ? 'CEP - buscando endereço...' : 'CEP'}
             </label>
@@ -522,7 +561,6 @@ function ProfilePage({ onUserUpdated }) {
               name="cep"
               value={user.cep || ''}
               onChange={handleChange}
-              disabled={!isEditing}
               maxLength="9"
               placeholder="Digite seu CEP"
               required
@@ -534,7 +572,8 @@ function ProfilePage({ onUserUpdated }) {
                 {cepError}
               </p>
             )}
-
+              </div>
+              <div className="profile-field">
             <label htmlFor="numero" className={numeroError ? 'profile-label-error' : ''}>Número</label>
             <input
               type="text"
@@ -545,7 +584,6 @@ function ProfilePage({ onUserUpdated }) {
                 handleChange(event);
                 setNumeroError('');
               }}
-              disabled={!isEditing}
               inputMode="numeric"
               placeholder="Digite o número"
               className={numeroError ? 'profile-input-error' : ''}
@@ -556,7 +594,8 @@ function ProfilePage({ onUserUpdated }) {
                 {numeroError}
               </p>
             )}
-
+              </div>
+              <div className="profile-field profile-field-full">
             <label htmlFor="complemento">Complemento</label>
             <input
               type="text"
@@ -564,9 +603,10 @@ function ProfilePage({ onUserUpdated }) {
               name="complemento"
               value={user.complemento || ''}
               onChange={handleChange}
-              disabled={!isEditing}
               placeholder="Opcional"
             />
+              </div>
+            </div>
 
             {(enderecoCep.logradouro || enderecoCep.bairro || enderecoCep.cidade || enderecoCep.estado) && (
               <div className="profile-viacep-box">
@@ -611,64 +651,84 @@ function ProfilePage({ onUserUpdated }) {
                 </div>
               </div>
             )}
-          </>
+          </section>
         )}
-
-        {isEditing && (
-          <>
-            <label htmlFor="password">Nova Senha</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={user.password || ''}
-              onChange={handleChange}
-              placeholder="Deixe em branco para não alterar"
-            />
-          </>
-        )}
-
-        {isEditing && (
-          <div className="button-group">
-            <button type="submit" className="save-button" disabled={loading || buscandoCep}>
-              {loading ? 'Salvando...' : 'Salvar Alterações'}
-            </button>
+        <section className="profile-section profile-password-section" aria-labelledby="password-title">
+          <h2 id="password-title">Senha</h2>
+          <div className="profile-field">
+            <label htmlFor="password">Nova senha</label>
+            <div className="profile-password-row">
+              <div className="profile-password-input-wrapper">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  name="password"
+                  value={user.password || ''}
+                  onChange={handleChange}
+                  disabled={!isPasswordEditing}
+                  placeholder="Deixe em branco para não alterar"
+                  autoComplete="new-password"
+                  aria-invalid={Boolean(passwordError)}
+                  aria-describedby="password-requirements password-error"
+                  className={passwordError ? 'profile-input-error' : ''}
+                />
+                <button
+                  type="button"
+                  className="profile-password-visibility-button"
+                  onClick={() => setShowPassword(current => !current)}
+                  disabled={!isPasswordEditing}
+                  aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                >
+                  {showPassword ? (
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" /><circle cx="12" cy="12" r="2.5" /></svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18" /><path d="M10.6 5.1A11.3 11.3 0 0 1 12 5c6.5 0 10 7 10 7a18.7 18.7 0 0 1-3.1 3.8" /><path d="M6.2 6.2A18.6 18.6 0 0 0 2 12s3.5 7 10 7c1.4 0 2.7-.3 3.8-.8" /><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" /></svg>
+                  )}
+                </button>
+              </div>
+              <div className="profile-password-actions">
+                {isPasswordEditing ? (
+                  <button
+                    type="button"
+                    className="profile-password-cancel-button"
+                    onClick={() => {
+                      setUser(prev => ({ ...prev, password: '' }));
+                      setPasswordError('');
+                      setIsPasswordEditing(false);
+                      setShowPassword(false);
+                    }}
+                  >
+                    Cancelar alteração
+                  </button>
+                ) : (
+                  <button type="button" className="edit-button" onClick={() => setIsPasswordEditing(true)}>
+                    Alterar senha
+                  </button>
+                )}
+              </div>
+            </div>
+            {passwordError && <p id="password-error" className="error-message profile-password-error-message">{passwordError}</p>}
+            <p id="password-requirements" className="profile-password-requirements">
+              Senha com no mínimo 8 caracteres, com letra maiúscula, minúscula, número e caractere especial.
+            </p>
           </div>
-        )}
+        </section>
+        <div className="profile-save-actions">
+          <button type="submit" className="save-button" disabled={loading || buscandoCep}>
+            {loading ? 'Salvando...' : 'Salvar alterações'}
+          </button>
+        </div>
       </form>
 
-      <div className="button-group profile-main-actions">
-        {!isEditing ? (
-          <>
-            <button
-              type="button"
-              onClick={() => setIsEditing(true)}
-              className="edit-button"
-            >
-              Editar Informações
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setShowInactivateConfirm(true)}
-              className="cancel-button"
-            >
-              Inativar Conta
-            </button>
-          </>
-        ) : (
-          <button
-            type="button"
-            onClick={() => {
-              setIsEditing(false);
-              setPreview(null);
-            }}
-            className="cancel-button"
-          >
-            Cancelar
-          </button>
-        )}
-      </div>
+      <section className="profile-danger-zone" aria-label="Ações da conta">
+        <button
+          type="button"
+          onClick={() => setShowInactivateConfirm(true)}
+          className="cancel-button"
+        >
+          Inativar conta
+        </button>
+      </section>
 
       {showInactivateConfirm && (
         <div className="profile-modal-overlay">
