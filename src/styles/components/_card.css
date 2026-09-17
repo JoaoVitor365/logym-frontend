@@ -45,6 +45,27 @@
   margin-bottom: var(--spacing-xs);
 }
 
+.card-distance {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xxs);
+  margin: 0 0 var(--spacing-xs);
+  color: #c2410c;
+  font-size: var(--font-size-small);
+  font-weight: 600;
+}
+
+.card-distance svg {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
 .card-details-link {
   margin-top: auto; /* Empurra o botão para o final do card-content */
   align-self: flex-start; /* Alinha o botão à esquerda dentro do card-content */

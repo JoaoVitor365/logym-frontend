@@ -603,6 +603,7 @@ function HomePage({ currentUser }) {
                   key={academia.id}
                   academy={academia}
                   categoriasAtivas={categoriasAtivas}
+                  distanciaKm={academia.distanciaKm}
                 />
               ))}
             </div>

@@ -80,11 +80,14 @@ function Card({ academy, onFavoriteChange, categoriasAtivas, distanciaKm }) {
 
     const distancia = Number(distanciaKm);
 
-    if (!Number.isFinite(distancia) || distancia < 0) {
+    if (!Number.isFinite(distancia) || distancia < 0 || distancia > 5) {
       return null;
     }
 
-    return `${new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 }).format(distancia)} km de você`;
+    return new Intl.NumberFormat('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(distancia);
   };
 
   const getCategoriasExibidas = () => {
@@ -193,7 +196,11 @@ function Card({ academy, onFavoriteChange, categoriasAtivas, distanciaKm }) {
 
         {getDistancia() && (
           <p className="card-distance">
-            {getDistancia()}
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z" />
+              <circle cx="12" cy="9" r="2.5" />
+            </svg>
+            Distância: {getDistancia()} km
           </p>
         )}
 

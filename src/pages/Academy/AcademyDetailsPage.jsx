@@ -220,6 +220,23 @@ function AcademyDetailsPage() {
     return Number(academy.nota).toFixed(1);
   };
 
+  const getDistancia = () => {
+    if (academy?.distanciaKm === null || academy?.distanciaKm === undefined) {
+      return null;
+    }
+
+    const distancia = Number(academy.distanciaKm);
+
+    if (!Number.isFinite(distancia) || distancia < 0) {
+      return null;
+    }
+
+    return new Intl.NumberFormat('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(distancia);
+  };
+
   const transformarTextoEmLista = (texto) => {
     if (!texto) return [];
 
@@ -562,6 +579,16 @@ function AcademyDetailsPage() {
         <h1>{academy.nome}</h1>
 
         <p>{montarEnderecoCompleto()}</p>
+
+        {getDistancia() && (
+          <p className="academy-details-distance">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z" />
+              <circle cx="12" cy="9" r="2.5" />
+            </svg>
+            Distância: {getDistancia()} km
+          </p>
+        )}
 
         <p>
           {getNota() ? (
