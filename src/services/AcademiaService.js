@@ -26,6 +26,19 @@ const findAll = () => {
   return http.mainInstance.get(API_URL);
 };
 
+const findParaHome = ({ page = 0, search = '', categorias = [], facilidades = [] } = {}) => {
+  const params = new URLSearchParams({ page: String(page) });
+
+  if (search.trim()) {
+    params.set('search', search.trim());
+  }
+
+  categorias.forEach((categoriaId) => params.append('categorias', String(categoriaId)));
+  facilidades.forEach((facilidadeId) => params.append('facilidades', String(facilidadeId)));
+
+  return http.mainInstance.get(`${API_URL}/home`, { params });
+};
+
 const getAcademiasProximas = () => {
   return http.mainInstance.get(`${API_URL}/proximas`);
 };
@@ -76,6 +89,7 @@ const AcademiaService = {
   create,
   createWithPhotos,
   findAll,
+  findParaHome,
   getAcademiasProximas,
   getAcademiasComparacao,
   findAllAdmin,

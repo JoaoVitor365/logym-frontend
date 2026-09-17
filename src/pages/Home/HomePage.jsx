@@ -1,5 +1,5 @@
 ﻿// src/pages/HomePage.jsx
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Input from '../../components/Input/Input';
@@ -13,6 +13,8 @@ import FacilidadeService from '../../services/FacilidadeService';
 
 function HomePage({ currentUser }) {
   const navigate = useNavigate();
+  const resultadosRef = useRef(null);
+  const deveRolarAteResultadosRef = useRef(false);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [termoPesquisado, setTermoPesquisado] = useState('');
@@ -23,6 +25,9 @@ function HomePage({ currentUser }) {
   const [verificandoGerente, setVerificandoGerente] = useState(false);
 
   const [academias, setAcademias] = useState([]);
+  const [paginaAtual, setPaginaAtual] = useState(0);
+  const [totalPaginas, setTotalPaginas] = useState(0);
+  const [totalResultados, setTotalResultados] = useState(0);
   const [loadingAcademias, setLoadingAcademias] = useState(true);
   const [mensagemAcademias, setMensagemAcademias] = useState('');
   const [academiasProximas, setAcademiasProximas] = useState([]);
@@ -71,35 +76,68 @@ function HomePage({ currentUser }) {
   }, [currentUser]);
 
   useEffect(() => {
+    let requisicaoAtiva = true;
+
     const carregarAcademias = async () => {
       setLoadingAcademias(true);
       setMensagemAcademias('');
 
       try {
-        const response = await AcademiaService.findAll();
-
+        const response = await AcademiaService.findParaHome({
+          page: paginaAtual,
+          search: termoPesquisado,
+          categorias: categoriasSelecionadas,
+          facilidades: facilidadesSelecionadas
+        });
         const dados = response.data;
 
-        if (Array.isArray(dados)) {
-          setAcademias(dados);
-        } else if (Array.isArray(dados?.content)) {
-          setAcademias(dados.content);
-        } else {
+        if (!requisicaoAtiva) {
+          return;
+        }
+
+        if (!Array.isArray(dados?.content)
+          || !Number.isInteger(dados?.page)
+          || !Number.isInteger(dados?.totalPages)
+          || typeof dados?.totalElements !== 'number') {
           console.error('Resposta inesperada ao carregar academias:', dados);
           setAcademias([]);
+          setTotalPaginas(0);
+          setTotalResultados(0);
           setMensagemAcademias('Erro ao carregar academias.');
+          return;
+        }
+
+        setAcademias(dados.content);
+        setTotalPaginas(dados.totalPages);
+        setTotalResultados(dados.totalElements);
+
+        if (deveRolarAteResultadosRef.current) {
+          resultadosRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          deveRolarAteResultadosRef.current = false;
         }
       } catch (error) {
+        if (!requisicaoAtiva) {
+          return;
+        }
+
         console.error('Erro ao carregar academias:', error);
         setMensagemAcademias('Erro ao carregar academias.');
         setAcademias([]);
+        setTotalPaginas(0);
+        setTotalResultados(0);
       } finally {
-        setLoadingAcademias(false);
+        if (requisicaoAtiva) {
+          setLoadingAcademias(false);
+        }
       }
     };
 
     carregarAcademias();
-  }, []);
+
+    return () => {
+      requisicaoAtiva = false;
+    };
+  }, [paginaAtual, termoPesquisado, categoriasSelecionadas, facilidadesSelecionadas]);
 
   useEffect(() => {
     const carregarAcademiasProximas = async () => {
@@ -205,191 +243,32 @@ function HomePage({ currentUser }) {
     carregarFacilidades();
   }, []);
 
-  const normalizarTexto = useCallback((texto) => {
-    return String(texto || '')
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
-  }, []);
+  const normalizarId = (id) => Number(id);
 
-  const normalizarId = useCallback((idCategoria) => Number(idCategoria), []);
-
-  const getCategoriaIdsAcademia = useCallback((academia) => {
-    if (!Array.isArray(academia?.categoriaIds)) {
-      return [];
+  const paginasVisiveis = useMemo(() => {
+    if (totalPaginas <= 7) {
+      return Array.from({ length: totalPaginas }, (_, index) => index);
     }
 
-    return academia.categoriaIds.map(normalizarId).filter(Number.isFinite);
-  }, [normalizarId]);
+    const paginas = new Set([0, totalPaginas - 1, paginaAtual - 1, paginaAtual, paginaAtual + 1]);
+    const ordenadas = [...paginas]
+      .filter((pagina) => pagina >= 0 && pagina < totalPaginas)
+      .sort((a, b) => a - b);
 
-  const getNomesCategoriasAcademia = useCallback((academia) => {
-    const categoriaIdsAcademia = getCategoriaIdsAcademia(academia);
-
-    if (categoriaIdsAcademia.length === 0) {
-      return '';
-    }
-
-    return categoriasAtivas
-      .filter((categoria) => categoriaIdsAcademia.includes(normalizarId(categoria.id)))
-      .map((categoria) => categoria.nome)
-      .join(' ');
-  }, [categoriasAtivas, getCategoriaIdsAcademia, normalizarId]);
-
-  const getFacilidadeIdsAcademia = useCallback((academia) => {
-    if (!Array.isArray(academia?.facilidadeIds)) {
-      return [];
-    }
-
-    return academia.facilidadeIds.map(normalizarId).filter(Number.isFinite);
-  }, [normalizarId]);
-
-  const getNomesFacilidadesAcademia = useCallback((academia) => {
-    const facilidadeIdsAcademia = getFacilidadeIdsAcademia(academia);
-
-    if (facilidadeIdsAcademia.length === 0) {
-      return '';
-    }
-
-    return facilidadesAtivas
-      .filter((facilidade) => facilidadeIdsAcademia.includes(normalizarId(facilidade.id)))
-      .map((facilidade) => facilidade.nome)
-      .join(' ');
-  }, [facilidadesAtivas, getFacilidadeIdsAcademia, normalizarId]);
-
-  const academiaContemTermo = useCallback((academia, termo) => {
-    const facilidadeIdsAcademia = getFacilidadeIdsAcademia(academia);
-    const facilidadesLegadas = facilidadeIdsAcademia.length === 0 ? academia.facilidades : '';
-
-    const textoPesquisavel = normalizarTexto(`
-      ${academia.nome}
-      ${academia.descricao}
-      ${academia.cep}
-      ${academia.endereco}
-      ${academia.numero}
-      ${academia.complemento}
-      ${academia.bairro}
-      ${academia.cidade}
-      ${academia.estado}
-      ${academia.telefone}
-      ${academia.celular}
-      ${academia.email}
-      ${academia.categorias}
-      ${getNomesCategoriasAcademia(academia)}
-      ${facilidadesLegadas}
-      ${getNomesFacilidadesAcademia(academia)}
-    `);
-
-    return textoPesquisavel.includes(termo);
-  }, [getFacilidadeIdsAcademia, getNomesCategoriasAcademia, getNomesFacilidadesAcademia, normalizarTexto]);
-
-  const academiaPossuiCategoria = useCallback((academia, categoria) => {
-    const categoriaId = normalizarId(categoria.id);
-    const categoriaIdsAcademia = getCategoriaIdsAcademia(academia);
-
-    if (categoriaIdsAcademia.length > 0 && Number.isFinite(categoriaId)) {
-      return categoriaIdsAcademia.includes(categoriaId);
-    }
-
-    return academiaContemTermo(academia, normalizarTexto(categoria.nome));
-  }, [academiaContemTermo, getCategoriaIdsAcademia, normalizarId, normalizarTexto]);
-
-  const academiaPossuiFacilidade = useCallback((academia, facilidade) => {
-    const facilidadeId = normalizarId(facilidade.id);
-    const facilidadeIdsAcademia = getFacilidadeIdsAcademia(academia);
-
-    if (facilidadeIdsAcademia.length > 0 && Number.isFinite(facilidadeId)) {
-      return facilidadeIdsAcademia.includes(facilidadeId);
-    }
-
-    return academiaContemTermo(academia, normalizarTexto(facilidade.nome));
-  }, [academiaContemTermo, getFacilidadeIdsAcademia, normalizarId, normalizarTexto]);
-
-  const academiasFiltradas = useMemo(() => {
-    const termoBusca = normalizarTexto(termoPesquisado.trim());
-
-    const listaAcademias = Array.isArray(academias) ? academias : [];
-
-    const filtradas = listaAcademias.filter((academia) => {
-      const passaNaBusca = termoBusca
-        ? academiaContemTermo(academia, termoBusca)
-        : true;
-
-      const passaNasCategorias = categoriasSelecionadas.length > 0
-        ? categoriasSelecionadas.every((categoriaId) => {
-          const categoria = categoriasAtivas.find(
-            (item) => normalizarId(item.id) === normalizarId(categoriaId)
-          );
-
-          return categoria ? academiaPossuiCategoria(academia, categoria) : false;
-        })
-        : true;
-
-      const passaNasFacilidades = facilidadesSelecionadas.length > 0
-        ? facilidadesSelecionadas.every((facilidadeId) => {
-          const facilidade = facilidadesAtivas.find(
-            (item) => normalizarId(item.id) === normalizarId(facilidadeId)
-          );
-
-          return facilidade ? academiaPossuiFacilidade(academia, facilidade) : false;
-        })
-        : true;
-
-      return passaNaBusca && passaNasCategorias && passaNasFacilidades;
-    });
-
-    return [...filtradas].sort((a, b) => {
-      const notaA = a.nota === null || a.nota === undefined ? -1 : Number(a.nota);
-      const notaB = b.nota === null || b.nota === undefined ? -1 : Number(b.nota);
-
-      return notaB - notaA;
-    });
-  }, [
-    academias,
-    termoPesquisado,
-    categoriasSelecionadas,
-    facilidadesSelecionadas,
-    categoriasAtivas,
-    facilidadesAtivas,
-    academiaContemTermo,
-    academiaPossuiCategoria,
-    academiaPossuiFacilidade,
-    normalizarTexto,
-    normalizarId
-  ]);
-
-  const academiasUnificadas = useMemo(() => {
-    const academiasFiltradasPorId = new Map(
-      academiasFiltradas.map((academia) => [String(academia.id), academia])
-    );
-    const idsAcademiasProximas = new Set();
-    const proximas = [];
-
-    academiasProximas.forEach(({ academia, distanciaKm }) => {
-      if (academia?.id === null || academia?.id === undefined) {
-        return;
+    return ordenadas.reduce((itens, pagina, index) => {
+      if (index > 0 && pagina - ordenadas[index - 1] > 1) {
+        itens.push(`ellipsis-${pagina}`);
       }
 
-      const idAcademia = String(academia?.id);
-      const academiaFiltrada = academiasFiltradasPorId.get(idAcademia);
-
-      if (!academiaFiltrada || idsAcademiasProximas.has(idAcademia)) {
-        return;
-      }
-
-      idsAcademiasProximas.add(idAcademia);
-      proximas.push({ academy: academiaFiltrada, distanciaKm });
-    });
-
-    const restantes = academiasFiltradas
-      .filter((academia) => !idsAcademiasProximas.has(String(academia.id)))
-      .map((academy) => ({ academy }));
-
-    return [...proximas, ...restantes];
-  }, [academiasFiltradas, academiasProximas]);
+      itens.push(pagina);
+      return itens;
+    }, []);
+  }, [paginaAtual, totalPaginas]);
 
   const handleSearch = (e) => {
     e.preventDefault();
     setTermoPesquisado(searchTerm);
+    setPaginaAtual(0);
   };
 
   const alternarCategoria = (categoriaId) => {
@@ -402,6 +281,7 @@ function HomePage({ currentUser }) {
 
       return [...categoriasAtuais, idNormalizado];
     });
+    setPaginaAtual(0);
   };
 
   const alternarFacilidade = (facilidadeId) => {
@@ -414,11 +294,13 @@ function HomePage({ currentUser }) {
 
       return [...facilidadesAtuais, idNormalizado];
     });
+    setPaginaAtual(0);
   };
 
   const limparBusca = () => {
     setSearchTerm('');
     setTermoPesquisado('');
+    setPaginaAtual(0);
   };
 
   const limparTudo = () => {
@@ -426,6 +308,16 @@ function HomePage({ currentUser }) {
     setTermoPesquisado('');
     setCategoriasSelecionadas([]);
     setFacilidadesSelecionadas([]);
+    setPaginaAtual(0);
+  };
+
+  const trocarPagina = (novaPagina) => {
+    if (novaPagina < 0 || novaPagina >= totalPaginas || novaPagina === paginaAtual) {
+      return;
+    }
+
+    deveRolarAteResultadosRef.current = true;
+    setPaginaAtual(novaPagina);
   };
 
   const categoriasSelecionadasNomes = categoriasSelecionadas
@@ -629,7 +521,7 @@ function HomePage({ currentUser }) {
           )}
 
           <span>
-            Resultado: <strong>{academiasUnificadas.length}</strong> academia(s)
+            Resultado: <strong>{totalResultados}</strong> academia(s)
           </span>
         </div>
       )}
@@ -652,8 +544,9 @@ function HomePage({ currentUser }) {
         </div>
       )}
 
-      {loadingAcademias ? (
-        <div
+      <section ref={resultadosRef} className="home-results-section" aria-busy={loadingAcademias}>
+        {loadingAcademias ? (
+          <div
           style={{
             textAlign: 'center',
             marginTop: '30px',
@@ -664,9 +557,9 @@ function HomePage({ currentUser }) {
           }}
         >
           <h2>Carregando academias...</h2>
-        </div>
-      ) : mensagemAcademias ? (
-        <div
+          </div>
+        ) : mensagemAcademias ? (
+          <div
           style={{
             textAlign: 'center',
             marginTop: '30px',
@@ -677,23 +570,9 @@ function HomePage({ currentUser }) {
           }}
         >
           {mensagemAcademias}
-        </div>
-      ) : academias.length === 0 ? (
-        <div
-          style={{
-            textAlign: 'center',
-            marginTop: '30px',
-            padding: '30px',
-            backgroundColor: '#ffffff',
-            border: '1px solid #000000',
-            borderRadius: '8px'
-          }}
-        >
-          <h2>Nenhuma academia cadastrada ainda.</h2>
-          <p>Quando um gerente cadastrar uma academia, ela aparecerá aqui.</p>
-        </div>
-      ) : academiasUnificadas.length === 0 ? (
-        <div
+          </div>
+        ) : totalResultados === 0 ? (
+          <div
           style={{
             textAlign: 'center',
             marginTop: '30px',
@@ -706,26 +585,68 @@ function HomePage({ currentUser }) {
           <h2>Nenhuma academia encontrada.</h2>
           <p>Tente pesquisar por outro termo, categoria, bairro ou facilidade.</p>
 
-          <Button
-            type="button"
-            className="button-primary"
-            onClick={limparTudo}
-          >
-            Ver todas as academias
-          </Button>
-        </div>
-      ) : (
-        <div className="academies-grid">
-          {academiasUnificadas.map(({ academy, distanciaKm }) => (
-            <Card
-              key={academy.id}
-              academy={academy}
-              distanciaKm={distanciaKm}
-              categoriasAtivas={categoriasAtivas}
-            />
-          ))}
-        </div>
-      )}
+          {(termoPesquisado || categoriasSelecionadas.length > 0 || facilidadesSelecionadas.length > 0) && (
+            <Button
+              type="button"
+              className="button-primary"
+              onClick={limparTudo}
+            >
+              Ver todas as academias
+            </Button>
+          )}
+          </div>
+        ) : (
+          <>
+            <div className="academies-grid">
+              {academias.map((academia) => (
+                <Card
+                  key={academia.id}
+                  academy={academia}
+                  categoriasAtivas={categoriasAtivas}
+                />
+              ))}
+            </div>
+
+            {totalPaginas > 1 && (
+              <nav className="home-pagination" aria-label="Paginação de academias">
+                <button
+                  type="button"
+                  className="home-pagination-button"
+                  onClick={() => trocarPagina(paginaAtual - 1)}
+                  disabled={paginaAtual === 0}
+                >
+                  Anterior
+                </button>
+
+                {paginasVisiveis.map((item) => (
+                  typeof item === 'string' ? (
+                    <span key={item} className="home-pagination-ellipsis" aria-hidden="true">…</span>
+                  ) : (
+                    <button
+                      key={item}
+                      type="button"
+                      className={`home-pagination-button ${item === paginaAtual ? 'active' : ''}`}
+                      onClick={() => trocarPagina(item)}
+                      aria-current={item === paginaAtual ? 'page' : undefined}
+                    >
+                      {item + 1}
+                    </button>
+                  )
+                ))}
+
+                <button
+                  type="button"
+                  className="home-pagination-button"
+                  onClick={() => trocarPagina(paginaAtual + 1)}
+                  disabled={paginaAtual === totalPaginas - 1}
+                >
+                  Próxima
+                </button>
+              </nav>
+            )}
+          </>
+        )}
+      </section>
     </div>
   );
 }
