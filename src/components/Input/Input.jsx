@@ -2,11 +2,12 @@
 import React from 'react';
 
 // O componente Input agora aceita uma prop 'className'
-function Input({ label, type, id, name, placeholder, value, onChange, className, ...props }) {
+function Input({ label, type, id, name, placeholder, value, onChange, className, endAdornment, ...props }) {
   return (
     // Aplica a prop 'className' diretamente ao div.input-group
     <div className={`input-group ${className || ''}`}>
       <label htmlFor={id} className="input-label">{label}</label>
+      <div className={endAdornment ? 'input-field-wrapper' : undefined}>
       <input
         type={type}
         id={id}
@@ -20,6 +21,8 @@ function Input({ label, type, id, name, placeholder, value, onChange, className,
         // pois vamos gerenciar a obrigatoriedade via JS.
         // Se você não tiver passado 'required' como prop, não precisa se preocupar.
       />
+      {endAdornment}
+      </div>
     </div>
   );
 }

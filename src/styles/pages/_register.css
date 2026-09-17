@@ -85,6 +85,33 @@
   color: var(--secondary-color);
 }
 
+.register-password-requirements {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(249, 115, 22, 0.3);
+  border-radius: var(--border-radius-sm);
+  background-color: #fff7ed;
+  color: var(--text-color);
+  font-size: var(--font-size-small);
+  line-height: 1.5;
+  text-align: left;
+}
+
+.register-password-requirements svg {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  fill: none;
+  stroke: #ea580c;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
 /* Media query para telas menores */
 @media (max-width: 600px) {
   .register-page {
