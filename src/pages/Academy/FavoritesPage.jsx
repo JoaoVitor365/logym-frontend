@@ -52,66 +52,47 @@ function FavoritesPage() {
   };
 
   return (
-    <div className="home-page">
+    <div className="favorites-page">
       <Link to="/" className="back-button">← Voltar para Home</Link>
 
-      <h1>Minhas Academias Favoritas</h1>
+      <header className="favorites-header">
+        <span className="favorites-eyebrow">Minha seleção</span>
+        <h1>Minhas academias favoritas</h1>
+        <p>Acompanhe as academias que você salvou para consultar depois.</p>
 
-      <p>
-        Veja aqui as academias que você marcou como favoritas.
-      </p>
+        {!loading && !apiMessage && academiasFavoritas.length > 0 && (
+          <span className="favorites-count">
+            ★ {academiasFavoritas.length} {academiasFavoritas.length === 1 ? 'academia salva' : 'academias salvas'}
+          </span>
+        )}
+      </header>
 
       {loading ? (
-        <div
-          style={{
-            textAlign: 'center',
-            marginTop: '30px',
-            padding: '30px',
-            backgroundColor: '#ffffff',
-            border: '1px solid #000000',
-            borderRadius: '8px'
-          }}
-        >
+        <div className="favorites-feedback-card" role="status">
           <h2>Carregando favoritos...</h2>
         </div>
       ) : apiMessage ? (
-        <div
-          style={{
-            textAlign: 'center',
-            marginTop: '30px',
-            padding: '30px',
-            backgroundColor: '#ffffff',
-            border: '1px solid #000000',
-            borderRadius: '8px'
-          }}
-        >
+        <div className="favorites-feedback-card">
           <h2>{apiMessage}</h2>
         </div>
       ) : academiasFavoritas.length === 0 ? (
-        <div
-          style={{
-            textAlign: 'center',
-            marginTop: '30px',
-            padding: '30px',
-            backgroundColor: '#ffffff',
-            border: '1px solid #000000',
-            borderRadius: '8px'
-          }}
-        >
-          <h2>Nenhuma academia favoritada ainda.</h2>
-          <p>Volte para a Home e clique na estrela das academias que você gostar.</p>
+        <div className="favorites-empty-state">
+          <span aria-hidden="true">★</span>
+          <h2>Sua lista de favoritos está vazia</h2>
+          <p>Salve as academias que mais chamarem sua atenção para encontrá-las rapidamente depois.</p>
 
-          <Link to="/" className="link">
-            Ver academias
+          <Link to="/" className="favorites-explore-link">
+            Explorar academias
           </Link>
         </div>
       ) : (
-        <div className="academies-grid">
+        <div className="favorites-grid">
           {academiasFavoritas.map((academia) => (
             <Card
               key={academia.id}
               academy={academia}
               onFavoriteChange={handleFavoriteChange}
+              variant="favorite-card"
             />
           ))}
         </div>

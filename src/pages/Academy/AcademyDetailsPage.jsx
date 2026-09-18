@@ -73,10 +73,13 @@ function AcademyDetailsPage() {
 
     try {
       const usuarioAtual = JSON.parse(localStorage.getItem('user'));
+      const usuarioIdParaAvaliacoes = usuarioAtual?.nivelAcesso === 'USER'
+        ? usuarioAtual.id
+        : null;
 
       const [academiaResponse, avaliacoesResponse, fotosResponse, itensResponse] = await Promise.all([
         AcademiaService.findById(id),
-        AvaliacaoService.findByAcademiaId(id, usuarioAtual?.id || null),
+        AvaliacaoService.findByAcademiaId(id, usuarioIdParaAvaliacoes),
         FotoAcademiaService.listarPorAcademia(id),
         AvaliacaoService.findItensAvaliacao()
       ]);
@@ -563,7 +566,7 @@ function AcademyDetailsPage() {
         </div>
       )}
 
-      <div className="academy-details-header">
+      <section className="academy-details-header academy-details-hero">
         {fotoPrincipalUrl ? (
           <img
             src={fotoPrincipalUrl}
@@ -625,14 +628,16 @@ function AcademyDetailsPage() {
         )}
           </div>
         )}
-      </div>
+      </section>
 
-      <div className="academy-details-section">
+      <main className="academy-details-content">
+      <div className="academy-details-grid academy-details-overview-grid">
+      <section className="academy-details-section academy-details-about">
         <h2>Sobre a Academia</h2>
         <p>{academy.descricao}</p>
-      </div>
+      </section>
 
-      <div className="academy-details-section academy-details-info">
+      <section className="academy-details-section academy-details-info academy-details-registration-info">
         <h2>Informações da Academia</h2>
 
         <ul>
@@ -640,9 +645,10 @@ function AcademyDetailsPage() {
           <li><strong>CEP:</strong> {formatarCEP(academy.cep)}</li>
           <li><strong>Endereço:</strong> {montarEnderecoCompleto()}</li>
         </ul>
+      </section>
       </div>
 
-      <div className="academy-details-section">
+      <section className="academy-details-section academy-details-map-section">
         <h2>Localização</h2>
         <AcademyMap
           latitude={academy.latitude}
@@ -650,9 +656,10 @@ function AcademyDetailsPage() {
           nome={academy.nome}
           endereco={montarEnderecoCompleto()}
         />
-      </div>
+      </section>
 
-      <div className="academy-details-section academy-details-info">
+      <div className="academy-details-grid academy-details-secondary-grid">
+      <section className="academy-details-section academy-details-info academy-details-contact">
         <h2>Informações de Contato</h2>
 
         <ul>
@@ -667,13 +674,13 @@ function AcademyDetailsPage() {
             )}
           </li>
         </ul>
-      </div>
+      </section>
 
-      <div className="academy-details-section academy-details-info">
+      <section className="academy-details-section academy-details-info academy-details-categories">
         <h2>Categorias</h2>
 
         {categorias.length > 0 ? (
-          <ul>
+          <ul className="academy-details-chips">
             {categorias.map((categoria, index) => (
               <li key={index}>{categoria}</li>
             ))}
@@ -681,13 +688,13 @@ function AcademyDetailsPage() {
         ) : (
           <p>Nenhuma categoria informada.</p>
         )}
-      </div>
+      </section>
 
-      <div className="academy-details-section academy-details-info">
+      <section className="academy-details-section academy-details-info academy-details-facilities">
         <h2>Facilidades</h2>
 
         {facilidades.length > 0 ? (
-          <ul>
+          <ul className="academy-details-chips academy-details-facility-chips">
             {facilidades.map((facilidade, index) => (
               <li key={index}>{facilidade}</li>
             ))}
@@ -695,13 +702,17 @@ function AcademyDetailsPage() {
         ) : (
           <p>Nenhuma facilidade informada.</p>
         )}
+      </section>
       </div>
 
-      <div className="academy-details-section">
+      <section className="academy-details-section academy-details-gallery-section">
         <h2>Galeria de Fotos</h2>
 
         {fotos.length === 0 ? (
-          <p>Esta academia ainda não possui fotos cadastradas.</p>
+          <div className="academy-details-empty-state">
+            <span aria-hidden="true">▧</span>
+            <p>Esta academia ainda não possui fotos cadastradas.</p>
+          </div>
         ) : (
           <div className="academy-photo-gallery">
             {fotos.map((foto) => (
@@ -714,7 +725,7 @@ function AcademyDetailsPage() {
             ))}
           </div>
         )}
-      </div>
+      </section>
 
       {podeAvaliar && (
         <div className="academy-details-section review-form-section" id="form-avaliacao">
@@ -799,10 +810,23 @@ function AcademyDetailsPage() {
       )}
 
       {!usuarioLogado && (
-        <div className="academy-details-section">
-          <p>Faça login como usuário comum para avaliar esta academia.</p>
-        </div>
+        <section className="academy-details-section academy-details-login-cta">
+          <span aria-hidden="true">★</span>
+          <div>
+            <h2>Quer avaliar esta academia?</h2>
+            <p>Entre na sua conta para compartilhar sua experiência.</p>
+          </div>
+          <Link to="/login" className="academy-details-login-link">Entrar</Link>
+        </section>
       )}
+
+      <AcademyReviews
+        reviews={reviews}
+        currentUser={usuarioLogado}
+        onRemoveReview={handleRemoverAvaliacao}
+        onEditReview={handleEditarAvaliacao}
+      />
+      </main>
 
       <Toast
         open={toast.open}
@@ -811,12 +835,6 @@ function AcademyDetailsPage() {
         onClose={() => setToast((prev) => ({ ...prev, open: false }))}
       />
 
-      <AcademyReviews
-        reviews={reviews}
-        currentUser={usuarioLogado}
-        onRemoveReview={handleRemoverAvaliacao}
-        onEditReview={handleEditarAvaliacao}
-      />
     </div>
   );
 }

@@ -668,3 +668,364 @@
     width: 100%;
   }
 }
+
+/* Experiência visual de criação de perfil da academia. */
+.academy-register-page {
+  display: block;
+  padding: clamp(2rem, 4vw, 4rem) clamp(1rem, 3vw, 2rem) 4.5rem;
+}
+
+.academy-register-shell {
+  width: min(100%, 1260px);
+  margin: 0 auto;
+}
+
+.academy-register-shell > .academy-register-header {
+  display: block;
+  margin: 0 0 1.5rem;
+  text-align: left;
+}
+
+.academy-register-eyebrow {
+  display: block;
+  margin-bottom: .45rem;
+  color: var(--secondary-darker);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.academy-register-shell > .academy-register-header h1 {
+  margin: 0 0 .55rem;
+  color: #111;
+  font-family: var(--font-heading);
+  font-size: clamp(2.35rem, 4vw, 3.35rem);
+  font-weight: 400;
+  letter-spacing: .035em;
+  line-height: .95;
+  text-transform: uppercase;
+}
+
+.academy-register-shell > .academy-register-header > p {
+  max-width: 670px;
+  margin: 0;
+  color: #5e5e5e;
+  font-size: .95rem;
+  line-height: 1.65;
+}
+
+.academy-edit-context {
+  display: inline-flex;
+  margin-top: .75rem;
+  padding: .4rem .7rem;
+  border-radius: 999px;
+  background: #fff3e9;
+  color: #9e3e05;
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+.academy-register-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .7rem;
+  margin-top: 1.5rem;
+}
+
+.academy-register-steps span {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  padding: .65rem .75rem;
+  border: 1px solid rgba(0, 0, 0, .1);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, .88);
+  color: #414141;
+  font-size: .76rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.academy-register-steps b {
+  color: var(--secondary-darker);
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  letter-spacing: .06em;
+}
+
+.academy-register-page .academy-register-form-container {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.academy-register-page .academy-register-form-container:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.academy-register-page .academy-form-grid,
+.academy-register-page .checkbox-section,
+.academy-register-page .academy-photo-upload-section {
+  border: 1px solid #e4e4e4;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .045);
+}
+
+.academy-register-page .academy-form-grid {
+  row-gap: 1rem;
+  margin: 0;
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.academy-register-page .academy-form-section-title {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin: 1.25rem 0 .25rem;
+  padding: 0 0 .7rem;
+  border-bottom: 1px solid #ececec;
+  color: #151515;
+  font-family: var(--font-heading);
+  font-size: 1.55rem;
+  font-weight: 400;
+  letter-spacing: .06em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.academy-register-page .academy-form-section-title::before,
+.academy-register-page .checkbox-section h3::before,
+.academy-register-page .academy-photo-upload-header h2::before {
+  width: 5px;
+  height: 1.1em;
+  border-radius: 99px;
+  background: var(--secondary-color);
+  content: '';
+}
+
+.academy-register-page .academy-form-section-title:first-child {
+  margin-top: 0;
+}
+
+.academy-register-page .input-label {
+  margin-bottom: .4rem;
+  color: #282828;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+
+.academy-register-page .input-field,
+.academy-register-page .textarea-field {
+  min-height: 47px;
+  padding: .75rem .9rem;
+  border: 1px solid #d5d5d5 !important;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: none !important;
+  color: #202020;
+  font-size: .9rem;
+}
+
+.academy-register-page .textarea-field {
+  min-height: 145px;
+  line-height: 1.6;
+}
+
+.academy-register-page .input-field:focus,
+.academy-register-page .textarea-field:focus {
+  border-color: var(--secondary-color) !important;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, .16) !important;
+}
+
+.academy-register-page .field-has-error .input-field,
+.academy-register-page .field-has-error .textarea-field {
+  border-color: #dc3545 !important;
+}
+
+.academy-register-page .error-message {
+  margin-top: .35rem;
+  color: #b4232c;
+  font-size: .76rem;
+}
+
+.academy-structure-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.academy-register-page .checkbox-section {
+  min-width: 0;
+  margin: 0;
+  padding: clamp(1.15rem, 2.4vw, 1.65rem);
+}
+
+.academy-register-page .checkbox-section h3,
+.academy-register-page .academy-photo-upload-header h2 {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin: 0 0 .45rem;
+  color: #151515;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: .06em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.academy-register-page .checkbox-section > p,
+.academy-register-page .academy-photo-upload-header p {
+  margin: 0 0 1.1rem;
+  color: #666;
+  font-size: .83rem;
+  line-height: 1.55;
+}
+
+.academy-register-page .checkbox-grid-improved {
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  gap: .6rem;
+}
+
+.academy-register-page .checkbox-card {
+  position: relative;
+  min-height: 38px;
+  padding: .48rem .7rem;
+  border: 1px solid #dedede;
+  border-radius: 999px;
+  background: #fff;
+  color: #3d3d3d;
+  font-size: .78rem;
+  font-weight: 650;
+}
+
+.academy-register-page .checkbox-card:hover {
+  border-color: #f7bb8d;
+  background: #fffaf6;
+}
+
+.academy-register-page .checkbox-card input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.academy-register-page .checkbox-card span {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1.2;
+}
+
+.academy-register-page .checkbox-card span::before {
+  display: inline-flex;
+  width: 0;
+  height: 1em;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  overflow: hidden;
+  color: #9e3e05;
+  content: '✓';
+  font-weight: 800;
+  line-height: 1;
+  transition: width .18s ease;
+}
+
+.academy-register-page .checkbox-card:has(input:checked) {
+  border-color: var(--secondary-color);
+  background: #fff3e9;
+  color: #8a3706;
+}
+
+.academy-register-page .checkbox-card:has(input:checked) span::before {
+  width: 1.1rem;
+}
+
+.academy-register-page .academy-photo-upload-section {
+  margin-top: 1.25rem;
+  padding: clamp(1.15rem, 2.4vw, 1.65rem);
+}
+
+.academy-register-page .academy-photo-upload-header {
+  margin-bottom: 1rem;
+  padding: 0;
+  border: 0;
+}
+
+.academy-register-page .academy-photo-upload-box {
+  min-height: 142px;
+  padding: 1.25rem;
+  border-width: 2px;
+  border-radius: 12px;
+  background: #fffaf6;
+}
+
+.academy-register-page .academy-photo-upload-box:hover {
+  border-color: var(--secondary-color);
+  background: #fff4eb;
+  transform: none;
+}
+
+.academy-register-page .academy-photo-upload-icon {
+  width: 60px;
+  height: 60px;
+  min-width: 60px;
+  background: #171717;
+}
+
+.academy-register-page .academy-photo-upload-text strong {
+  font-size: 1rem;
+}
+
+.academy-register-page .academy-form-actions {
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.academy-register-page .academy-form-actions button {
+  flex: 0 1 235px;
+  min-height: 48px;
+  border-radius: 9px;
+}
+
+.academy-register-page .academy-form-actions .button-primary {
+  order: 2;
+  border: 1px solid var(--secondary-color) !important;
+  background: var(--secondary-color) !important;
+  color: #111 !important;
+}
+
+.academy-register-page .academy-form-actions .button-primary:hover {
+  border-color: #111 !important;
+  background: #111 !important;
+  color: #fff !important;
+}
+
+.academy-register-page .academy-form-actions .button-cancel {
+  order: 1;
+  border: 1px solid #222 !important;
+  background: #fff !important;
+  color: #222 !important;
+}
+
+.academy-register-page .academy-form-actions .button-cancel:hover {
+  border-color: #222 !important;
+  background: #222 !important;
+  color: #fff !important;
+}
+
+@media (max-width: 900px) {
+  .academy-register-steps,
+  .academy-structure-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

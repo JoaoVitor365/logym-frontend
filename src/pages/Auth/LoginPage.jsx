@@ -141,9 +141,26 @@ function LoginPage({ onLogin }) {
 
   return (
     <div className="login-page">
-      <div className="form-card">
+      <div className="form-card auth-card">
+        <aside className="auth-visual-panel" aria-label="Conheça o LOGYM">
+          <img src={logo} alt="LOGYM" className="auth-panel-logo" />
+          <div className="auth-visual-content">
+            <span className="auth-panel-kicker">Seu treino começa aqui</span>
+            <h2>Bem-vindo de volta</h2>
+            <p>Encontre, compare e acompanhe as academias que combinam com você.</p>
+            <ul className="auth-benefits-list">
+              <li>Academias próximas</li>
+              <li>Compare academias</li>
+              <li>Salve suas favoritas</li>
+            </ul>
+          </div>
+        </aside>
+
+        <div className="auth-form-panel login-form-panel">
         <div className="login-header">
-          <img src={logo} alt="Logo da LOGYM" className="login-logo" />
+          <span className="auth-form-kicker">Acesse o LOGYM</span>
+          <h1>Entre na sua conta</h1>
+          <p>Use seu e-mail e senha para continuar.</p>
         </div>
 
         {apiMessage && (
@@ -210,19 +227,20 @@ function LoginPage({ onLogin }) {
           </Button>
         </form>
 
-        <p>
+        <p className="auth-switch-link">
           Não tem uma conta?{' '}
           <Link to="/cadastrar" className="link">
             Cadastre-se
           </Link>
         </p>
 
-        <p>
+        <p className="auth-forgot-link">
           Esqueceu a senha?{' '}
           <Link to="/esqueci-minha-senha" className="link">
             Esqueci Minha Senha
           </Link>
         </p>
+        </div>
       </div>
     </div>
   );

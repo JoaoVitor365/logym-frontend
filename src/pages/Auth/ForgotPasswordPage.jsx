@@ -198,13 +198,41 @@ function ForgotPasswordPage() {
 
   return (
     <div className="forgot-password-page">
-      <div className="forgot-password-form-container">
+      <div className="forgot-password-form-container forgot-password-card">
+        <aside className="forgot-password-visual-panel" aria-label="Recuperação de acesso LOGYM">
+          <img src={logo} alt="LOGYM" className="forgot-password-logo" />
+          <div className="forgot-password-visual-content">
+            <span className="forgot-password-panel-kicker">Segurança da sua conta</span>
+            <h2>Recupere seu acesso</h2>
+            <p>Vamos confirmar sua identidade antes de permitir a criação de uma nova senha.</p>
+            <ul className="forgot-password-benefits-list">
+              <li>Código enviado ao seu e-mail</li>
+              <li>Validação em três etapas</li>
+              <li>Redefinição segura da senha</li>
+            </ul>
+          </div>
+        </aside>
+
+        <div className="forgot-password-form-panel">
         <div className="forgot-password-header">
-          <img src={logo} alt="Logo da LOGYM" className="forgot-password-logo" />
-          <h1>Recuperação de senha</h1>
+          <span className="forgot-password-form-kicker">Recuperação de senha</span>
+          <h1>
+            {etapa === 1 && 'Recupere seu acesso'}
+            {etapa === 2 && 'Confirme seu código'}
+            {etapa === 3 && 'Crie uma nova senha'}
+          </h1>
+          <p>
+            {etapa === 1 && 'Informe o e-mail cadastrado para receber seu código de recuperação.'}
+            {etapa === 2 && 'Use o código de 6 dígitos enviado para confirmar sua identidade.'}
+            {etapa === 3 && 'Escolha uma senha segura para proteger sua conta.'}
+          </p>
         </div>
 
-        <p className="forgot-password-step">Etapa {etapa} de 3</p>
+        <ol className="forgot-password-stepper" aria-label={`Etapa ${etapa} de 3`}>
+          <li className={etapa >= 1 ? 'is-active' : ''}><span>1</span><small>E-mail</small></li>
+          <li className={etapa >= 2 ? 'is-active' : ''}><span>2</span><small>Código</small></li>
+          <li className={etapa >= 3 ? 'is-active' : ''}><span>3</span><small>Nova senha</small></li>
+        </ol>
 
         {mensagem.texto && (
           <p className={`forgot-password-message ${mensagem.tipo}`} role={mensagem.tipo === 'erro' ? 'alert' : 'status'}>
@@ -214,10 +242,6 @@ function ForgotPasswordPage() {
 
         {etapa === 1 && (
           <>
-            <p className="forgot-password-intro">
-              Informe seu e-mail para receber um código de recuperação.
-            </p>
-
             <form onSubmit={solicitarCodigo} noValidate>
               <div className={`input-group ${erros.email ? 'has-error' : ''}`}>
                 <label htmlFor="email" className="input-label">E-mail</label>
@@ -295,10 +319,6 @@ function ForgotPasswordPage() {
 
         {etapa === 3 && (
           <>
-            <p className="forgot-password-intro">
-              Crie uma nova senha para sua conta.
-            </p>
-
             <form onSubmit={redefinirSenha} noValidate>
               <div className={`input-group forgot-password-password-group ${erros.novaSenha ? 'has-error' : ''}`}>
                 <label htmlFor="novaSenha" className="input-label">Nova senha</label>
@@ -389,6 +409,7 @@ function ForgotPasswordPage() {
               <ErrorMessage message={erros.confirmarSenha} />
 
               <p className="forgot-password-requirements">
+                <span aria-hidden="true">i</span>
                 A senha deve ter entre 8 e 64 caracteres, incluindo letra maiúscula, letra minúscula, número e caractere especial.
               </p>
 
@@ -402,6 +423,7 @@ function ForgotPasswordPage() {
         <p className="back-to-login">
           Lembrou da senha? <Link to="/login" className="link">Fazer Login</Link>
         </p>
+        </div>
       </div>
     </div>
   );

@@ -172,3 +172,135 @@
     text-align: left; /* Garante que fique alinhado com o input */
     font-family: 'Poppins', sans-serif; /* Mantém a identidade do site */
 }
+
+/* Organização visual exclusiva do formulário de cadastro. */
+.register-page .register-form-container {
+  align-items: stretch;
+}
+
+.register-page .auth-visual-panel p {
+  color: rgba(255, 255, 255, .88);
+}
+
+.register-form-panel form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 1rem;
+  align-items: start;
+}
+
+.register-form-panel .register-field {
+  min-width: 0;
+}
+
+.register-form-panel .register-field-full,
+.register-form-panel .viacep-address-box,
+.register-form-panel .register-manager-checkbox-group,
+.register-form-panel .button-primary {
+  grid-column: 1 / -1;
+}
+
+.register-form-panel .viacep-address-box {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 1rem;
+  margin: .1rem 0 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  background: #fafafa;
+}
+
+.register-form-panel .viacep-address-box > .input-group:first-child {
+  grid-column: 1 / -1;
+}
+
+.register-form-panel .viacep-address-box .input-group {
+  margin-bottom: .85rem;
+}
+
+.register-form-panel .viacep-address-box .field-has-error {
+  min-width: 0;
+}
+
+.register-form-panel .viacep-address-box input:disabled {
+  border-color: #e1e1e1 !important;
+  background: #f1f1f1;
+  color: #777;
+}
+
+.register-form-panel .field-has-error .input-field {
+  border-color: #dc3545 !important;
+}
+
+.register-manager-checkbox-group {
+  margin: .35rem 0 .45rem;
+}
+
+.register-manager-checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: .8rem;
+  padding: .9rem 1rem;
+  border: 1px solid #dedede;
+  border-radius: 10px;
+  background: #fcfcfc;
+  color: #242424;
+  cursor: pointer;
+  transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+}
+
+.register-manager-checkbox-label:hover {
+  border-color: #f7bb8d;
+  background: #fffaf6;
+}
+
+.register-manager-checkbox-input {
+  width: 18px !important;
+  height: 18px;
+  margin: .15rem 0 0;
+  accent-color: var(--secondary-color);
+}
+
+.register-manager-checkbox-label span {
+  display: grid;
+  gap: .18rem;
+}
+
+.register-manager-checkbox-label strong {
+  color: #202020;
+  font-size: .84rem;
+}
+
+.register-manager-checkbox-label small {
+  color: #6a6a6a;
+  font-size: .76rem;
+  line-height: 1.45;
+}
+
+.register-manager-checkbox-label:has(.register-manager-checkbox-input:checked) {
+  border-color: var(--secondary-color);
+  background: #fff6ef;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, .12);
+}
+
+.register-form-panel .register-password-requirements {
+  margin: -.2rem 0 .65rem;
+  border-radius: 9px;
+  font-size: .72rem;
+}
+
+.register-form-panel .auth-switch-link {
+  margin-bottom: 0 !important;
+}
+
+@media (max-width: 800px) {
+  .register-form-panel form,
+  .register-form-panel .viacep-address-box {
+    grid-template-columns: 1fr;
+  }
+
+  .register-form-panel .viacep-address-box > .input-group:first-child {
+    grid-column: auto;
+  }
+}

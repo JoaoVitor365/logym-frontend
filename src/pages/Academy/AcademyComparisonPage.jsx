@@ -118,13 +118,6 @@ function AcademyComparisonPage({ currentUser }) {
   const criterios = useMemo(() => criarLinhas(academias, 'criterios'), [academias]);
   const categorias = useMemo(() => criarLinhas(academias, 'categorias'), [academias]);
   const facilidades = useMemo(() => criarLinhas(academias, 'facilidades'), [academias]);
-  const maiorNota = useMemo(() => {
-    const notas = academias
-      .map((academia) => academia.nota)
-      .filter((nota) => nota !== null && nota !== undefined && Number.isFinite(Number(nota)));
-
-    return notas.length > 0 ? Math.max(...notas.map(Number)) : null;
-  }, [academias]);
   const menorDistancia = useMemo(() => {
     const distancias = academias
       .map((academia) => academia.distanciaKm)
@@ -170,7 +163,11 @@ function AcademyComparisonPage({ currentUser }) {
   return (
     <div className="academy-comparison-page">
       <Link to="/" className="back-button">Voltar para academias</Link>
-      <h1>Comparação de academias</h1>
+      <header className="comparison-page-header">
+        <span className="comparison-page-eyebrow">Análise lado a lado</span>
+        <h1>Comparação de academias</h1>
+        <p>Compare avaliações, modalidades e facilidades antes de escolher.</p>
+      </header>
 
       {carregando ? (
         <div className="academy-comparison-feedback">Carregando comparação...</div>
@@ -183,35 +180,49 @@ function AcademyComparisonPage({ currentUser }) {
         <>
           <section className="comparison-summary" aria-label="Resumo das academias">
             {academias.map((academia) => {
-              const notaEmDestaque = maiorNota !== null && Number(academia.nota) === maiorNota;
               const distanciaEmDestaque = menorDistancia !== null && Number(academia.distanciaKm) === menorDistancia;
               const fotoPrincipalUrl = getFotoPrincipalUrl(academia.fotoPrincipal);
 
               return (
                 <article className="comparison-summary-card" key={academia.id}>
-                  {fotoPrincipalUrl ? (
-                    <img src={fotoPrincipalUrl} alt={`Foto da academia ${academia.nome}`} className="comparison-summary-image" />
-                  ) : (
-                    <div className="card-image-placeholder comparison-summary-placeholder">
-                      <span>{academia.nome?.charAt(0)?.toUpperCase() || 'A'}</span>
-                    </div>
-                  )}
+                  <div className="comparison-summary-media">
+                    {fotoPrincipalUrl ? (
+                      <img src={fotoPrincipalUrl} alt={`Foto da academia ${academia.nome}`} className="comparison-summary-image" />
+                    ) : (
+                      <div className="card-image-placeholder comparison-summary-placeholder">
+                        <span>{academia.nome?.charAt(0)?.toUpperCase() || 'A'}</span>
+                      </div>
+                    )}
 
-                  <h2>{academia.nome}</h2>
-                  <p className={notaEmDestaque ? 'comparison-value-highlight' : ''}>
-                    <strong>Nota:</strong> {academia.nota === null || academia.nota === undefined
-                      ? 'Sem avaliações'
-                      : formatarNumero(academia.nota)}
-                  </p>
-                  <p className={distanciaEmDestaque ? 'comparison-value-highlight' : ''}>
-                    <strong>Distância:</strong> {formatarDistancia(academia.distanciaKm)}
-                  </p>
-                  <p><strong>Localização:</strong> {montarEndereco(academia)}</p>
-                  <div className="comparison-summary-actions">
-                    <Link to={`/academia/${academia.id}`} className="button button-primary">Ver academia</Link>
-                    <button type="button" className="button button-outline" onClick={() => removerAcademia(academia.id)}>
-                      Remover
-                    </button>
+                    {distanciaEmDestaque && (
+                      <span className="comparison-nearest-badge">Mais próxima</span>
+                    )}
+                  </div>
+
+                  <div className="comparison-summary-content">
+                    <h2>{academia.nome}</h2>
+                    <div className="comparison-summary-meta">
+                      <p className="comparison-summary-rating">
+                        <span aria-hidden="true">★</span>
+                        {academia.nota === null || academia.nota === undefined
+                          ? 'Sem avaliações'
+                          : `Nota ${formatarNumero(academia.nota)}`}
+                      </p>
+                      <p className={distanciaEmDestaque ? 'comparison-summary-distance comparison-value-highlight' : 'comparison-summary-distance'}>
+                        <span aria-hidden="true">⌖</span>
+                        {formatarDistancia(academia.distanciaKm)}
+                      </p>
+                    </div>
+                    <p className="comparison-summary-location">
+                      <span>Localização</span>
+                      {montarEndereco(academia)}
+                    </p>
+                    <div className="comparison-summary-actions">
+                      <Link to={`/academia/${academia.id}`} className="button button-primary">Ver academia</Link>
+                      <button type="button" className="button button-outline" onClick={() => removerAcademia(academia.id)}>
+                        Remover
+                      </button>
+                    </div>
                   </div>
                 </article>
               );
@@ -228,7 +239,9 @@ function AcademyComparisonPage({ currentUser }) {
               const mediaValida = criterio?.media !== null && criterio?.media !== undefined && Number.isFinite(Number(criterio?.media));
 
               return {
-                conteudo: mediaValida ? formatarNumero(criterio.media) : 'Sem avaliações',
+                conteudo: mediaValida ? (
+                  <span className="comparison-rating-value">{formatarNumero(criterio.media)} <span aria-hidden="true">★</span></span>
+                ) : <span className="comparison-empty-value">Sem avaliações</span>,
                 destaque: mediaValida && maiorMedia !== null && Number(criterio.media) === maiorMedia
               };
             }}
@@ -239,7 +252,9 @@ function AcademyComparisonPage({ currentUser }) {
             academias={academias}
             linhas={categorias}
             renderValue={(academia, linha) => ({
-              conteudo: academiaPossuiItem(academia, 'categorias', linha.chave) ? '✓' : '✕',
+              conteudo: academiaPossuiItem(academia, 'categorias', linha.chave) ? (
+                <span className="comparison-presence comparison-presence-yes" aria-label="Possui">✓</span>
+              ) : <span className="comparison-presence comparison-presence-no" aria-label="Não possui">—</span>,
               destaque: false
             })}
           />
@@ -249,7 +264,9 @@ function AcademyComparisonPage({ currentUser }) {
             academias={academias}
             linhas={facilidades}
             renderValue={(academia, linha) => ({
-              conteudo: academiaPossuiItem(academia, 'facilidades', linha.chave) ? '✓' : '✕',
+              conteudo: academiaPossuiItem(academia, 'facilidades', linha.chave) ? (
+                <span className="comparison-presence comparison-presence-yes" aria-label="Possui">✓</span>
+              ) : <span className="comparison-presence comparison-presence-no" aria-label="Não possui">—</span>,
               destaque: false
             })}
           />

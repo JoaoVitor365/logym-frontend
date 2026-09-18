@@ -7,7 +7,7 @@ import FavoritoService from '../../services/FavoritoService';
 import { useComparison } from '../../contexts/useComparison';
 import { getFotoPrincipalUrl } from '../../utils/academyPhoto';
 
-function Card({ academy, onFavoriteChange, categoriasAtivas, distanciaKm }) {
+function Card({ academy, onFavoriteChange, categoriasAtivas, distanciaKm, variant = '' }) {
   const [favoritado, setFavoritado] = useState(false);
   const [loadingFavorito, setLoadingFavorito] = useState(false);
   const [toast, setToast] = useState({
@@ -160,7 +160,7 @@ function Card({ academy, onFavoriteChange, categoriasAtivas, distanciaKm }) {
   };
 
   return (
-    <div className="card">
+    <div className={`card ${variant}`}>
       {fotoPrincipalUrl ? (
         <img
           src={fotoPrincipalUrl}
@@ -214,7 +214,11 @@ function Card({ academy, onFavoriteChange, categoriasAtivas, distanciaKm }) {
 
         {categoriasExibidas && (
           <p className="card-categories">
-            {categoriasExibidas}
+            {variant === 'favorite-card'
+              ? categoriasExibidas.split(',').map((categoria, index) => (
+                <span key={`${categoria.trim()}-${index}`}>{categoria.trim()}</span>
+              ))
+              : categoriasExibidas}
           </p>
         )}
 

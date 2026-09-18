@@ -32,9 +32,9 @@
 
 .comparison-bar {
   position: fixed;
-  right: var(--spacing-lg);
-  bottom: var(--spacing-lg);
-  left: var(--spacing-lg);
+  right: clamp(1rem, 3vw, 2rem);
+  bottom: clamp(1rem, 2vw, 1.5rem);
+  left: clamp(1rem, 3vw, 2rem);
   z-index: 1000;
 }
 
@@ -47,11 +47,11 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-md);
-  max-width: 1040px;
+  max-width: 1300px;
   margin: 0 auto;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid #222222;
-  border-radius: var(--border-radius-md);
+  padding: .8rem 1rem;
+  border: 1px solid #2e2e2e;
+  border-radius: 14px;
   background-color: #111111;
   color: #ffffff;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
@@ -74,8 +74,8 @@
   align-items: center;
   gap: var(--spacing-xs);
   max-width: 210px;
-  padding: 4px 8px;
-  border-radius: var(--border-radius-sm);
+  padding: 5px 9px;
+  border-radius: 999px;
   background-color: #2b2b2b;
   font-size: var(--font-size-sm);
 }

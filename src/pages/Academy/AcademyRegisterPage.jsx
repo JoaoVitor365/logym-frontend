@@ -12,7 +12,6 @@ import FacilidadeService from '../../services/FacilidadeService';
 import { isValidCNPJ } from '../../utils/documentValidators';
 
 import '../../styles/pages/_academyRegister.css';
-import logo from '../../assets/logoFundo.png';
 
 const formatCEP = (value) => {
   const rawValue = value.replace(/\D/g, '').slice(0, 8);
@@ -669,11 +668,21 @@ function AcademyRegisterPage() {
 
   return (
     <div className="academy-register-page">
-      <div className="academy-register-form-container" id="academy-register-top">
-        <div className="academy-register-header">
-          <img src={logo} alt="Logo da LOGYM" className="academy-register-logo" />
-          <h1>Cadastrar Nova Academia</h1>
-        </div>
+      <div className="academy-register-shell" id="academy-register-top">
+        <header className="academy-register-header">
+          <span className="academy-register-eyebrow">Painel do gerente</span>
+          <h1>Cadastrar nova academia</h1>
+          <p>Preencha as informações abaixo para adicionar sua academia ao LOGYM.</p>
+
+          <div className="academy-register-steps" aria-label="Etapas do cadastro">
+            <span><b>01</b> Dados principais</span>
+            <span><b>02</b> Localização e contato</span>
+            <span><b>03</b> Estrutura</span>
+            <span><b>04</b> Fotos</span>
+          </div>
+        </header>
+
+      <div className="academy-register-form-container">
 
         {apiMessage && (
           <p className={`academy-api-message ${apiMessage.startsWith('Erro') || apiMessage === 'Selecione apenas arquivos de imagem.' ? 'academy-api-message-error' : 'academy-api-message-success'}`}>
@@ -683,7 +692,7 @@ function AcademyRegisterPage() {
 
         <form onSubmit={handleSubmit} noValidate>
           <div className="academy-form-grid">
-            <h2 className="academy-form-section-title">Dados da Academia</h2>
+            <h2 className="academy-form-section-title">Dados principais</h2>
 
             <div className={`academy-field-half ${getFieldErrorClass('nome')}`}>
               <Input
@@ -879,6 +888,7 @@ function AcademyRegisterPage() {
             </div>
           </div>
 
+          <div className="academy-structure-grid">
           <div className="checkbox-section">
             <h3>Categorias</h3>
             <p>Selecione as modalidades oferecidas pela academia.</p>
@@ -933,6 +943,7 @@ function AcademyRegisterPage() {
                 {facilidadesMessage}
               </p>
             )}
+          </div>
           </div>
 
           <div className="academy-photo-upload-section">
@@ -1031,6 +1042,7 @@ function AcademyRegisterPage() {
             </Button>
           </div>
         </form>
+      </div>
       </div>
     </div>
   );

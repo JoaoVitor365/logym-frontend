@@ -336,10 +336,26 @@ function RegisterPage() {
 
   return (
     <div className="register-page">
-      <div className="register-form-container" id="register-form-top">
+      <div className="register-form-container auth-card auth-register-card" id="register-form-top">
+        <aside className="auth-visual-panel" aria-label="Conheça o LOGYM">
+          <img src={logo} alt="LOGYM" className="auth-panel-logo" />
+          <div className="auth-visual-content">
+            <span className="auth-panel-kicker">Movimento que conecta</span>
+            <h2>Faça parte do LOGYM</h2>
+            <p>Crie sua conta e encontre a academia ideal para você.</p>
+            <ul className="auth-benefits-list">
+              <li>Academias próximas</li>
+              <li>Compare academias</li>
+              <li>Salve suas favoritas</li>
+            </ul>
+          </div>
+        </aside>
+
+        <div className="auth-form-panel register-form-panel">
         <div className="register-header">
-          <img src={logo} alt="Logo da LOGYM" className="register-logo" />
-          <h1>Cadastre-se</h1>
+          <span className="auth-form-kicker">Comece agora</span>
+          <h1>Crie sua conta</h1>
+          <p>Preencha seus dados para acessar todas as opções do LOGYM.</p>
         </div>
 
         {apiMessage && (
@@ -349,7 +365,7 @@ function RegisterPage() {
         )}
 
         <form onSubmit={handleSubmit} noValidate>
-          <div className={getFieldErrorClass('name')}>
+          <div className={`register-field register-field-full ${getFieldErrorClass('name')}`}>
             <Input
               label="Nome Completo"
               type="text"
@@ -365,7 +381,7 @@ function RegisterPage() {
             <ErrorMessage message={errors.name} />
           </div>
 
-          <div className={getFieldErrorClass('email')}>
+          <div className={`register-field ${getFieldErrorClass('email')}`}>
             <Input
               label="E-mail"
               type="email"
@@ -383,7 +399,7 @@ function RegisterPage() {
 
           {!isManager && (
             <>
-              <div className={getFieldErrorClass('cep')}>
+              <div className={`register-field ${getFieldErrorClass('cep')}`}>
                 <Input
                   label={buscandoCep ? 'CEP - buscando endereço...' : 'CEP'}
                   type="text"
@@ -475,7 +491,7 @@ function RegisterPage() {
             </>
           )}
 
-          <div className={getFieldErrorClass('password')}>
+          <div className={`register-field register-password-field ${getFieldErrorClass('password')}`}>
             <Input
               label="Senha"
               type={showPassword ? 'text' : 'password'}
@@ -513,7 +529,7 @@ function RegisterPage() {
             <ErrorMessage message={errors.password} />
           </div>
 
-          <div className={getFieldErrorClass('confirmPassword')}>
+          <div className={`register-field register-password-field ${getFieldErrorClass('confirmPassword')}`}>
             <Input
               label="Confirme a Senha"
               type={showConfirmPassword ? 'text' : 'password'}
@@ -565,7 +581,10 @@ function RegisterPage() {
                 }}
                 className="register-manager-checkbox-input"
               />
-              Sou proprietário/gerente de academia
+              <span>
+                <strong>Sou proprietário/gerente de academia</strong>
+                <small>Quero cadastrar e administrar academias no LOGYM.</small>
+              </span>
             </label>
           </div>
 
@@ -574,9 +593,10 @@ function RegisterPage() {
           </Button>
         </form>
 
-        <p>
+        <p className="auth-switch-link">
           Já tem uma conta? <Link to="/login" className="link">Faça Login</Link>
         </p>
+        </div>
       </div>
     </div>
   );

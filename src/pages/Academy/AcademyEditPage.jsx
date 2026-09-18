@@ -13,7 +13,6 @@ import FacilidadeService from '../../services/FacilidadeService';
 import { isValidCNPJ } from '../../utils/documentValidators';
 
 import '../../styles/pages/_academyRegister.css';
-import logo from '../../assets/logoFundo.png';
 
 const formatCEP = (value) => {
   const rawValue = String(value || '').replace(/\D/g, '').slice(0, 8);
@@ -650,11 +649,22 @@ function AcademyEditPage() {
   return (
     <>
       <div className="academy-register-page">
+      <div className="academy-register-shell academy-edit-shell">
+        <header className="academy-register-header">
+          <span className="academy-register-eyebrow">Painel do gerente</span>
+          <h1>Editar academia</h1>
+          <p>Atualize as informações da sua academia e mantenha o perfil sempre completo.</p>
+          {formData.nome && <span className="academy-edit-context">Editando: {formData.nome}</span>}
+
+          <div className="academy-register-steps" aria-label="Etapas da edição">
+            <span><b>01</b> Dados principais</span>
+            <span><b>02</b> Localização e contato</span>
+            <span><b>03</b> Estrutura</span>
+            <span><b>04</b> Fotos</span>
+          </div>
+        </header>
+
         <div className="academy-register-form-container">
-        <div className="academy-register-header">
-          <img src={logo} alt="Logo da LOGYM" className="academy-register-logo" />
-          <h1>Editar Academia</h1>
-        </div>
 
         {apiMessage && (
           <p className={`academy-api-message ${apiMessage.startsWith('Erro') || apiMessage === 'Selecione apenas arquivos de imagem.' ? 'academy-api-message-error' : 'academy-api-message-success'}`}>
@@ -664,7 +674,7 @@ function AcademyEditPage() {
 
         <form onSubmit={handleSubmit} noValidate>
           <div className="academy-form-grid">
-            <h2 className="academy-form-section-title">Dados da Academia</h2>
+            <h2 className="academy-form-section-title">Dados principais</h2>
 
             <div className="academy-field-half">
               <Input
@@ -693,6 +703,25 @@ function AcademyEditPage() {
                 required
               />
               <ErrorMessage message={errors.cnpj} />
+            </div>
+
+            <div className="academy-field-full">
+              <div className="input-group">
+                <label htmlFor="descricao" className="input-label">
+                  Descrição da Academia
+                </label>
+                <textarea
+                  id="descricao"
+                  name="descricao"
+                  className="textarea-field"
+                  rows="5"
+                  placeholder="Descreva os diferenciais, estrutura e serviços da academia."
+                  value={formData.descricao}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <ErrorMessage message={errors.descricao} />
             </div>
 
             <h2 className="academy-form-section-title">Endereço</h2>
@@ -838,28 +867,9 @@ function AcademyEditPage() {
               />
             </div>
 
-            <h2 className="academy-form-section-title">Descrição</h2>
-
-            <div className="academy-field-full">
-              <div className="input-group">
-                <label htmlFor="descricao" className="input-label">
-                  Descrição da Academia
-                </label>
-                <textarea
-                  id="descricao"
-                  name="descricao"
-                  className="textarea-field"
-                  rows="5"
-                  placeholder="Descreva os diferenciais, estrutura e serviços da academia."
-                  value={formData.descricao}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <ErrorMessage message={errors.descricao} />
-            </div>
           </div>
 
+          <div className="academy-structure-grid">
           <div className="checkbox-section">
             <h3>Categorias</h3>
             <p>Selecione as modalidades oferecidas pela academia.</p>
@@ -906,6 +916,7 @@ function AcademyEditPage() {
                 {facilidadesMessage}
               </p>
             )}
+          </div>
           </div>
 
           <div className="academy-photo-upload-section">
@@ -1098,6 +1109,7 @@ function AcademyEditPage() {
           </div>
         </form>
         </div>
+      </div>
       </div>
 
       <ConfirmModal
