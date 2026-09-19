@@ -27,10 +27,10 @@ function ManagerDashboard({
   }
 
   const cards = [
-    { label: 'Total de academias', value: totais.total },
-    { label: 'Academias ativas', value: totais.ativas },
-    { label: 'Academias inativas', value: totais.inativas },
-    { label: 'Academias suspensas', value: totais.suspensas }
+    { label: 'Total', value: totais.total, detalhe: 'Academias cadastradas' },
+    { label: 'Ativas', value: totais.ativas, detalhe: 'Em operação', classe: 'manager-dashboard-card--active' },
+    { label: 'Inativas', value: totais.inativas, detalhe: 'Academias inativas', classe: 'manager-dashboard-card--inactive' },
+    { label: 'Suspensas', value: totais.suspensas, detalhe: 'Academias suspensas', classe: 'manager-dashboard-card--suspended' }
   ];
   const resumoStatus = [
     { label: 'Ativas', quantidade: totais.ativas, classe: 'manager-dashboard-progress--active' },
@@ -44,6 +44,7 @@ function ManagerDashboard({
   return (
     <section className="manager-dashboard manager-section-shell">
       <header className="manager-dashboard__header">
+        <span className="manager-eyebrow">Painel do gerente</span>
         <h1 className="manager-dashboard__title">Dashboard</h1>
         <p className="manager-dashboard__description">
           Acompanhe o resumo das suas academias cadastradas.
@@ -52,6 +53,7 @@ function ManagerDashboard({
 
       <section className="manager-dashboard-box">
         <div className="manager-dashboard-box__header">
+          <span className="manager-eyebrow">Visão geral</span>
           <h2>Visão geral</h2>
         </div>
 
@@ -59,14 +61,16 @@ function ManagerDashboard({
 
       <div className="manager-dashboard__cards">
         {cards.map((card) => (
-          <div key={card.label} className="manager-dashboard-card">
-            <strong>{card.value}</strong>
+          <div key={card.label} className={`manager-dashboard-card ${card.classe || ''}`}>
             <span>{card.label}</span>
+            <strong>{card.value}</strong>
+            <small>{card.detalhe}</small>
           </div>
         ))}
       </div>
 
       <section className="manager-dashboard-section">
+        <span className="manager-eyebrow">Distribuição</span>
         <h2>Resumo das suas academias</h2>
 
         <div className="manager-dashboard-progress-list">
@@ -101,6 +105,7 @@ function ManagerDashboard({
       </section>
 
       <section className="manager-dashboard-section">
+        <span className="manager-eyebrow">Atalhos</span>
         <h2>Ações rápidas</h2>
 
         <div className="manager-dashboard-actions">
@@ -123,6 +128,7 @@ function ManagerDashboard({
       </section>
 
       <section className="manager-dashboard-section manager-dashboard-section--last">
+        <span className="manager-eyebrow">Atenção</span>
         <h2>Academias que precisam de atenção</h2>
 
         {totais.academiasAtencao.length === 0 ? (

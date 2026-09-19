@@ -586,6 +586,7 @@ function ManagerPanelPage() {
           <section className="manager-academies-section manager-section-shell">
       <div className="manager-header">
         <div>
+          <span className="manager-eyebrow">Gestão de academias</span>
           <h1>Minhas Academias</h1>
 
           <p>
@@ -606,7 +607,13 @@ function ManagerPanelPage() {
 
       <section className="manager-academies-box">
         <div className="manager-academies-box__header">
-          <h2 className="manager-academies-box__title">Academias cadastradas</h2>
+          <div className="manager-academies-box__heading">
+            <div>
+              <span className="manager-eyebrow">Gestão</span>
+              <h2 className="manager-academies-box__title">Academias cadastradas</h2>
+            </div>
+            <span className="manager-records-count">{academias.length} {academias.length === 1 ? 'registro' : 'registros'}</span>
+          </div>
 
           <div className="manager-academies-controls">
             <label className="manager-academies-control manager-academies-control--search" htmlFor="buscaAcademiasGerente">
@@ -754,10 +761,20 @@ function ManagerPanelPage() {
 }
 
 function InfoAcademia({ label, value, className = '' }) {
+  const tags = (label === 'Categorias' || label === 'Facilidades') && value !== 'Não informado'
+    ? String(value).split(',').map((item) => item.trim()).filter(Boolean)
+    : [];
+
   return (
     <div className={`manager-academy-info ${className}`}>
       <strong className="manager-academy-info__label">{label}</strong>
-      <span className="manager-academy-info__value">{value || 'Não informado'}</span>
+      {tags.length > 0 ? (
+        <span className="manager-academy-tags">
+          {tags.map((tag) => <span key={tag}>{tag}</span>)}
+        </span>
+      ) : (
+        <span className="manager-academy-info__value">{value || 'Não informado'}</span>
+      )}
     </div>
   );
 }

@@ -28,8 +28,11 @@ function ManagerSidebar({ activeSection, managerName, onSectionChange }) {
       </nav>
 
       <div className="manager-sidebar__footer">
-        <p className="manager-sidebar__footer-label">Gerente</p>
-        <strong className="manager-sidebar__footer-name">{managerName}</strong>
+        <span className="manager-sidebar__footer-avatar" aria-hidden="true">{managerName.charAt(0).toUpperCase()}</span>
+        <div>
+          <strong className="manager-sidebar__footer-name">{managerName}</strong>
+          <p className="manager-sidebar__footer-label">Gerente</p>
+        </div>
       </div>
     </aside>
   );
