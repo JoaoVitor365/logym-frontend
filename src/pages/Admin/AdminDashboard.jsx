@@ -4,12 +4,21 @@ import React from 'react';
 function AdminDashboard({ totais, onMudarSecao }) {
   return (
     <>
-      <section className="admin-section">
-        <h2 className="admin-section__title">Resumo do sistema</h2>
+      <section className="admin-dashboard-highlights" aria-label="Principais indicadores">
+        <DestaqueCard titulo="Usuários" numero={totais.usuarios} detalhe={`${totais.usuariosAtivos} ativos`} />
+        <DestaqueCard titulo="Academias" numero={totais.academias} detalhe={`${totais.academiasAtivas} ativas`} />
+        <DestaqueCard titulo="Avaliações" numero={totais.avaliacoes} detalhe={`${totais.avaliacoesAtivas} ativas`} />
+        <DestaqueCard titulo="Gerentes" numero={totais.gerentes} detalhe={`${totais.gerentes} completos`} />
+      </section>
 
-        <p className="admin-section__description">
-          Acompanhe os principais dados administrativos do LOGYM separados por área.
-        </p>
+      <section className="admin-section admin-dashboard-details">
+        <div className="admin-section__heading">
+          <div>
+            <span className="admin-section__eyebrow">Visão detalhada</span>
+            <h2 className="admin-section__title">Resumo do sistema</h2>
+          </div>
+          <p className="admin-section__description">Acompanhe os principais dados administrativos do LOGYM separados por área.</p>
+        </div>
 
         <div className="admin-dashboard-groups">
           <ResumoGrupo
@@ -59,27 +68,42 @@ function AdminDashboard({ totais, onMudarSecao }) {
       </section>
 
       <section className="admin-section">
-        <h2 className="admin-section__title">Ações rápidas</h2>
+        <div className="admin-section__heading">
+          <div>
+            <span className="admin-section__eyebrow">Atalhos</span>
+            <h2 className="admin-section__title">Ações rápidas</h2>
+          </div>
+        </div>
 
         <div className="admin-quick-actions">
           <button type="button" className="admin-quick-action" onClick={() => onMudarSecao('usuarios')}>
-            Gerenciar usuários
+            <span>Gerenciar usuários</span><span aria-hidden="true">→</span>
           </button>
 
           <button type="button" className="admin-quick-action" onClick={() => onMudarSecao('gerentes')}>
-            Ver gerentes
+            <span>Ver gerentes</span><span aria-hidden="true">→</span>
           </button>
 
           <button type="button" className="admin-quick-action" onClick={() => onMudarSecao('academias')}>
-            Gerenciar academias
+            <span>Gerenciar academias</span><span aria-hidden="true">→</span>
           </button>
 
           <button type="button" className="admin-quick-action" onClick={() => onMudarSecao('avaliacoes')}>
-            Gerenciar avaliações
+            <span>Gerenciar avaliações</span><span aria-hidden="true">→</span>
           </button>
         </div>
       </section>
     </>
+  );
+}
+
+function DestaqueCard({ titulo, numero, detalhe }) {
+  return (
+    <div className="admin-highlight-card">
+      <span>{titulo}</span>
+      <strong>{numero}</strong>
+      <small>{detalhe}</small>
+    </div>
   );
 }
 

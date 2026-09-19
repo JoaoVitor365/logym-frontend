@@ -334,45 +334,25 @@ function HomePage({ currentUser }) {
 
   return (
     <div className="home-page">
-      <h1>LOGYM - Encontre sua Academia!</h1>
-
-      <p>
-        Descubra as melhores academias perto de você.
-        Use a barra de busca para encontrar por nome, local ou especialidade.
-      </p>
+      <header className="home-hero">
+        <span className="home-eyebrow">Encontre sua academia</span>
+        <h1>Encontre a academia ideal para você</h1>
+        <p>Busque, compare e descubra academias próximas ao seu endereço.</p>
+      </header>
 
       {currentUser?.nivelAcesso === 'MANAGER' && (
-        <div
-          style={{
-            backgroundColor: '#ffffff',
-            border: '1px solid #000000',
-            borderRadius: '10px',
-            padding: '20px',
-            margin: '20px auto',
-            maxWidth: '800px',
-            textAlign: 'center'
-          }}
-        >
-          <h2 style={{ color: '#000000', marginBottom: '10px' }}>
-            Área do Gerente
-          </h2>
+        <div className="home-manager-card">
+          <h2>Área do gerente</h2>
 
           {verificandoGerente && !gerente ? (
             <p>Verificando cadastro de gerente...</p>
           ) : gerente ? (
             <>
-              <p style={{ marginBottom: '15px' }}>
+              <p>
                 Seu cadastro de gerente já foi concluído. Agora você pode cadastrar e gerenciar suas academias.
               </p>
 
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  gap: '15px',
-                  flexWrap: 'wrap'
-                }}
-              >
+              <div className="home-manager-actions">
                 <Button
                   type="button"
                   className="button-primary"
@@ -392,7 +372,7 @@ function HomePage({ currentUser }) {
             </>
           ) : (
             <>
-              <p style={{ marginBottom: '15px' }}>
+              <p>
                 Para cadastrar uma academia, primeiro finalize seu cadastro de gerente.
               </p>
 
@@ -417,6 +397,12 @@ function HomePage({ currentUser }) {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="search-input"
+          endAdornment={(
+            <svg className="home-search-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="6.5" />
+              <path d="m16 16 4 4" />
+            </svg>
+          )}
         />
 
         <Button type="submit" className="button-primary">
@@ -435,7 +421,12 @@ function HomePage({ currentUser }) {
       </form>
 
       <div className="home-filters-section">
-        <h3>Filtros rápidos</h3>
+        <div className="home-section-heading">
+          <div>
+            <h2>Filtros rápidos</h2>
+            <p>Refine os resultados conforme suas preferências.</p>
+          </div>
+        </div>
 
         <div className="home-filters-list">
           {categoriasAtivas.map((categoria) => {
@@ -448,6 +439,7 @@ function HomePage({ currentUser }) {
                 className={`home-filter-button ${categoriasSelecionadas.includes(categoriaId) ? 'active' : ''}`}
                 onClick={() => alternarCategoria(categoria.id)}
               >
+                {categoriasSelecionadas.includes(categoriaId) && <span aria-hidden="true">✓</span>}
                 {categoria.nome}
               </button>
             );
@@ -463,6 +455,7 @@ function HomePage({ currentUser }) {
                 className={`home-filter-button ${facilidadesSelecionadas.includes(facilidadeId) ? 'active' : ''}`}
                 onClick={() => alternarFacilidade(facilidade.id)}
               >
+                {facilidadesSelecionadas.includes(facilidadeId) && <span aria-hidden="true">✓</span>}
                 {facilidade.nome}
               </button>
             );
@@ -528,6 +521,13 @@ function HomePage({ currentUser }) {
 
       {currentUser?.nivelAcesso === 'USER' && (
         <div className="home-nearby-map-section">
+          <div className="home-map-heading">
+            <div>
+              <span className="home-eyebrow">Por perto</span>
+              <h2>Academias próximas de você</h2>
+              <p>Veja academias localizadas em um raio de até 5 km.</p>
+            </div>
+          </div>
           {loadingAcademiasProximas ? (
             <p className="home-location-info">Carregando academias próximas...</p>
           ) : mensagemAcademiasProximas ? (
@@ -545,45 +545,30 @@ function HomePage({ currentUser }) {
       )}
 
       <section ref={resultadosRef} className="home-results-section" aria-busy={loadingAcademias}>
+        {!loadingAcademias && !mensagemAcademias && (
+          <div className="home-results-heading">
+            <div>
+              <span className="home-eyebrow">Explore opções</span>
+              <h2>Academias encontradas</h2>
+            </div>
+            <span className="home-results-count">
+              {totalResultados} {totalResultados === 1 ? 'academia disponível' : 'academias disponíveis'}
+            </span>
+          </div>
+        )}
         {loadingAcademias ? (
-          <div
-          style={{
-            textAlign: 'center',
-            marginTop: '30px',
-            padding: '30px',
-            backgroundColor: '#ffffff',
-            border: '1px solid #000000',
-            borderRadius: '8px'
-          }}
-        >
+          <div className="home-feedback-card home-loading-card">
           <h2>Carregando academias...</h2>
           </div>
         ) : mensagemAcademias ? (
-          <div
-          style={{
-            textAlign: 'center',
-            marginTop: '30px',
-            padding: '30px',
-            backgroundColor: '#f8d7da',
-            color: '#721c24',
-            borderRadius: '8px'
-          }}
-        >
+          <div className="home-feedback-card home-error-card">
           {mensagemAcademias}
           </div>
         ) : totalResultados === 0 ? (
-          <div
-          style={{
-            textAlign: 'center',
-            marginTop: '30px',
-            padding: '30px',
-            backgroundColor: '#ffffff',
-            border: '1px solid #000000',
-            borderRadius: '8px'
-          }}
-        >
-          <h2>Nenhuma academia encontrada.</h2>
-          <p>Tente pesquisar por outro termo, categoria, bairro ou facilidade.</p>
+          <div className="home-feedback-card home-empty-card">
+          <span className="home-empty-icon" aria-hidden="true">⌕</span>
+          <h2>Não encontramos academias com esses filtros.</h2>
+          <p>Experimente ajustar sua busca ou limpar os filtros.</p>
 
           {(termoPesquisado || categoriasSelecionadas.length > 0 || facilidadesSelecionadas.length > 0) && (
             <Button
@@ -604,6 +589,7 @@ function HomePage({ currentUser }) {
                   academy={academia}
                   categoriasAtivas={categoriasAtivas}
                   distanciaKm={academia.distanciaKm}
+                  variant="home-card"
                 />
               ))}
             </div>

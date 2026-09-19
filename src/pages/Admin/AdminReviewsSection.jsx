@@ -58,10 +58,16 @@ function AdminReviewsSection({ avaliacoes, onSuspenderAvaliacao, onReativarAvali
   }, [avaliacoes, termoBusca, statusSelecionado]);
 
   return (
-    <section className="admin-section">
-      <h2 className="admin-section__title">Avaliações cadastradas</h2>
+    <section className="admin-section admin-reviews-section">
+      <div className="admin-section__heading admin-records-heading">
+        <div>
+          <span className="admin-section__eyebrow">Gestão de avaliações</span>
+          <h2 className="admin-section__title">Avaliações cadastradas</h2>
+        </div>
+        <span className="admin-records-count">{avaliacoes.length} {avaliacoes.length === 1 ? 'registro' : 'registros'}</span>
+      </div>
 
-      <div className="admin-actions-row">
+      <div className="admin-actions-row admin-entity-toolbar">
         <div className="input-group">
           <label htmlFor="buscaAvaliacoesAdmin" className="input-label">
             Buscar
@@ -110,7 +116,7 @@ function AdminReviewsSection({ avaliacoes, onSuspenderAvaliacao, onReativarAvali
             const reativando = acaoEstaEmAndamento(getAcaoKey('avaliacao', avaliacao.id, 'reativar'));
 
             return (
-              <div key={avaliacao.id} className="admin-list-item">
+              <div key={avaliacao.id} className="admin-list-item admin-review-item">
                 <div className="admin-review-grid">
                   <div>
                     <strong className="admin-list-item__title">
@@ -149,17 +155,17 @@ function AdminReviewsSection({ avaliacoes, onSuspenderAvaliacao, onReativarAvali
                   </div>
                 )}
 
-                <div className="admin-actions-row">
-                  <Link to={`/academia/${avaliacao.academiaId}`} style={{ textDecoration: 'none' }}>
+                <div className="admin-actions-row admin-entity-actions">
+                  <Link to={`/academia/${avaliacao.academiaId}`} className="admin-details-link">
                     <Button type="button" className="button-primary">Ver academia</Button>
                   </Link>
 
                   {estaAtiva ? (
-                    <Button type="button" className="button-cancel" onClick={() => onSuspenderAvaliacao(avaliacao.id)} disabled={suspendendo}>
+                    <Button type="button" className="button-cancel admin-user-action admin-user-action--suspend" onClick={() => onSuspenderAvaliacao(avaliacao.id)} disabled={suspendendo}>
                       {suspendendo ? 'Suspendendo...' : 'Suspender avaliação'}
                     </Button>
                   ) : (
-                    <Button type="button" className="button-primary" onClick={() => onReativarAvaliacao(avaliacao.id)} disabled={reativando}>
+                    <Button type="button" className="button-primary admin-user-action admin-entity-reactivate" onClick={() => onReativarAvaliacao(avaliacao.id)} disabled={reativando}>
                       {reativando ? 'Reativando...' : 'Reativar avaliação'}
                     </Button>
                   )}

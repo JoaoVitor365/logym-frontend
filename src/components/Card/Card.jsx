@@ -26,6 +26,7 @@ function Card({ academy, onFavoriteChange, categoriasAtivas, distanciaKm, varian
   } = useComparison();
   const comparacaoSelecionada = isAcademiaSelecionada(academy?.id);
   const fotoPrincipalUrl = getFotoPrincipalUrl(academy?.fotoPrincipal);
+  const isHomeCard = variant === 'home-card';
 
   useEffect(() => {
     const verificarFavorito = async () => {
@@ -161,23 +162,37 @@ function Card({ academy, onFavoriteChange, categoriasAtivas, distanciaKm, varian
 
   return (
     <div className={`card ${variant}`}>
-      {fotoPrincipalUrl ? (
-        <img
-          src={fotoPrincipalUrl}
-          alt={`Foto da academia ${academy.nome}`}
-          className="card-principal-image"
-        />
-      ) : (
-        <div className="card-image-placeholder">
-          <span>{academy.nome?.charAt(0)?.toUpperCase() || 'A'}</span>
-        </div>
-      )}
+      <div className={isHomeCard ? 'card-media' : undefined}>
+        {fotoPrincipalUrl ? (
+          <img
+            src={fotoPrincipalUrl}
+            alt={`Foto da academia ${academy.nome}`}
+            className="card-principal-image"
+          />
+        ) : (
+          <div className="card-image-placeholder">
+            <span>{academy.nome?.charAt(0)?.toUpperCase() || 'A'}</span>
+          </div>
+        )}
+
+        {isHomeCard && podeFavoritar && (
+          <button
+            type="button"
+            className={`favorite-button ${favoritado ? 'active' : ''}`}
+            onClick={handleToggleFavorito}
+            disabled={loadingFavorito}
+            title={favoritado ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+          >
+            {favoritado ? '★' : '☆'}
+          </button>
+        )}
+      </div>
 
       <div className="card-content">
         <div className="card-title-row">
           <h3 className="card-title">{academy.nome}</h3>
 
-          {podeFavoritar && (
+          {!isHomeCard && podeFavoritar && (
             <button
               type="button"
               className={`favorite-button ${favoritado ? 'active' : ''}`}
@@ -190,8 +205,14 @@ function Card({ academy, onFavoriteChange, categoriasAtivas, distanciaKm, varian
           )}
         </div>
 
-        <p className="card-address">
-          {montarEndereco()}
+          <p className="card-address">
+            {isHomeCard && (
+              <svg className="card-address-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z" />
+                <circle cx="12" cy="9" r="2.5" />
+              </svg>
+            )}
+            {montarEndereco()}
         </p>
 
         {getDistancia() && (
@@ -204,9 +225,13 @@ function Card({ academy, onFavoriteChange, categoriasAtivas, distanciaKm, varian
           </p>
         )}
 
-        <p className="card-rating">
-          {getNota() ? (
-            <>Avaliação: {getNota()} ⭐</>
+          <p className="card-rating">
+            {getNota() ? (
+            isHomeCard ? (
+              <><span aria-hidden="true">★</span> {getNota()}</>
+            ) : (
+              <>Avaliação: {getNota()} ⭐</>
+            )
           ) : (
             <>Sem avaliações</>
           )}
@@ -214,7 +239,7 @@ function Card({ academy, onFavoriteChange, categoriasAtivas, distanciaKm, varian
 
         {categoriasExibidas && (
           <p className="card-categories">
-            {variant === 'favorite-card'
+            {variant === 'favorite-card' || isHomeCard
               ? categoriasExibidas.split(',').map((categoria, index) => (
                 <span key={`${categoria.trim()}-${index}`}>{categoria.trim()}</span>
               ))

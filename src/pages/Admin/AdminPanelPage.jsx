@@ -884,11 +884,17 @@ function AdminPanelPage({ currentUser }) {
         <div className="admin-content">
           <header className="admin-header">
             <div>
+              {activeSection === 'dashboard' && <span className="admin-header__eyebrow">Painel administrativo</span>}
+              {(activeSection === 'usuarios' || activeSection === 'gerentes') && <span className="admin-header__eyebrow">Gestão de contas</span>}
+              {activeSection === 'academias' && <span className="admin-header__eyebrow">Gestão de academias</span>}
+              {activeSection === 'avaliacoes' && <span className="admin-header__eyebrow">Gestão de avaliações</span>}
+              {(activeSection === 'categorias' || activeSection === 'facilidades') && <span className="admin-header__eyebrow">Gestão de estrutura</span>}
               <h1 className="admin-header__title">{getTituloSecao()}</h1>
               <p className="admin-header__description">{getDescricaoSecao()}</p>
             </div>
 
-            <Button type="button" className="button-primary" onClick={carregarDadosAdmin}>
+            <Button type="button" className="button-primary admin-refresh-button" onClick={carregarDadosAdmin}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7" /><path d="M20 4v5h-5" /></svg>
               Atualizar dados
             </Button>
           </header>

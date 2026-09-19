@@ -440,8 +440,9 @@ function ProfilePage({ onUserUpdated }) {
       <Link to="/" className="back-button">← Voltar para Home</Link>
 
       <header className="profile-page-header">
-        <h1>Meu Perfil</h1>
-        <p className="subtitle">Altere suas informações pessoais.</p>
+        <span className="profile-eyebrow">Minha conta</span>
+        <h1>Meu perfil</h1>
+        <p className="subtitle">Gerencie seus dados pessoais, endereço e segurança da conta.</p>
       </header>
 
       {apiMessage && (
@@ -517,6 +518,11 @@ function ProfilePage({ onUserUpdated }) {
         <p className="profile-photo-help">
           Clique no ícone para {fotoUrl ? 'trocar' : 'adicionar'} sua foto.
         </p>
+        <div className="profile-user-summary">
+          <strong>{user.nome || 'Seu nome'}</strong>
+          <span>{user.username || 'seuemail@exemplo.com'}</span>
+          <p>Atualize sua foto e informações quando precisar.</p>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="profile-form">
@@ -654,7 +660,10 @@ function ProfilePage({ onUserUpdated }) {
           </section>
         )}
         <section className="profile-section profile-password-section" aria-labelledby="password-title">
-          <h2 id="password-title">Senha</h2>
+          <div className="profile-section-heading">
+            <h2 id="password-title">Segurança</h2>
+            <p>Altere sua senha apenas quando necessário.</p>
+          </div>
           <div className="profile-field">
             <label htmlFor="password">Nova senha</label>
             <div className="profile-password-row">
@@ -721,6 +730,10 @@ function ProfilePage({ onUserUpdated }) {
       </form>
 
       <section className="profile-danger-zone" aria-label="Ações da conta">
+        <div>
+          <h2>Gerenciamento da conta</h2>
+          <p>Inativar sua conta impedirá o uso normal até a reativação conforme as regras existentes.</p>
+        </div>
         <button
           type="button"
           onClick={() => setShowInactivateConfirm(true)}

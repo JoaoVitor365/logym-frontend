@@ -31,10 +31,13 @@ function AdminSidebar({ activeSection, menuItems, currentUser, onMudarSecao }) {
       </nav>
 
       <div className="admin-sidebar__footer">
-        <p className="admin-sidebar__footer-label">Administrador</p>
-        <strong className="admin-sidebar__footer-name">
-          {currentUser?.nome || usuarioSalvo?.nome || 'ADMIN'}
-        </strong>
+        <span className="admin-sidebar__footer-avatar" aria-hidden="true">
+          {(currentUser?.nome || usuarioSalvo?.nome || 'A').charAt(0).toUpperCase()}
+        </span>
+        <div>
+          <strong className="admin-sidebar__footer-name">{currentUser?.nome || usuarioSalvo?.nome || 'ADMIN'}</strong>
+          <p className="admin-sidebar__footer-label">Administrador</p>
+        </div>
       </div>
     </aside>
   );

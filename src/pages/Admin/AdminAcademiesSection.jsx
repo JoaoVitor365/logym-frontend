@@ -54,10 +54,16 @@ function AdminAcademiesSection({ academias, onSuspenderAcademia, onReativarAcade
   }, [academias, termoBusca, statusSelecionado]);
 
   return (
-    <section className="admin-section">
-      <h2 className="admin-section__title">Academias cadastradas</h2>
+    <section className="admin-section admin-academies-section">
+      <div className="admin-section__heading admin-records-heading">
+        <div>
+          <span className="admin-section__eyebrow">Gestão de academias</span>
+          <h2 className="admin-section__title">Academias cadastradas</h2>
+        </div>
+        <span className="admin-records-count">{academias.length} {academias.length === 1 ? 'registro' : 'registros'}</span>
+      </div>
 
-      <div className="admin-actions-row">
+      <div className="admin-actions-row admin-entity-toolbar">
         <div className="input-group">
           <label htmlFor="buscaAcademiasAdmin" className="input-label">
             Buscar
@@ -104,7 +110,7 @@ function AdminAcademiesSection({ academias, onSuspenderAcademia, onReativarAcade
             const reativando = acaoEstaEmAndamento(getAcaoKey('academia', academia.id, 'reativar'));
 
             return (
-              <div key={academia.id} className="admin-list-item">
+              <div key={academia.id} className="admin-list-item admin-academy-item">
                 <div className="admin-academy-grid">
                   <div>
                     <strong className="admin-list-item__title">{academia.nome}</strong>
@@ -112,23 +118,23 @@ function AdminAcademiesSection({ academias, onSuspenderAcademia, onReativarAcade
                   </div>
 
                   <InfoInline label="Status" value={<StatusBadge status={getStatusLabel(academia.statusAcademia)} />} />
-                  <InfoInline label="Nota" value={formatarNota(academia.nota)} />
+                  <InfoInline label="Nota" value={academia.nota === null || academia.nota === undefined ? formatarNota(academia.nota) : `★ ${formatarNota(academia.nota)}`} />
                   <InfoInline label="Cidade" value={`${academia.cidade || 'Não informado'} - ${academia.estado || ''}`} />
                   <InfoInline label="Gerente" value={getNomeGerente(academia)} />
                   <InfoInline label="CNPJ" value={formatarCNPJ(academia.cnpj)} />
                 </div>
 
-                <div className="admin-actions-row">
-                  <Link to={`/academia/${academia.id}`} style={{ textDecoration: 'none' }}>
+                <div className="admin-actions-row admin-entity-actions">
+                  <Link to={`/academia/${academia.id}`} className="admin-details-link">
                     <Button type="button" className="button-primary">Ver detalhes</Button>
                   </Link>
 
                   {estaAtiva ? (
-                    <Button type="button" className="button-cancel" onClick={() => onSuspenderAcademia(academia.id)} disabled={suspendendo}>
+                    <Button type="button" className="button-cancel admin-user-action admin-user-action--suspend" onClick={() => onSuspenderAcademia(academia.id)} disabled={suspendendo}>
                       {suspendendo ? 'Suspendendo...' : 'Suspender'}
                     </Button>
                   ) : (
-                    <Button type="button" className="button-primary" onClick={() => onReativarAcademia(academia.id)} disabled={reativando}>
+                    <Button type="button" className="button-primary admin-user-action admin-entity-reactivate" onClick={() => onReativarAcademia(academia.id)} disabled={reativando}>
                       {reativando ? 'Reativando...' : 'Reativar'}
                     </Button>
                   )}

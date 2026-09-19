@@ -1,553 +1,77 @@
-/* src/styles/pages/_profile.css - Estilo baseado em _variables.css */
-
-/* --- Layout Principal --- */
-.profile-page-container {
-    /* Usa a largura máxima do container, mas centralizado */
-    max-width: var(--container-width); 
-    margin: 0 auto;
-    /* Usa o espaçamento XXL para margens laterais */
-    padding: var(--spacing-xl) var(--spacing-xxl); 
-    min-height: calc(100vh - var(--header-height) - 100px); /* Garante que preencha a tela */
-}
-
-/* --- Títulos e Subtítulos --- */
-.profile-page-container h1 {
-    font-family: var(--font-heading); /* Aplica a fonte de título (Bebas Neue) */
-    color: var(--primary-color); 
-    font-size: var(--font-size-xxl);
-    margin-bottom: var(--spacing-xs);
-}
-
-.subtitle {
-    font-family: var(--font-body); /* Aplica a fonte de corpo (Poppins) */
-    color: var(--text-color-light); 
-    font-size: var(--font-size-lg);
-    margin-bottom: var(--spacing-xl);
-}
-
-/* --- Container do Formulário --- */
-.profile-form {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-lg); /* Espaçamento mais generoso entre campos */
-    padding: var(--spacing-xxl);
-    background-color: var(--card-background); /* Fundo branco do card */
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-md); 
-    box-shadow: var(--box-shadow-sm); 
-}
-
-/* --- Labels e Inputs --- */
-.profile-form label {
-    font-family: var(--font-body);
-    font-weight: bold;
-    color: var(--text-color);
-    margin-bottom: var(--spacing-xxs);
-    margin-top: var(--spacing-xs);
-}
-
-.profile-form input {
-    font-family: var(--font-body);
-    padding: var(--spacing-sm) var(--spacing-md);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-sm); 
-    font-size: var(--font-size-md);
-    color: var(--text-color);
-}
-
-.profile-form input:focus {
-    border-color: var(--primary-color);
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(13, 40, 76, 0.2); /* Sombra do foco com a cor primária */
-}
-
-/* Estilo para inputs desabilitados (E-mail) */
-.profile-form input:disabled {
-    background-color: var(--background-color); /* Cinza muito claro */
-    color: var(--text-color-light);
-    cursor: not-allowed;
-}
-
-/* --- Botões de Ação --- */
-.button-group {
-    display: flex;
-    gap: var(--spacing-md);
-    margin-top: var(--spacing-xl);
-}
-
-.edit-button,
-.save-button,
-.cancel-button {
-    font-family: var(--font-heading); /* Botões com a fonte de título */
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border: none;
-    border-radius: var(--border-radius-sm);
-    font-size: var(--font-size-lg);
-    cursor: pointer;
-    transition: background-color 0.3s, opacity 0.3s;
-    text-transform: uppercase;
-}
-
-/* Botão de Edição (Cor Primária) */
-.edit-button {
-    background-color: var(--primary-color); 
-    color: var(--card-background); /* Texto branco */
-}
-.edit-button:hover {
-    background-color: var(--hover-color); /* Cinza claro no hover */
-    color: var(--primary-color); /* Texto volta a ser azul */
-}
-
-/* Botão Salvar (Cor Primária) */
-.save-button {
-    background-color: var(--primary-color); 
-    color: var(--card-background);
-}
-.save-button:hover {
-    background-color: var(--hover-color);
-    color: var(--primary-color);
-}
-
-/* Botão Cancelar (Neutro) */
-.cancel-button {
-    background-color: var(--secondary-color);
-    color: var(--card-background);
-}
-.cancel-button:hover {
-    background-color: var(--hover-color);
-    color: var(--text-color);
-}
-
-/* Ajuste do botão de voltar */
-.back-button {
-    display: inline-block;
-    margin-bottom: var(--spacing-lg);
-    color: var(--primary-color);
-    text-decoration: none;
-    font-weight: bold;
-    font-family: var(--font-body);
-}
-.back-button:hover {
-    text-decoration: underline;
-    opacity: 0.8;
-}
-
-.profile-photo-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin: 18px 0 30px 0;
-}
-
-.profile-photo-wrapper {
-  position: relative;
-  width: 145px;
-  height: 145px;
-}
-
-.profile-photo,
-.profile-photo-placeholder {
-  width: 145px;
-  height: 145px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #f97316;
-  background-color: #ffffff;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.14);
-}
-
-.profile-photo-placeholder {
-  background-color: #f1f5f9;
-  color: #08294d;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.profile-photo-edit-button {
-  position: absolute;
-  right: 2px;
-  bottom: 8px;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 2px solid #ffffff;
-  background-color: #000000;
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.2s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
-}
-
-.profile-photo-edit-button:hover {
-  transform: scale(1.08);
-  background-color: #f97316;
-  color: #000000;
-}
-
-.profile-photo-edit-button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.profile-photo-hidden-input {
-  display: none;
-}
-
-.profile-photo-help {
-  margin: 0;
-  color: #666666;
-  font-size: 14px;
-  text-align: center;
-}
-
-.profile-photo-loading {
-  font-weight: 700;
-  font-size: 18px;
-}
-
-/* Card de endereço ViaCEP no Meu Perfil */
-.profile-viacep-box {
-  margin: 18px 0 22px 0;
-  padding: 20px;
-  border: 1px solid #d9d9d9;
-  border-radius: 12px;
-  background-color: #fafafa;
-}
-
-.profile-viacep-box h3 {
-  margin: 0 0 16px 0;
-  color: #000000;
-  font-size: 18px;
-  font-weight: 700;
-  border-bottom: 1px solid #dddddd;
-  padding-bottom: 10px;
-}
-
-.profile-address-grid {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 16px;
-}
-
-.profile-address-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.profile-address-field label {
-  font-weight: 700;
-  color: #000000;
-  font-size: 14px;
-}
-
-.profile-address-field input {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #bdbdbd;
-  border-radius: 6px;
-  background-color: #f1f1f1;
-  color: #333333;
-  cursor: not-allowed;
-}
-
-.profile-address-large {
-  grid-column: span 2;
-}
-
-.profile-address-small {
-  max-width: 160px;
-}
-
-/* Responsivo */
-@media (max-width: 768px) {
-  .profile-address-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .profile-address-large {
-    grid-column: span 1;
-  }
-
-  .profile-address-small {
-    max-width: 100%;
-  }
-}
-
-/* Organização visual da página de perfil */
-.profile-page-container {
-  max-width: 980px;
-  padding: 48px 32px 64px;
-}
-
-.profile-page-header {
-  margin-bottom: 8px;
-}
-
-.profile-page-header h1 {
-  margin-bottom: 4px;
-}
-
-.profile-page-header .subtitle {
-  margin-bottom: 0;
-}
-
-.profile-photo-container {
-  margin: 24px 0 32px;
-}
-
-.profile-form {
-  gap: 24px;
-  padding: 0;
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-}
-
-.profile-section {
-  padding: 28px;
-  background: var(--card-background);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-}
-
-.profile-section h2 {
-  margin: 0 0 22px;
-  color: var(--primary-color);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-xl);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.profile-fields-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
-}
-
-.profile-personal-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.profile-address-inputs {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-}
-
-.profile-field {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.profile-field-full {
-  grid-column: 1 / -1;
-}
-
-.profile-password-requirements,
-.profile-password-error-message {
-  margin: 8px 0 0;
-  font-size: var(--font-size-sm);
-}
-
-.profile-password-requirements {
-  color: var(--text-color-light);
-  line-height: 1.5;
-}
-
-.profile-password-row {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  width: 100%;
-}
-
-.profile-password-input-wrapper {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-}
-
-.profile-form .profile-password-input-wrapper input {
-  padding-right: calc(var(--spacing-xl) + var(--spacing-md));
-}
-
-.profile-password-visibility-button {
-  position: absolute;
-  top: 50%;
-  right: var(--spacing-xs);
-  display: inline-grid;
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  place-items: center;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--text-color);
-  cursor: pointer;
-  transform: translateY(-50%);
-}
-
-.profile-password-visibility-button:hover:not(:disabled) {
-  background: var(--hover-color);
-}
-
-.profile-password-visibility-button:disabled {
-  cursor: not-allowed;
-}
-
-.profile-password-visibility-button svg {
-  width: 20px;
-  height: 20px;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 2;
-}
-
-/* Evita que controles nativos de senha se sobreponham ao botão customizado. */
-.profile-password-input-wrapper input::-ms-reveal,
-.profile-password-input-wrapper input::-ms-clear {
-  display: none;
-}
-
-.profile-password-input-wrapper input::-webkit-credentials-auto-fill-button {
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.profile-password-actions {
-  flex: 0 0 auto;
-}
-
-.profile-password-actions .edit-button,
-.profile-password-cancel-button {
-  font-family: var(--font-heading);
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border-radius: var(--border-radius-sm);
-  font-size: var(--font-size-lg);
-  cursor: pointer;
-  text-transform: uppercase;
-}
-
-.profile-password-cancel-button {
-  border: 1px solid var(--secondary-color);
-  background: transparent;
-  color: var(--secondary-color);
-}
-
-.profile-password-cancel-button:hover {
-  background: var(--secondary-color);
-  color: var(--card-background);
-}
-
-.profile-form .profile-field label {
-  margin: 0 0 7px;
-}
-
-.profile-form .profile-field input {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.profile-cep-error-message {
-  margin: 6px 0 0;
-}
-
-.profile-viacep-box {
-  margin: 24px 0 0;
-  padding: 20px;
-  background: #f8f8f8;
-}
-
-.profile-viacep-box h3 {
-  font-family: var(--font-heading);
-  font-size: var(--font-size-lg);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.profile-address-field input {
-  box-sizing: border-box;
-}
-
-.profile-save-actions {
-  display: flex;
-  justify-content: flex-start;
-  padding-top: 4px;
-}
-
-.profile-save-actions .save-button,
-.profile-danger-zone .cancel-button {
-  min-width: 210px;
-}
-
-.profile-danger-zone {
-  display: flex;
-  align-items: center;
-  margin-top: 40px;
-  padding-top: 28px;
-  border-top: 1px solid var(--border-color);
-}
-
-.profile-danger-zone .cancel-button {
-  background: transparent;
-  border: 1px solid var(--secondary-color);
-  color: var(--secondary-color);
-}
-
-.profile-danger-zone .cancel-button:hover {
-  background: var(--secondary-color);
-  color: var(--card-background);
-}
-
-@media (max-width: 768px) {
-  .profile-page-container {
-    padding: 32px 20px 48px;
-  }
-
-  .profile-section {
-    padding: 22px 18px;
-  }
-
-  .profile-fields-grid,
-  .profile-personal-grid,
-  .profile-address-inputs {
-    grid-template-columns: 1fr;
-  }
-
-  .profile-field-full {
-    grid-column: auto;
-  }
-
-  .profile-password-row {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .profile-password-input-wrapper,
-  .profile-password-actions,
-  .profile-password-actions .edit-button,
-  .profile-password-cancel-button {
-    width: 100%;
-  }
-
-  .profile-save-actions,
-  .profile-danger-zone {
-    display: flex;
-  }
-
-  .profile-save-actions .save-button,
-  .profile-danger-zone .cancel-button {
-    width: 100%;
-  }
-}
+/* Meu Perfil: visual scoped to this page; no application background is overridden. */
+.profile-page-container { width: min(100%, 1180px); min-height: calc(100vh - var(--header-height) - 100px); margin: 0 auto; padding: clamp(1.75rem, 4vw, 3.5rem) clamp(1rem, 3vw, 2.25rem) 4.5rem; color: #191919; }
+.profile-page-container .back-button { display: inline-flex; align-items: center; min-height: 38px; margin-bottom: 1.6rem; padding: .55rem .85rem; border: 1px solid #171717; border-radius: 999px; font-family: var(--font-body); font-size: .78rem; font-weight: 750; text-decoration: none; }
+.profile-page-header { margin-bottom: 1.45rem; }
+.profile-eyebrow { display: block; margin-bottom: .45rem; color: var(--secondary-darker); font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.profile-page-container h1, .profile-page-container h2 { margin: 0; color: #151515; font-family: var(--font-heading); font-weight: 400; letter-spacing: .045em; line-height: .95; text-transform: uppercase; }
+.profile-page-container h1 { font-size: clamp(2.7rem, 5vw, 4rem); }
+.profile-page-container h2 { font-size: 1.8rem; }
+.profile-page-header .subtitle { max-width: 610px; margin: .85rem 0 0; color: #626262; font-size: .94rem; line-height: 1.7; }
+.profile-api-message { max-width: 760px; margin: 0 0 1.1rem; }
+
+.profile-photo-container { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 1.25rem; max-width: 760px; margin: 0 0 1.5rem; padding: 1.15rem 1.35rem; border: 1px solid #e4e4e4; border-radius: 18px; background: #fff; box-shadow: 0 10px 28px rgba(0, 0, 0, .05); }
+.profile-photo-wrapper { grid-row: span 2; position: relative; width: 112px; height: 112px; }
+.profile-photo, .profile-photo-placeholder { width: 112px; height: 112px; box-sizing: border-box; border: 3px solid var(--secondary-color); border-radius: 50%; background: #fff6ef; box-shadow: 0 6px 16px rgba(0, 0, 0, .14); object-fit: cover; }
+.profile-photo-placeholder { display: flex; align-items: center; justify-content: center; color: #151515; }
+.profile-photo-placeholder svg { width: 55px; height: 55px; }
+.profile-photo-edit-button { position: absolute; right: -2px; bottom: 2px; display: grid; width: 37px; height: 37px; padding: 0; place-items: center; border: 2px solid #fff; border-radius: 50%; background: #151515; color: #fff; box-shadow: 0 4px 12px rgba(0, 0, 0, .22); cursor: pointer; transition: transform .2s ease, background-color .2s ease; }
+.profile-photo-edit-button:hover:not(:disabled) { background: var(--secondary-color); color: #151515; transform: scale(1.08); }
+.profile-photo-edit-button:disabled { cursor: not-allowed; opacity: .7; }
+.profile-photo-hidden-input { display: none; }
+.profile-photo-help { grid-column: 2; margin: .45rem 0 0; color: #707070; font-size: .76rem; }
+.profile-user-summary { grid-column: 2; min-width: 0; }
+.profile-user-summary strong, .profile-user-summary span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.profile-user-summary strong { color: #171717; font-size: 1.1rem; }
+.profile-user-summary span { margin-top: .18rem; color: #6a6a6a; font-size: .82rem; }
+.profile-user-summary p { margin: .65rem 0 0; color: #6c6c6c; font-size: .8rem; line-height: 1.5; }
+
+.profile-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; padding: 0; border: 0; background: transparent; box-shadow: none; }
+.profile-section { min-width: 0; padding: 1.45rem; border: 1px solid #e3e3e3; border-radius: 18px; background: #fff; box-shadow: 0 10px 28px rgba(0, 0, 0, .045); }
+.profile-section:first-child, .profile-section:nth-child(2), .profile-password-section, .profile-save-actions { grid-column: 1 / -1; }
+.profile-section h2 { margin-bottom: 1.1rem; }
+.profile-section-heading { margin-bottom: 1.15rem; }
+.profile-section-heading h2 { margin-bottom: .4rem; }
+.profile-section-heading p { margin: 0; color: #696969; font-size: .82rem; line-height: 1.55; }
+.profile-fields-grid { display: grid; gap: 1rem; }
+.profile-personal-grid, .profile-address-inputs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.profile-field { display: flex; flex-direction: column; min-width: 0; }
+.profile-field-full { grid-column: 1 / -1; }
+.profile-form .profile-field label { margin: 0 0 .42rem; color: #414141; font-family: var(--font-body); font-size: .76rem; font-weight: 750; }
+.profile-form .profile-field input { width: 100%; min-height: 45px; box-sizing: border-box; padding: .7rem .8rem; border: 1px solid #dcdcdc !important; border-radius: 9px; background: #fafafa; font-family: var(--font-body); font-size: .84rem; }
+.profile-form .profile-field input:focus { border-color: var(--secondary-color) !important; background: #fff; box-shadow: 0 0 0 3px rgba(249, 115, 22, .13) !important; }
+.profile-form .profile-field input:disabled { background: #f2f2f2; color: #767676; cursor: not-allowed; }
+.profile-cep-error-message, .profile-password-error-message { margin: .4rem 0 0; }
+
+.profile-viacep-box { margin: 1.2rem 0 0; padding: 1rem; border: 1px solid #f3c5a6; border-radius: 12px; background: #fff9f4; }
+.profile-viacep-box h3 { margin: 0 0 .8rem; color: #863707; font-family: var(--font-body); font-size: .82rem; font-weight: 800; }
+.profile-address-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+.profile-address-field { display: flex; flex-direction: column; gap: .3rem; }
+.profile-address-field label { color: #875333; font-size: .68rem; font-weight: 750; }
+.profile-address-field input { min-height: 38px; box-sizing: border-box; padding: .55rem .65rem; border: 0 !important; border-radius: 7px; background: rgba(255,255,255,.8) !important; color: #503b2e !important; font-family: var(--font-body); font-size: .76rem; }
+.profile-address-large { grid-column: 1 / -1; }
+.profile-address-small { max-width: 160px; }
+
+.profile-password-row { display: flex; align-items: center; gap: .7rem; }
+.profile-password-input-wrapper { position: relative; flex: 1; min-width: 0; }
+.profile-form .profile-password-input-wrapper input { padding-right: 3rem; }
+.profile-password-visibility-button { position: absolute; top: 50%; right: .35rem; display: grid; width: 36px; height: 36px; padding: 0; place-items: center; border: 0; border-radius: 50%; background: transparent; color: #444; cursor: pointer; transform: translateY(-50%); }
+.profile-password-visibility-button:hover:not(:disabled) { background: #fff0e6; color: var(--secondary-darker); }
+.profile-password-visibility-button:disabled { cursor: not-allowed; opacity: .5; }
+.profile-password-visibility-button svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
+.profile-password-input-wrapper input::-ms-reveal, .profile-password-input-wrapper input::-ms-clear { display: none; }
+.profile-password-input-wrapper input::-webkit-credentials-auto-fill-button { visibility: hidden; pointer-events: none; }
+.profile-password-actions { flex: 0 0 auto; }
+.profile-password-actions .edit-button, .profile-password-cancel-button { min-height: 45px; padding: .65rem .9rem; border-radius: 9px; font-family: var(--font-body); font-size: .78rem; font-weight: 800; text-transform: none; }
+.profile-password-cancel-button { border: 1px solid var(--secondary-color); background: #fff; color: #913b06; cursor: pointer; }
+.profile-password-requirements { display: flex; align-items: flex-start; gap: .45rem; margin: .8rem 0 0; padding: .7rem .8rem; border: 1px solid #f5c29b; border-radius: 9px; background: #fff9f4; color: #783209; font-size: .75rem; line-height: 1.55; }
+.profile-password-requirements::before { content: 'i'; display: inline-grid; width: 16px; height: 16px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: var(--secondary-color); color: #171717; font-size: .68rem; font-weight: 800; }
+
+.profile-save-actions { display: flex; justify-content: flex-start; padding-top: .1rem; }
+.profile-save-actions .save-button { min-width: 210px; min-height: 48px; border-radius: 10px; font-family: var(--font-body); font-size: .84rem; font-weight: 800; text-transform: none; }
+.profile-danger-zone { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; margin-top: 1.6rem; padding: 1.25rem 1.45rem; border: 1px solid #f0c7c7; border-radius: 16px; background: #fffafa; }
+.profile-danger-zone h2 { margin: 0 0 .4rem; font-size: 1.5rem; }
+.profile-danger-zone p { max-width: 650px; margin: 0; color: #6c5a5a; font-size: .8rem; line-height: 1.55; }
+.profile-danger-zone .cancel-button { min-width: 156px; min-height: 42px; border: 1px solid #c53c3c !important; border-radius: 9px; background: #fff !important; color: #b52e2e !important; font-family: var(--font-body); font-size: .78rem; font-weight: 800; text-transform: none; }
+.profile-danger-zone .cancel-button:hover { background: #c53c3c !important; color: #fff !important; }
+
+@media (max-width: 760px) { .profile-photo-container { grid-template-columns: 1fr; justify-items: center; text-align: center; } .profile-photo-wrapper { grid-row: auto; } .profile-photo-help, .profile-user-summary { grid-column: auto; } .profile-form { grid-template-columns: 1fr; } .profile-section:first-child, .profile-section:nth-child(2), .profile-password-section, .profile-save-actions { grid-column: auto; } .profile-personal-grid, .profile-address-inputs, .profile-address-grid { grid-template-columns: 1fr; } .profile-field-full, .profile-address-large { grid-column: auto; } .profile-address-small { max-width: none; } .profile-password-row, .profile-danger-zone { align-items: stretch; flex-direction: column; } .profile-password-actions, .profile-password-actions .edit-button, .profile-password-cancel-button, .profile-save-actions .save-button, .profile-danger-zone .cancel-button { width: 100%; } }

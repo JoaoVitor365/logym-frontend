@@ -60,10 +60,14 @@ function AdminFacilitiesSection({
   };
 
   return (
-    <section className="admin-section">
-      <h2 className="admin-section__title">Facilidades cadastradas</h2>
+    <section className="admin-section admin-structure-section">
+      <div className="admin-structure-grid">
+        <div className="admin-structure-card">
+          <span className="admin-section__eyebrow">Gestão de estrutura</span>
+          <h2 className="admin-section__title">{facilidadeEmEdicao ? 'Editar facilidade' : 'Nova facilidade'}</h2>
+          <p className="admin-structure-card__description">{facilidadeEmEdicao ? 'Atualize as informações da facilidade selecionada.' : 'Cadastre uma nova facilidade disponível para as academias.'}</p>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="admin-structure-form">
         <div className="input-group">
           <label htmlFor="nomeFacilidade" className="input-label">
             Nome
@@ -106,7 +110,7 @@ function AdminFacilitiesSection({
           </div>
         )}
 
-        <div className="admin-actions-row">
+        <div className="admin-actions-row admin-structure-form__actions">
           <Button type="submit" className="button-primary" disabled={salvandoFormulario}>
             {salvandoFormulario ? 'Salvando...' : facilidadeEmEdicao ? 'Salvar facilidade' : 'Cadastrar facilidade'}
           </Button>
@@ -118,8 +122,17 @@ function AdminFacilitiesSection({
           )}
         </div>
       </form>
+        </div>
 
-      <div className="admin-table-scroll">
+        <div className="admin-structure-card admin-structure-list-card">
+          <div className="admin-section__heading admin-records-heading">
+            <div>
+              <span className="admin-section__eyebrow">Registros</span>
+              <h2 className="admin-section__title">Facilidades cadastradas</h2>
+            </div>
+            <span className="admin-records-count">{facilidades.length} {facilidades.length === 1 ? 'registro' : 'registros'}</span>
+          </div>
+      <div className="admin-table-scroll admin-structure-table-scroll">
         <table className="admin-table">
           <thead>
             <tr>
@@ -147,17 +160,17 @@ function AdminFacilitiesSection({
                     <td>{facilidade.descricao || '-'}</td>
                     <td><StatusBadge status={facilidade.statusFacilidade} /></td>
                     <td>
-                      <div className="admin-actions-row">
-                        <Button type="button" className="button-primary" onClick={() => iniciarEdicao(facilidade)}>
+                      <div className="admin-actions-row admin-structure-table-actions">
+                        <Button type="button" className="button-primary admin-structure-edit-button" onClick={() => iniciarEdicao(facilidade)}>
                           Editar
                         </Button>
 
                         {estaAtiva ? (
-                          <Button type="button" className="button-cancel" onClick={() => onInativarFacilidade(facilidade.id)} disabled={inativando}>
+                          <Button type="button" className="button-cancel admin-user-action admin-user-action--suspend" onClick={() => onInativarFacilidade(facilidade.id)} disabled={inativando}>
                             {inativando ? 'Inativando...' : 'Inativar'}
                           </Button>
                         ) : (
-                          <Button type="button" className="button-primary" onClick={() => onReativarFacilidade(facilidade.id)} disabled={reativando}>
+                          <Button type="button" className="button-primary admin-user-action admin-entity-reactivate" onClick={() => onReativarFacilidade(facilidade.id)} disabled={reativando}>
                             {reativando ? 'Reativando...' : 'Reativar'}
                           </Button>
                         )}
@@ -169,6 +182,8 @@ function AdminFacilitiesSection({
             )}
           </tbody>
         </table>
+      </div>
+        </div>
       </div>
     </section>
   );

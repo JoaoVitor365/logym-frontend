@@ -6,8 +6,14 @@ import { formatarCPF, formatarData, getStatusLabel } from './adminFormatters';
 
 function AdminManagersSection({ gerentes }) {
   return (
-    <section className="admin-section">
-      <h2 className="admin-section__title">Gerentes cadastrados</h2>
+    <section className="admin-section admin-managers-section">
+      <div className="admin-section__heading admin-records-heading">
+        <div>
+          <span className="admin-section__eyebrow">Contas de gestão</span>
+          <h2 className="admin-section__title">Gerentes cadastrados</h2>
+        </div>
+        <span className="admin-records-count">{gerentes.length} {gerentes.length === 1 ? 'completo' : 'completos'}</span>
+      </div>
 
       <div className="admin-table-scroll">
         <table className="admin-table">

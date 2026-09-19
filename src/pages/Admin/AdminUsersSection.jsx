@@ -53,10 +53,16 @@ function AdminUsersSection({ usuarios, currentUser, onSuspenderUsuario, onAtivar
   }, [usuarios, termoBusca, nivelSelecionado, statusSelecionado]);
 
   return (
-    <section className="admin-section">
-      <h2 className="admin-section__title">Usuários cadastrados</h2>
+    <section className="admin-section admin-users-section">
+      <div className="admin-section__heading admin-records-heading">
+        <div>
+          <span className="admin-section__eyebrow">Contas registradas</span>
+          <h2 className="admin-section__title">Usuários cadastrados</h2>
+        </div>
+        <span className="admin-records-count">{usuarios.length} {usuarios.length === 1 ? 'registro' : 'registros'}</span>
+      </div>
 
-      <div className="admin-actions-row">
+      <div className="admin-actions-row admin-users-toolbar">
         <div className="input-group">
           <label htmlFor="buscaUsuariosAdmin" className="input-label">
             Buscar
@@ -144,16 +150,16 @@ function AdminUsersSection({ usuarios, currentUser, onSuspenderUsuario, onAtivar
                     <td>{usuario.id}</td>
                     <td>{usuario.nome}</td>
                     <td>{usuario.username}</td>
-                    <td>{usuario.nivelAcesso}</td>
+                    <td><span className={`admin-access-badge admin-access-badge--${String(usuario.nivelAcesso || '').toLowerCase()}`}>{usuario.nivelAcesso}</span></td>
                     <td><StatusBadge status={getStatusUsuarioVisual(usuario.statusUsuario)} /></td>
                     <td>{formatarData(usuario.dataCadastro)}</td>
                     <td>
                       {usuario.statusUsuario === 'ATIVO' ? (
-                        <Button type="button" className="button-cancel" onClick={() => onSuspenderUsuario(usuario.id)} disabled={ehContaAtual || suspendendo}>
+                        <Button type="button" className="button-cancel admin-user-action admin-user-action--suspend" onClick={() => onSuspenderUsuario(usuario.id)} disabled={ehContaAtual || suspendendo}>
                           {suspendendo ? 'Suspendendo...' : 'Suspender'}
                         </Button>
                       ) : (
-                        <Button type="button" className="button-primary" onClick={() => onAtivarUsuario(usuario.id)} disabled={reativando}>
+                        <Button type="button" className="button-primary admin-user-action" onClick={() => onAtivarUsuario(usuario.id)} disabled={reativando}>
                           {reativando ? 'Reativando...' : 'Reativar'}
                         </Button>
                       )}

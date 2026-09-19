@@ -12,9 +12,10 @@ export function InfoInline({ label, value }) {
 
 export function StatusBadge({ status }) {
   const ativo = status === 'ATIVO' || status === 'ATIVA';
+  const suspenso = status === 'SUSPENSO' || status === 'SUSPENSA';
 
   return (
-    <span className={`admin-status-badge ${ativo ? 'admin-status-badge--active' : 'admin-status-badge--inactive'}`}>
+    <span className={`admin-status-badge ${ativo ? 'admin-status-badge--active' : suspenso ? 'admin-status-badge--suspended' : 'admin-status-badge--inactive'}`}>
       {status}
     </span>
   );
