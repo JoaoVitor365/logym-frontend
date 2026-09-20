@@ -43,9 +43,18 @@
 .nearby-academies-map-container { width: 100%; overflow: hidden; border: 1px solid #e2e2e2; border-radius: 13px; }
 .nearby-academies-map-canvas { width: 100%; height: 340px; }
 .home-location-info { margin: 0; padding: .9rem 1rem; border: 1px solid #f6c49f; border-radius: 11px; background: #fff8f3; color: #7a3108; font-size: .84rem; text-align: center; }
+.home-nearby-map-empty { margin-top: .8rem; }
+.home-map-provider-controls { display: flex; align-items: center; justify-content: flex-end; gap: .65rem; margin-top: .65rem; }
+.home-map-provider-label { color: #777; font-size: .72rem; font-weight: 650; }
+.home-map-provider-toggle { padding: .32rem .55rem; border: 1px solid #e1b28f; border-radius: 7px; background: #fffaf7; color: #8c3906; font-family: var(--font-body); font-size: .72rem; font-weight: 750; cursor: pointer; transition: .18s ease; }
+.home-map-provider-toggle:hover:not(:disabled) { border-color: var(--secondary-color); background: #fff0e6; }
+.home-map-provider-toggle:disabled { cursor: not-allowed; opacity: .6; }
 .user-location-marker { line-height: 0; background: transparent; border: 0; }
 .user-location-marker svg { display: block; filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .3)); }
-.leaflet-container .academy-map-details-button { display: inline-block; margin-top: 4px; padding: 6px 10px; border: 1px solid var(--secondary-color); border-radius: 6px; background: var(--secondary-color); color: #111; font-family: var(--font-body); font-size: 12px; font-weight: 700; text-decoration: none; }
+.leaflet-container .academy-map-details-button, .nearby-academies-map-canvas .academy-map-details-button { display: inline-block; margin-top: 4px; padding: 6px 10px; border: 1px solid var(--secondary-color); border-radius: 6px; background: var(--secondary-color); color: #111; font-family: var(--font-body); font-size: 12px; font-weight: 700; text-decoration: none; }
+.nearby-academies-map-canvas .academy-map-info-window { min-width: 170px; color: #333; font-family: var(--font-body); font-size: 12px; line-height: 1.4; }
+.nearby-academies-map-canvas .academy-map-info-window strong { display: block; color: #151515; font-size: 14px; }
+.nearby-academies-map-canvas .academy-map-info-window p { margin: 5px 0; }
 
 .home-results-section { max-width: 1280px; margin: 2.5rem auto 0; scroll-margin-top: 24px; }
 .home-results-heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 1.2rem; }

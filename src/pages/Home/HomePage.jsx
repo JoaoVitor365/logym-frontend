@@ -532,8 +532,6 @@ function HomePage({ currentUser }) {
             <p className="home-location-info">Carregando academias próximas...</p>
           ) : mensagemAcademiasProximas ? (
             <p className="home-location-info">{mensagemAcademiasProximas}</p>
-          ) : academiasProximas.length === 0 ? (
-            <p className="home-location-info">Nenhuma academia encontrada em até 5 km da sua localização.</p>
           ) : (
             <NearbyAcademiesMap
               userLatitude={currentUser.latitude}

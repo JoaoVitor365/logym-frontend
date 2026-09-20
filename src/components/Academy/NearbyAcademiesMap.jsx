@@ -1,46 +1,35 @@
-import { useEffect, useMemo } from 'react';
-import L from 'leaflet';
-import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
-import { Link } from 'react-router-dom';
+import { useCallback, useMemo, useState } from 'react';
 
-import { academyMarkerIcon, getCoordenadasValidas, userMarkerIcon } from './leafletMapUtils';
+import NearbyAcademiesGoogleMap from './NearbyAcademiesGoogleMap';
+import NearbyAcademiesLeafletMap from './NearbyAcademiesLeafletMap';
+import { getCoordenadasValidas } from './nearbyAcademiesMapUtils';
 
-const formatarDistancia = (distanciaKm) => {
-  const distancia = Number(distanciaKm);
+const MAP_PROVIDER_STORAGE_KEY = 'logym_map_provider';
+const GOOGLE_PROVIDER = 'google';
+const LEAFLET_PROVIDER = 'leaflet';
 
-  if (!Number.isFinite(distancia) || distancia < 0) {
-    return '';
+const lerProviderDaSessao = (googleDisponivel) => {
+  if (!googleDisponivel) {
+    return LEAFLET_PROVIDER;
   }
 
-  return `${new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 }).format(distancia)} km de você`;
+  try {
+    return sessionStorage.getItem(MAP_PROVIDER_STORAGE_KEY) === LEAFLET_PROVIDER
+      ? LEAFLET_PROVIDER
+      : GOOGLE_PROVIDER;
+  } catch {
+    return GOOGLE_PROVIDER;
+  }
 };
-
-const montarEnderecoResumido = (academia) => {
-  return [academia?.endereco, academia?.bairro, academia?.cidade, academia?.estado]
-    .filter(Boolean)
-    .join(' - ');
-};
-
-function AjustarEnquadramento({ pontos }) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (pontos.length === 1) {
-      map.setView(pontos[0], 16);
-      return;
-    }
-
-    map.fitBounds(L.latLngBounds(pontos), {
-      padding: [40, 40],
-      maxZoom: 15
-    });
-  }, [map, pontos]);
-
-  return null;
-}
 
 function NearbyAcademiesMap({ userLatitude, userLongitude, academiasProximas }) {
-  const coordenadasUsuario = getCoordenadasValidas(userLatitude, userLongitude);
+  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const googleDisponivel = Boolean(apiKey);
+  const [providerAtivo, setProviderAtivo] = useState(() => lerProviderDaSessao(googleDisponivel));
+  const coordenadasUsuario = useMemo(
+    () => getCoordenadasValidas(userLatitude, userLongitude),
+    [userLatitude, userLongitude]
+  );
   const academiasComCoordenadas = useMemo(() => {
     if (!Array.isArray(academiasProximas)) {
       return [];
@@ -54,6 +43,18 @@ function NearbyAcademiesMap({ userLatitude, userLongitude, academiasProximas }) 
       }))
       .filter(({ academia, coordenadas }) => academia && coordenadas);
   }, [academiasProximas]);
+  const selecionarProvider = useCallback((provider) => {
+    setProviderAtivo(provider);
+
+    try {
+      sessionStorage.setItem(MAP_PROVIDER_STORAGE_KEY, provider);
+    } catch {
+      // A indisponibilidade do sessionStorage não impede a troca na sessão atual.
+    }
+  }, []);
+  const ativarFallbackLeaflet = useCallback(() => {
+    selecionarProvider(LEAFLET_PROVIDER);
+  }, [selecionarProvider]);
 
   if (!coordenadasUsuario) {
     return (
@@ -63,49 +64,48 @@ function NearbyAcademiesMap({ userLatitude, userLongitude, academiasProximas }) 
     );
   }
 
-  const pontosDoMapa = [
-    coordenadasUsuario,
-    ...academiasComCoordenadas.map(({ coordenadas }) => coordenadas)
-  ];
+  const usandoGoogle = providerAtivo === GOOGLE_PROVIDER && googleDisponivel;
+  const textoDoBotao = usandoGoogle ? 'Usar mapa alternativo' : 'Usar Google Maps';
 
   return (
-    <div className="nearby-academies-map-container">
-      <MapContainer
-        center={coordenadasUsuario}
-        zoom={14}
-        scrollWheelZoom={false}
-        className="nearby-academies-map-canvas"
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+    <>
+      <div className="nearby-academies-map-container">
+        {usandoGoogle ? (
+          <NearbyAcademiesGoogleMap
+            apiKey={apiKey}
+            coordenadasUsuario={coordenadasUsuario}
+            academiasComCoordenadas={academiasComCoordenadas}
+            onError={ativarFallbackLeaflet}
+          />
+        ) : (
+          <NearbyAcademiesLeafletMap
+            coordenadasUsuario={coordenadasUsuario}
+            academiasComCoordenadas={academiasComCoordenadas}
+          />
+        )}
+      </div>
 
-        <AjustarEnquadramento pontos={pontosDoMapa} />
+      <div className="home-map-provider-controls">
+        <span className="home-map-provider-label">
+          {usandoGoogle ? 'Google Maps' : 'Mapa alternativo'}
+        </span>
+        <button
+          type="button"
+          className="home-map-provider-toggle"
+          onClick={() => selecionarProvider(usandoGoogle ? LEAFLET_PROVIDER : GOOGLE_PROVIDER)}
+          disabled={!usandoGoogle && !googleDisponivel}
+          title={!usandoGoogle && !googleDisponivel ? 'Google Maps não está configurado.' : undefined}
+        >
+          {textoDoBotao}
+        </button>
+      </div>
 
-        <Marker position={coordenadasUsuario} icon={userMarkerIcon}>
-          <Popup>Sua localização</Popup>
-        </Marker>
-
-        {academiasComCoordenadas.map(({ academia, distanciaKm, coordenadas }) => {
-          const endereco = montarEnderecoResumido(academia);
-          const distanciaFormatada = formatarDistancia(distanciaKm);
-
-          return (
-            <Marker key={academia.id} position={coordenadas} icon={academyMarkerIcon}>
-              <Popup>
-                <strong>{academia.nome || 'Academia'}</strong>
-                {distanciaFormatada && <p>{distanciaFormatada}</p>}
-                {endereco && <p>{endereco}</p>}
-                <Link to={`/academia/${academia.id}`} className="academy-map-details-button">
-                  Ver detalhes
-                </Link>
-              </Popup>
-            </Marker>
-          );
-        })}
-      </MapContainer>
-    </div>
+      {academiasComCoordenadas.length === 0 && (
+        <p className="home-location-info home-nearby-map-empty">
+          Nenhuma academia encontrada em até 5 km da sua localização.
+        </p>
+      )}
+    </>
   );
 }
 
